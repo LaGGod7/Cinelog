@@ -1,0 +1,21 @@
+.venv/
+__pycache__/
+node_modules/
+dist/
+*.db
+*.db-*
+.env
+.secret_key
+.pytest_cache/
+.piptmp*/
+
+# training data (about 1 GB) stays on the laptop
+mltraining/
+Claude outputs/
+
+# the optional DistilBERT layer (67 MB, off by default); the other model files are small enough to version
+backend/models/spoiler_dl.onnx
+
+# install logs
+backend/logs/pip*.txt
+backend/logs/npm*.txt

@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CineLog Concept Map</title>
+<style>
+:root{--bg:#0d161c;--surface:#15222b;--surface2:#1c2d38;--ink:#e9f1f6;--muted:#9db0bd;--line:#2c4250;--brand:#ff8a4c;--focus:#7db6ff;
+--sans:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;--mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 var(--sans)}
+.page{max-width:1220px;margin:0 auto;padding:24px 16px 36px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:14px;align-items:flex-end}
+.eyebrow{font:600 11px var(--mono);letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+h1{margin:6px 0 4px;font-size:28px;letter-spacing:-.01em}
+.sub{margin:0;color:var(--muted);max-width:72ch}
+.stats{display:flex;gap:8px}
+.stat{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:6px 12px;text-align:center}
+.stat b{display:block;font-size:22px}.stat span{font-size:11px;color:var(--muted)}
+.bar{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;align-items:center}
+.bar button{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:5px 12px;font-size:12.5px}
+.bar button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.bar .act{border-color:var(--brand);color:var(--brand)}
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;margin-top:14px;align-items:start}
+.mapcard{position:relative;background:radial-gradient(ellipse at 50% 45%,#1a2c38 0%,#111d25 60%,#0d161c 100%);border:1px solid var(--line);border-radius:16px;min-width:0;overflow:hidden}
+svg{width:100%;height:auto;display:block;touch-action:none;user-select:none}
+.hint{position:absolute;left:12px;bottom:10px;font:11px var(--mono);color:var(--muted);pointer-events:none}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;min-width:0}
+.panel h2{margin:6px 0 4px;font-size:21px}
+.panel p{color:var(--muted);margin:0 0 10px}
+.panel h4{font:600 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface2);border-radius:8px;padding:4px 9px;font-size:12.5px}
+.chip.lk{cursor:pointer}.chip.lk:hover{border-color:var(--brand)}
+.where{margin:0;padding-left:18px}.where li{margin:4px 0}
+.tag{display:inline-block;font:600 10.5px var(--mono);letter-spacing:.08em;padding:3px 9px;border-radius:99px;border:1px solid}
+.ball{cursor:grab}.ball:active{cursor:grabbing}
+@media (max-width:980px){.stage{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="top">
+    <div><div class="eyebrow">Academic foundation · CineLog project</div><h1>How subjects connect inside CineLog</h1>
+    <p class="sub">Every ball is a subject; the small balls orbiting it are its concepts. Drag and fling them, click one to see where CineLog uses it, and watch the sparks travel along the cross-links between subjects.</p></div>
+    <div class="stats"><div class="stat"><b id="ns">0</b><span>subjects</span></div><div class="stat"><b id="nc">0</b><span>concepts</span></div><div class="stat"><b id="nx">0</b><span>cross-links</span></div></div>
+  </div>
+  <div class="bar" id="bar"></div>
+  <div class="stage">
+    <div class="mapcard"><svg id="map" viewBox="0 0 800 620" role="img" aria-label="Interactive concept map of subjects used in CineLog"></svg><div class="hint">drag · fling · click</div></div>
+    <aside class="panel" id="panel" aria-live="polite"></aside>
+  </div>
+</main>
+<script>
+(function(){
+"use strict";
+var S=[
+ {id:"daa",n:"DAA",f:"Design & Analysis of Algorithms",c:"#ff8a4c",con:["Trie","Inverted index","Aho–Corasick","Heaps / top-K","TF-IDF","Big-O"],use:["Autocomplete in O(length of prefix)","Spoiler word lists matched in one pass","Moderator queue ordered by risk"],eng:"E1 Search & Spoiler Matching"},
+ {id:"ml",n:"ML / DL",f:"Machine Learning & Deep Learning",c:"#f2c14e",con:["Logistic regression","BiGRU","Sentence embeddings","Precision / recall","Train / test split"],use:["Spoiler classifier scores each review","Plot-similarity check against film synopses","Evaluated on 150,000 labelled IMDb reviews"],eng:"E1 Spoiler Shield"},
+ {id:"dbms",n:"DBMS",f:"Database Management Systems",c:"#5fd3a6",con:["ER model","3NF","ACID","Unique constraint","Indexes","WAL"],use:["One vote per member per poll","Diary, reviews and audit log stored once","Reads never wait behind a long write"],eng:"E2 Storage & Transaction"},
+ {id:"os",n:"OS",f:"Operating Systems",c:"#7db6ff",con:["Thread pool","Producer–consumer","Semaphores","Priority scheduling","LRU cache","Deadlock prevention"],use:["Spoiler scans run in the background","User jobs run before batch jobs","TMDB responses cached"],eng:"E3 Background Job Scheduler"},
+ {id:"cn",n:"CN",f:"Computer Networks",c:"#a99dff",con:["HTTP / REST","WebSocket","OAuth 2.0","CSRF tokens","Token bucket","Reverse proxy"],use:["Google sign-in","Live poll results","Rate limiting logins and TMDB calls"],eng:"E4 Secure Access & Communication"},
+ {id:"se",n:"SE",f:"Software Engineering",c:"#f27ba8",con:["Stakeholders","AS-IS / TO-BE","Use cases","RBAC matrix","State machines","Testing & Git"],use:["Review and poll lifecycles","Requirements traced to tests","Role-based permissions"],eng:"E5 Role, Permission & Workflow"},
+ {id:"wt",n:"WT",f:"Web Technology",c:"#4fd0d3",con:["React SPA","Routing","Responsive layout","Validation","Dashboards"],use:["One web app for every role","Permission-driven buttons","Spoiler blur and Reveal"],eng:"E6 Client–Server Interaction"},
+ {id:"oop",n:"OOP",f:"Object-Oriented Programming",c:"#c8a2ff",con:["Encapsulation","Interfaces","Modularity","Design patterns"],use:["Search, shield and scheduler as separate services","Swappable models and API clients"],eng:"All engines"},
+ {id:"pocd",n:"POCD",f:"Principles of Compiler Design",c:"#ffb38a",con:["Tokenisation","Regex","Finite automata","Schema validation"],use:["Review text split into sentences and tokens","Input checked before any handler runs"],eng:"E1, E6"},
+ {id:"coa",n:"COA",f:"Computer Organization & Architecture",c:"#9fd36b",con:["CPU inference","Memory hierarchy","SIMD batching"],use:["Models sized to run on a laptop CPU","Batches sorted by length to cut padding"],eng:"E1, E3"},
+ {id:"dm",n:"DM",f:"Discrete Mathematics",c:"#d9d9d9",con:["Sets","Relations","Automata","Graphs"],use:["A user's rights = union of role permissions","Valid transitions as a relation T ⊆ S × S"],eng:"E5"}
+];
+var X=[["daa","ml"],["daa","os"],["daa","pocd"],["daa","dm"],["ml","coa"],["ml","os"],["dbms","os"],["dbms","se"],["dbms","cn"],["os","coa"],["os","cn"],["cn","wt"],["cn","se"],["se","dm"],["se","oop"],["wt","oop"],["wt","pocd"],["oop","daa"],["dm","pocd"],["ml","pocd"]];
+var W=800,H=620,NS="http://www.w3.org/2000/svg",$=function(s){return document.querySelector(s)};
+var reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var by={},nodes=[],springs=[],sel=null,drag=null;
+function mk(t,a){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);return e}
+function rnd(a,b){return a+Math.random()*(b-a)}
+/* build nodes */
+var hub={id:"hub",kind:"hub",r:46,x:W/2,y:H/2,vx:0,vy:0,c:"#ff8a4c",m:6};nodes.push(hub);
+S.forEach(function(s,i){var t=i/S.length*Math.PI*2;var n={id:s.id,kind:"sub",s:s,r:30,x:W/2+Math.cos(t)*220,y:H/2+Math.sin(t)*200,vx:rnd(-1,1),vy:rnd(-1,1),c:s.c,m:3};by[s.id]=n;nodes.push(n);
+  springs.push({a:hub,b:n,len:210,k:.004,kind:"hub"});
+  s.con.forEach(function(c,j){var a=t+(j-s.con.length/2)*.35;var cn={id:s.id+"_"+j,kind:"con",parent:n,label:c,r:9,x:n.x+Math.cos(a)*55,y:n.y+Math.sin(a)*55,vx:rnd(-2,2),vy:rnd(-2,2),c:s.c,m:1};nodes.push(cn);springs.push({a:n,b:cn,len:56,k:.03,kind:"con"});});
+});
+X.forEach(function(p){springs.push({a:by[p[0]],b:by[p[1]],len:260,k:.0009,kind:"x",pair:p})});
+$("#ns").textContent=S.length;$("#nc").textContent=S.reduce(function(a,s){return a+s.con.length},0);$("#nx").textContent=X.length;
+/* svg layers */
+var svg=$("#map"),defs=mk("defs",{});svg.appendChild(defs);
+S.concat([{id:"hub",c:"#ff8a4c"}]).forEach(function(s){var g=mk("radialGradient",{id:"g_"+s.id,cx:"35%",cy:"30%",r:"75%"});g.appendChild(mk("stop",{offset:"0%","stop-color":"#ffffff","stop-opacity":.85}));g.appendChild(mk("stop",{offset:"35%","stop-color":s.c}));g.appendChild(mk("stop",{offset:"100%","stop-color":s.c,"stop-opacity":.55}));defs.appendChild(g);});
+var flt=mk("filter",{id:"glow",x:"-50%",y:"-50%",width:"200%",height:"200%"});flt.appendChild(mk("feGaussianBlur",{stdDeviation:4,result:"b"}));var mg=mk("feMerge",{});mg.appendChild(mk("feMergeNode",{in:"b"}));mg.appendChild(mk("feMergeNode",{in:"SourceGraphic"}));flt.appendChild(mg);defs.appendChild(flt);
+var Lx=mk("g",{}),Lc=mk("g",{}),Ls=mk("g",{}),Lb=mk("g",{});svg.appendChild(Lx);svg.appendChild(Lc);svg.appendChild(Ls);svg.appendChild(Lb);
+springs.forEach(function(s){s.el=mk("line",{stroke:s.kind==="x"?"#4d6a7c":s.kind==="hub"?"#2f4757":s.a.c,"stroke-width":s.kind==="con"?1:1.2,"stroke-dasharray":s.kind==="x"?"4 5":"",opacity:s.kind==="con"?.45:.7});(s.kind==="con"?Lc:Lx).appendChild(s.el);});
+var sparks=[];X.forEach(function(p,i){var sp=mk("circle",{r:3,fill:"#ffd27a",filter:"url(#glow)"});Ls.appendChild(sp);sparks.push({el:sp,s:springs.filter(function(q){return q.pair===p})[0],t:Math.random(),v:rnd(.003,.007)});});
+nodes.forEach(function(n){
+  var g=mk("g",{"class":"ball"});
+  if(n.kind==="hub"){g.appendChild(mk("circle",{r:n.r,fill:"url(#g_hub)",filter:"url(#glow)"}));var t=mk("text",{"text-anchor":"middle",y:5,"font-size":17,"font-weight":800,fill:"#1a0d05"});t.textContent="CineLog";g.appendChild(t);}
+  else if(n.kind==="sub"){n.circ=mk("circle",{r:n.r,fill:"url(#g_"+n.id+")",stroke:"#0d161c","stroke-width":2});g.appendChild(n.circ);var t2=mk("text",{"text-anchor":"middle",y:4,"font-size":12,"font-weight":800,fill:"#0d161c"});t2.textContent=n.s.n;g.appendChild(t2);g.setAttribute("tabindex",0);g.setAttribute("role","button");g.setAttribute("aria-label",n.s.f);
+    g.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();pick(n.id)}});}
+  else{n.circ=mk("circle",{r:n.r,fill:n.c,opacity:.85,stroke:"#0d161c","stroke-width":1.5});g.appendChild(n.circ);n.txt=mk("text",{"text-anchor":"middle",y:-13,"font-size":10.5,fill:"#e9f1f6",opacity:0,"pointer-events":"none"});n.txt.textContent=n.label;g.appendChild(n.txt);
+    g.addEventListener("pointerenter",function(){n.hover=true});g.addEventListener("pointerleave",function(){n.hover=false});}
+  n.g=g;Lb.appendChild(g);
+  g.addEventListener("pointerdown",function(e){e.preventDefault();var p=pt(e);drag={n:n,ox:n.x-p.x,oy:n.y-p.y,lx:p.x,ly:p.y,moved:0,vx:0,vy:0};g.setPointerCapture(e.pointerId);});
+});
+function pt(e){var r=svg.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}}
+svg.addEventListener("pointermove",function(e){if(!drag)return;var p=pt(e);drag.vx=p.x-drag.lx;drag.vy=p.y-drag.ly;drag.moved+=Math.abs(drag.vx)+Math.abs(drag.vy);drag.lx=p.x;drag.ly=p.y;drag.n.x=p.x+drag.ox;drag.n.y=p.y+drag.oy;drag.n.vx=0;drag.n.vy=0;});
+svg.addEventListener("pointerup",function(){if(!drag)return;var n=drag.n;if(drag.moved<6){if(n.kind==="sub")pick(n.id);else if(n.kind==="con")pick(n.parent.id);else pick(null);}else{n.vx=drag.vx*1.2;n.vy=drag.vy*1.2;}drag=null;});
+/* physics */
+function stepPhys(){
+  var i,j,a,b,dx,dy,d,f;
+  for(i=0;i<nodes.length;i++){a=nodes[i];for(j=i+1;j<nodes.length;j++){b=nodes[j];dx=b.x-a.x;dy=b.y-a.y;d=Math.sqrt(dx*dx+dy*dy)||.01;var min=a.r+b.r+4;
+    f=(a.kind==="con"&&b.kind==="con")?60/(d*d):900/(d*d);
+    if(d<min){f+= (min-d)*.08;}
+    var fx=dx/d*f,fy=dy/d*f;a.vx-=fx/a.m;a.vy-=fy/a.m;b.vx+=fx/b.m;b.vy+=fy/b.m;}}
+  springs.forEach(function(s){dx=s.b.x-s.a.x;dy=s.b.y-s.a.y;d=Math.sqrt(dx*dx+dy*dy)||.01;f=(d-s.len)*s.k;var fx=dx/d*f,fy=dy/d*f;s.a.vx+=fx/s.a.m*3;s.a.vy+=fy/s.a.m*3;s.b.vx-=fx/s.b.m*3;s.b.vy-=fy/s.b.m*3;});
+  nodes.forEach(function(n){
+    if(drag&&drag.n===n)return;
+    n.vx+=(W/2-n.x)*(n.kind==="hub"?.004:.0004);n.vy+=(H/2-n.y)*(n.kind==="hub"?.004:.0004);
+    n.vx+=rnd(-.05,.05);n.vy+=rnd(-.05,.05);
+    n.vx*=.96;n.vy*=.96;
+    var sp=Math.sqrt(n.vx*n.vx+n.vy*n.vy);if(sp>18){n.vx*=18/sp;n.vy*=18/sp;}
+    n.x+=n.vx;n.y+=n.vy;
+    if(n.x<n.r){n.x=n.r;n.vx=Math.abs(n.vx)*.8}if(n.x>W-n.r){n.x=W-n.r;n.vx=-Math.abs(n.vx)*.8}
+    if(n.y<n.r){n.y=n.r;n.vy=Math.abs(n.vy)*.8}if(n.y>H-n.r){n.y=H-n.r;n.vy=-Math.abs(n.vy)*.8}
+  });
+}
+function linked(id){var o={};o[id]=1;X.forEach(function(p){if(p[0]===id)o[p[1]]=1;if(p[1]===id)o[p[0]]=1});return o}
+function draw(){
+  var L=sel?linked(sel):null;
+  springs.forEach(function(s){s.el.setAttribute("x1",s.a.x);s.el.setAttribute("y1",s.a.y);s.el.setAttribute("x2",s.b.x);s.el.setAttribute("y2",s.b.y);
+    if(s.kind==="x"){var on=sel&&(s.pair[0]===sel||s.pair[1]===sel);s.el.setAttribute("stroke",on?"#ffd27a":"#4d6a7c");s.el.setAttribute("stroke-width",on?2.2:1);s.el.setAttribute("stroke-dasharray",on?"":"4 5");s.el.setAttribute("opacity",sel&&!on?.25:.8);}
+    else if(s.kind==="hub"){s.el.setAttribute("opacity",sel?(s.b.id===sel?.9:.15):.6);s.el.setAttribute("stroke",sel===s.b.id?s.b.c:"#2f4757");}
+    else s.el.setAttribute("opacity",sel?(s.a.id===sel?.8:.12):.4);});
+  nodes.forEach(function(n){n.g.setAttribute("transform","translate("+n.x+","+n.y+")");
+    if(n.kind==="sub"){var on=sel===n.id;n.circ.setAttribute("r",on?36:30);n.g.setAttribute("opacity",L&&!L[n.id]?.3:1);n.circ.setAttribute("stroke",on?"#fff":"#0d161c");}
+    else if(n.kind==="con"){var mine=sel===n.parent.id;n.g.setAttribute("opacity",sel&&!mine?.2:1);n.circ.setAttribute("r",mine?11:8);n.txt.setAttribute("opacity",(mine||n.hover)?1:0);}});
+  sparks.forEach(function(k){k.t+=k.v*(sel&&(k.s.pair[0]===sel||k.s.pair[1]===sel)?2.2:1);if(k.t>1)k.t-=1;var a=k.s.a,b=k.s.b;k.el.setAttribute("cx",a.x+(b.x-a.x)*k.t);k.el.setAttribute("cy",a.y+(b.y-a.y)*k.t);k.el.setAttribute("opacity",sel&&!(k.s.pair[0]===sel||k.s.pair[1]===sel)?.15:.95);});
+}
+function loop(){stepPhys();draw();requestAnimationFrame(loop)}
+/* UI */
+function pick(id){sel=(sel===id)?null:id;bar();panel();
+  if(sel){var n=by[sel];n.vx+=(W/2-n.x)*.04;n.vy+=(H/2-n.y)*.04;}}
+function bar(){$("#bar").innerHTML='<button type="button" data-t="" aria-pressed="'+(!sel)+'">Overview</button>'+S.map(function(s){return '<button type="button" data-t="'+s.id+'" aria-pressed="'+(sel===s.id)+'" style="'+(sel===s.id?"":"border-color:"+s.c+"55")+'">'+s.n+'</button>'}).join("")+'<button type="button" class="act" data-x="shake">Shake</button><button type="button" class="act" data-x="explode">Explode</button>';}
+function panel(){var h;
+  if(!sel){h='<span class="tag" style="color:#ff8a4c;border-color:#ff8a4c">OVERVIEW</span><h2>'+S.length+' subjects, one system</h2><p>CineLog is split into six engines, and each engine leans on one main subject: DAA and ML for search and the Spoiler Shield, DBMS for storage, OS for background jobs, CN for secure access, SE for roles and workflows, and WT for the interface.</p><h4>Strongest cross-links</h4><ul class="where"><li>DAA ↔ ML: the Spoiler Shield combines automata, TF-IDF and trained models.</li><li>DBMS ↔ OS: one vote per member even when votes arrive at the same time.</li><li>SE ↔ DM: permissions as sets, workflows as state machines.</li><li>CN ↔ WT: REST and WebSocket carry every screen\'s data.</li></ul>';}
+  else{var s=by[sel].s,nb=[];X.forEach(function(p){if(p[0]===sel)nb.push(p[1]);if(p[1]===sel)nb.push(p[0])});
+    h='<span class="tag" style="color:'+s.c+';border-color:'+s.c+'">'+s.n+'</span><h2>'+s.f+'</h2><p>Engine: '+s.eng+'</p><h4>Core concepts</h4><div class="chips">'+s.con.map(function(c){return '<span class="chip" style="border-color:'+s.c+'66">'+c+'</span>'}).join("")+'</div><h4>Where CineLog uses it</h4><ul class="where">'+s.use.map(function(u){return "<li>"+u+"</li>"}).join("")+'</ul><h4>Works with</h4><div class="chips">'+nb.map(function(n){return '<button type="button" class="chip lk" data-t="'+n+'">'+by[n].s.f+'</button>'}).join("")+'</div>';}
+  $("#panel").innerHTML=h;}
+document.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
+  if(b.dataset.x==="shake"){nodes.forEach(function(n){n.vx+=rnd(-9,9);n.vy+=rnd(-9,9)});return;}
+  if(b.dataset.x==="explode"){nodes.forEach(function(n){var dx=n.x-W/2,dy=n.y-H/2,d=Math.sqrt(dx*dx+dy*dy)||1;n.vx+=dx/d*16;n.vy+=dy/d*16});return;}
+  if(b.dataset.t!==undefined){var t=b.dataset.t;sel=null;if(t)pick(t);else{bar();panel();}}});
+bar();panel();
+if(reduce){for(var i=0;i<400;i++)stepPhys();draw();}else loop();
+})();
+</script>
+</body>
+</html>

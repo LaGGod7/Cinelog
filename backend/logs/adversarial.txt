@@ -1,0 +1,38 @@
+=== set A (gold_adversarial.json) ===
+shield: ml=True rnn=True (active: True) semantic=True  warn cut-offs: {'ml': 0.40559497229702357, 'fused': 0.4016467644123496}
+
+DISGUISED SPOILERS (want: blurred / flagged)           rules  rules+semantic           model       model+rnn            FULL
+  euphemism                                  2/8 b, 3 fl     2/8 b, 4 fl     0/8 b, 1 fl     0/8 b, 1 fl     0/8 b, 2 fl
+  hinglish                                   0/6 b, 4 fl     0/6 b, 4 fl     0/6 b, 0 fl     0/6 b, 0 fl     0/6 b, 0 fl
+  slang_typos                                4/8 b, 7 fl     6/8 b, 8 fl     1/8 b, 6 fl     1/8 b, 6 fl     4/8 b, 8 fl
+  question                                   2/6 b, 5 fl     4/6 b, 6 fl     1/6 b, 3 fl     1/6 b, 3 fl     3/6 b, 5 fl
+  emotional_reaction                         1/6 b, 3 fl     2/6 b, 4 fl     0/6 b, 0 fl     0/6 b, 0 fl     2/6 b, 2 fl
+  hindsight                                  1/5 b, 1 fl     1/5 b, 2 fl     0/5 b, 0 fl     0/5 b, 0 fl     0/5 b, 1 fl
+  fates                                      1/6 b, 3 fl     2/6 b, 4 fl     0/6 b, 0 fl     0/6 b, 0 fl     1/6 b, 1 fl
+  sarcastic_negative                         2/6 b, 2 fl     3/6 b, 3 fl     0/6 b, 1 fl     0/6 b, 1 fl     1/6 b, 1 fl
+  roles_only                                 0/6 b, 2 fl     0/6 b, 2 fl     0/6 b, 1 fl     0/6 b, 1 fl     0/6 b, 1 fl
+  buried_in_long_review                      3/6 b, 6 fl     5/6 b, 6 fl     0/6 b, 0 fl     0/6 b, 0 fl     3/6 b, 4 fl
+  comparison                                 2/4 b, 3 fl     2/4 b, 3 fl     0/4 b, 1 fl     0/4 b, 1 fl     0/4 b, 2 fl
+  ALL DISGUISED                           18/67 b, 39 fl  27/67 b, 46 fl   2/67 b, 13 fl   2/67 b, 13 fl  14/67 b, 27 fl
+
+CLEAN BUT SPOILER-LOOKING (want: shown)            rules  rules+semantic           model       model+rnn            FULL
+  hard clean                               7/34 b, 12 fl   7/34 b, 13 fl    0/34 b, 2 fl    0/34 b, 2 fl    0/34 b, 3 fl
+
+model probability: disguised spoilers mean 0.19 (median 0.14), hard clean mean 0.13; cut-offs for blur/ask 0.53-0.64
+AUC of the model's probability on this set: 0.695
+
+=== set B (gold_adversarial_b.json, written after the layer was designed) ===
+shield: ml=True rnn=True (active: True) semantic=True  warn cut-offs: {'ml': 0.40559497229702357, 'fused': 0.4016467644123496}
+
+DISGUISED SPOILERS (want: blurred / flagged)           rules  rules+semantic           model       model+rnn            FULL
+  paraphrase                                3/20 b, 5 fl    5/20 b, 6 fl    0/20 b, 0 fl    0/20 b, 0 fl    2/20 b, 3 fl
+  slang                                      4/8 b, 5 fl     7/8 b, 7 fl     1/8 b, 2 fl     1/8 b, 2 fl     5/8 b, 5 fl
+  opinion_with_reveal                        2/6 b, 4 fl     2/6 b, 5 fl     0/6 b, 1 fl     0/6 b, 1 fl     0/6 b, 2 fl
+  question                                   0/4 b, 2 fl     0/4 b, 2 fl     0/4 b, 0 fl     0/4 b, 0 fl     0/4 b, 0 fl
+  ALL DISGUISED                            9/38 b, 16 fl  14/38 b, 20 fl    1/38 b, 3 fl    1/38 b, 3 fl   7/38 b, 10 fl
+
+CLEAN BUT SPOILER-LOOKING (want: shown)            rules  rules+semantic           model       model+rnn            FULL
+  hard clean                                1/25 b, 1 fl    1/25 b, 1 fl    2/25 b, 2 fl    2/25 b, 2 fl    2/25 b, 2 fl
+
+model probability: disguised spoilers mean 0.17 (median 0.13), hard clean mean 0.10; cut-offs for blur/ask 0.53-0.64
+AUC of the model's probability on this set: 0.816

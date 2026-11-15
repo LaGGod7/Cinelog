@@ -1,0 +1,73 @@
+{
+  "thr_low": 0.5266279433350917,
+  "thr_high": 0.638638764039286,
+  "blur_fpr": 0.08,
+  "ask_fpr": 0.15,
+  "validation": {
+    "n": 1018,
+    "spoilers_blurred": 0.46062992125984253,
+    "spoilers_to_moderators": 0.18503937007874016,
+    "clean_wrongly_blurred": 0.08115183246073299,
+    "clean_to_moderators": 0.0693717277486911
+  },
+  "test": {
+    "n": 1254,
+    "spoilers_blurred": 0.5079872204472844,
+    "spoilers_to_moderators": 0.15654952076677317,
+    "clean_wrongly_blurred": 0.10201912858660998,
+    "clean_to_moderators": 0.07438894792773645
+  },
+  "n_val": 1018,
+  "n_test": 1254,
+  "thr_warn": 0.40559497229702357,
+  "recall_target": 0.8,
+  "flagged": {
+    "validation": {
+      "spoilers_flagged": 0.7992125984251969,
+      "clean_flagged": 0.2683246073298429
+    },
+    "test": {
+      "spoilers_flagged": 0.8178913738019169,
+      "clean_flagged": 0.3007438894792774
+    }
+  },
+  "fused": {
+    "rnn_weight": 0.2,
+    "thr_low": 0.5143150667709878,
+    "thr_high": 0.6199200530933542,
+    "auc_test": {
+      "ml_only": 0.8249262391650513,
+      "rnn_only": 0.7556912128691862,
+      "blend": 0.8241962700274672
+    },
+    "auc_gain_95ci": [
+      -0.005060716560467601,
+      0.0035548883653741883
+    ],
+    "validation": {
+      "n": 1018,
+      "spoilers_blurred": 0.42913385826771655,
+      "spoilers_to_moderators": 0.1968503937007874,
+      "clean_wrongly_blurred": 0.06806282722513089,
+      "clean_to_moderators": 0.06675392670157068
+    },
+    "test": {
+      "n": 1254,
+      "spoilers_blurred": 0.5079872204472844,
+      "spoilers_to_moderators": 0.14376996805111822,
+      "clean_wrongly_blurred": 0.08926673751328375,
+      "clean_to_moderators": 0.0818278427205101
+    },
+    "thr_warn": 0.4016467644123496,
+    "flagged": {
+      "validation": {
+        "spoilers_flagged": 0.7992125984251969,
+        "clean_flagged": 0.2670157068062827
+      },
+      "test": {
+        "spoilers_flagged": 0.7891373801916933,
+        "clean_flagged": 0.2975557917109458
+      }
+    }
+  }
+}

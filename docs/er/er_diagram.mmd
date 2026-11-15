@@ -1,0 +1,327 @@
+%% CineLog ER diagram (Mermaid). Solid line = identifying, dotted = non-identifying. Logical references without a constraint are omitted.
+erDiagram
+    users ||--o{ aspect_ratings : "user_id"
+    films ||--o{ aspect_ratings : "film_id"
+    films ||..o{ cast_members : "film_id"
+    clubs ||--o{ club_members : "club_id"
+    users ||--o{ club_members : "user_id"
+    clubs ||..o{ club_threads : "club_id"
+    users ||..o{ club_threads : "user_id"
+    clubs ||--o{ club_watchlist : "club_id"
+    films ||--o{ club_watchlist : "film_id"
+    users |o..o{ club_watchlist : "added_by"
+    users ||..o{ critic_applications : "user_id"
+    users |o..o{ critic_applications : "decided_by"
+    users ||--o{ critic_picks : "user_id"
+    films ||--o{ critic_picks : "film_id"
+    users ||..o{ diary_entries : "user_id"
+    films ||..o{ diary_entries : "film_id"
+    films ||--o{ film_genres : "film_id"
+    films ||--o{ film_keywords : "film_id"
+    users ||..o{ film_lists : "user_id"
+    films ||..o{ film_plots : "film_id"
+    users ||--o{ follows : "follower_id"
+    users ||--o{ follows : "followee_id"
+    users ||--o{ likes : "user_id"
+    users ||..o{ notifications : "user_id"
+    users ||..o{ password_resets : "user_id"
+    clubs ||..o{ polls : "club_id"
+    films |o..o{ polls : "winner_film_id"
+    users |o..o{ polls : "created_by"
+    users ||..o{ reviews : "user_id"
+    films ||..o{ reviews : "film_id"
+    films ||..o{ spoiler_terms : "film_id"
+    users |o..o{ spoiler_terms : "added_by"
+    users ||--o{ user_badges : "user_id"
+    users ||--o{ user_roles : "user_id"
+    users ||..o{ user_strikes : "user_id"
+    users |o..o{ user_strikes : "issued_by"
+    users ||--o{ watch_goals : "user_id"
+    users ||--o{ watchlist : "user_id"
+    films ||--o{ watchlist : "film_id"
+    film_lists ||--o{ film_list_items : "list_id"
+    films ||--o{ film_list_items : "film_id"
+    polls ||..o{ poll_options : "poll_id"
+    films ||..o{ poll_options : "film_id"
+    reviews ||..o{ review_reports : "review_id"
+    users ||..o{ review_reports : "user_id"
+    club_threads ||..o{ thread_replies : "thread_id"
+    users ||..o{ thread_replies : "user_id"
+    clubs ||..o{ watchalongs : "club_id"
+    films ||..o{ watchalongs : "film_id"
+    polls |o..o| watchalongs : "poll_id"
+    users ||..o{ watchalongs : "created_by"
+    polls ||..o{ votes : "poll_id"
+    users ||..o{ votes : "user_id"
+    poll_options ||..o{ votes : "option_id"
+    watchalongs ||--o{ watchalong_rsvps : "watchalong_id"
+    users ||--o{ watchalong_rsvps : "user_id"
+    users {
+        int id PK
+        string email UK
+        string password_hash
+        string display_name
+        string google_sub UK
+        boolean email_opt_out
+        datetime created_at
+        string bio
+        string avatar
+        datetime password_changed_at
+        datetime muted_until
+        boolean spoiler_safe
+    }
+    user_roles {
+        int user_id PK, FK
+        string role PK
+    }
+    password_resets {
+        int id PK
+        int user_id FK
+        string token_hash UK
+        datetime expires_at
+        datetime used_at
+        datetime created_at
+    }
+    films {
+        int id PK
+        int tmdb_id UK
+        string imdb_id UK
+        string title
+        int year
+        text overview
+        string poster_path
+        float popularity
+        int runtime
+        int wordlist_version
+        boolean plot_checked
+        datetime synced_at
+    }
+    film_genres {
+        int film_id PK, FK
+        string genre PK
+    }
+    film_keywords {
+        int film_id PK, FK
+        string keyword PK
+    }
+    cast_members {
+        int id PK
+        int film_id FK
+        string actor
+        string character
+        int billing
+    }
+    film_plots {
+        int id PK
+        int film_id FK
+        string kind
+        text text
+        string source
+    }
+    spoiler_terms {
+        int id PK
+        int film_id FK
+        string term
+        string kind
+        string source
+        int added_by FK
+    }
+    diary_entries {
+        int id PK
+        int user_id FK
+        int film_id FK
+        date watched_on
+        string format
+        boolean rewatch
+        text notes
+        float stars
+        datetime created_at
+    }
+    watchlist {
+        int user_id PK, FK
+        int film_id PK, FK
+        datetime added_at
+    }
+    aspect_ratings {
+        int user_id PK, FK
+        int film_id PK, FK
+        string aspect PK
+        float value
+    }
+    watch_goals {
+        int user_id PK, FK
+        int year PK
+        int target
+    }
+    reviews {
+        int id PK
+        int user_id FK
+        int film_id FK
+        text text
+        string state
+        float risk
+        boolean uncertain
+        boolean warn
+        text segments_json
+        int scan_version
+        datetime created_at
+    }
+    review_reports {
+        int id PK
+        int review_id FK
+        int user_id FK
+        string reason
+        text comment
+        datetime created_at
+    }
+    likes {
+        int user_id PK, FK
+        string kind PK
+        int target_id PK
+        datetime created_at
+    }
+    clubs {
+        int id PK
+        string name UK
+        text description
+        boolean is_public
+        datetime created_at
+    }
+    club_members {
+        int club_id PK, FK
+        int user_id PK, FK
+        string role
+    }
+    club_watchlist {
+        int club_id PK, FK
+        int film_id PK, FK
+        int added_by FK
+    }
+    club_threads {
+        int id PK
+        int club_id FK
+        int user_id FK
+        string title
+        text body
+        string tag
+        datetime created_at
+    }
+    thread_replies {
+        int id PK
+        int thread_id FK
+        int user_id FK
+        text body
+        datetime created_at
+    }
+    polls {
+        int id PK
+        int club_id FK
+        string title
+        string state
+        datetime deadline
+        datetime screening_date
+        int winner_film_id FK
+        text result_json
+        int created_by FK
+        datetime created_at
+    }
+    poll_options {
+        int id PK
+        int poll_id FK
+        int film_id FK
+    }
+    votes {
+        int id PK
+        int poll_id FK
+        int user_id FK
+        int option_id FK
+        datetime created_at
+    }
+    watchalongs {
+        int id PK
+        int club_id FK
+        int film_id FK
+        datetime starts_at
+        int poll_id FK, UK
+        int created_by FK
+    }
+    watchalong_rsvps {
+        int watchalong_id PK, FK
+        int user_id PK, FK
+    }
+    follows {
+        int follower_id PK, FK
+        int followee_id PK, FK
+    }
+    film_lists {
+        int id PK
+        int user_id FK
+        string title
+        text description
+        datetime created_at
+    }
+    film_list_items {
+        int list_id PK, FK
+        int film_id PK, FK
+        int position
+    }
+    user_badges {
+        int user_id PK, FK
+        string key PK
+        datetime earned_at
+    }
+    notifications {
+        int id PK
+        int user_id FK
+        string kind
+        string text
+        string link
+        datetime created_at
+        datetime read_at
+    }
+    critic_applications {
+        int id PK
+        int user_id FK
+        text statement
+        string links
+        string state
+        int decided_by FK
+        text decision_note
+        datetime created_at
+        datetime decided_at
+    }
+    critic_picks {
+        int user_id PK, FK
+        int film_id PK, FK
+        string blurb
+        datetime created_at
+    }
+    user_strikes {
+        int id PK
+        int user_id FK
+        int issued_by FK
+        int review_id
+        string reason
+        datetime created_at
+    }
+    audit_log {
+        int id PK
+        datetime at
+        int actor_id
+        string action
+        string target
+        text detail
+    }
+    outbox {
+        int id PK
+        string to_email
+        string subject
+        text body
+        string status
+        datetime created_at
+    }
+    schema_version {
+        int version PK
+        string description
+        datetime applied_at
+    }

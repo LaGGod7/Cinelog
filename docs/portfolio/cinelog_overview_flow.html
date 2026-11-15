@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CineLog Live Flow</title>
+<style>
+:root{--bg:#faf7f2;--card:#fff;--ink:#1f2933;--mut:#64748b;--line:#e7e1d8;--or:#e8590c;--or2:#fff1e6;
+--e1:#2563eb;--e2:#16a34a;--e3:#d97706;--e4:#7c3aed;--req:#0ea5e9;--job:#f59e0b;--pub:#16a34a;--blur:#8b5cf6;--mod:#ea580c;--rej:#dc2626}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:18px 16px 28px}
+.brand{font-weight:800;font-size:26px;color:var(--or);letter-spacing:-.5px}
+h1{margin:2px 0 6px;font-size:24px;line-height:1.2}
+.sub{color:var(--mut);margin:0 0 12px;max-width:780px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin:6px 0 14px;font-size:13px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+.dia{width:10px;height:10px;transform:rotate(45deg);display:inline-block;background:var(--job)}
+.grid{display:grid;grid-template-columns:1fr 300px;gap:14px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.stage{padding:8px}
+svg{width:100%;height:auto;display:block}
+.node rect.box{fill:#fff;stroke-width:2}
+.node{cursor:pointer}
+.node:hover rect.box{filter:drop-shadow(0 3px 8px rgba(0,0,0,.10))}
+.node.sel rect.box{stroke-width:3.5}
+.lbl{font-size:15px;font-weight:700;fill:var(--ink)}
+.sm{font-size:12px;fill:var(--mut)}
+.tag{font-size:11px;font-weight:800;fill:#fff}
+.wire{fill:none;stroke:#e5ded3;stroke-width:2}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px;border-top:1px solid var(--line)}
+button{font:inherit;font-size:13px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;cursor:pointer;color:var(--ink)}
+button:hover{border-color:#d6cbbb;background:#fffaf5}
+button.pri{background:var(--or);border-color:var(--or);color:#fff;font-weight:600}
+button.pri:hover{background:#d14f08}
+.sl{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--mut)}
+input[type=range]{accent-color:var(--or);width:110px}
+.side{display:flex;flex-direction:column;gap:14px}
+.pad{padding:14px}
+.k{font-size:11px;letter-spacing:1.4px;font-weight:700;color:var(--mut);text-transform:uppercase;margin-bottom:8px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.st{background:#fbf9f6;border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.st b{display:block;font-size:20px;line-height:1.1}
+.st small{color:var(--mut);font-size:11.5px}
+.bar{height:8px;border-radius:6px;background:#f1ece4;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--or);width:0;transition:width .3s}
+#info h3{margin:0 0 4px;font-size:16px}
+#info p{margin:4px 0;color:#334155}
+#info ul{margin:6px 0 0;padding-left:18px;color:#334155}
+#log{list-style:none;margin:0;padding:0;max-height:220px;overflow:auto;font-size:12.5px}
+#log li{padding:5px 0;border-bottom:1px dashed var(--line);display:flex;gap:8px}
+#log li i{width:9px;height:9px;border-radius:50%;margin-top:5px;flex:none}
+.note{font-size:12px;color:var(--mut);margin-top:12px}
+.pill{display:inline-block;background:var(--or2);color:#9a3412;border-radius:999px;padding:2px 9px;font-size:11.5px;font-weight:600}
+.scen{display:flex;flex-wrap:wrap;gap:6px}
+@media (prefers-reduced-motion: reduce){.bar i{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">CineLog</div>
+  <h1>Role-Based Review &amp; Club Workflow — Live Flow</h1>
+  <p class="sub">Every request from the five roles passes through <b>E4</b> first. <b>E1</b> decides, <b>E3</b> runs slow work in the background, <b>E2</b> stores. Watch reviews get scanned for spoilers, votes get counted once, and bad requests get stopped at the gate. Click any box to see what it does. <span class="pill">Simulation · illustrative</span></p>
+  <div class="legend">
+    <span><i class="dot" style="background:var(--req)"></i>User request</span>
+    <span><i class="dia"></i>Background job (E3)</span>
+    <span><i class="dot" style="background:var(--pub)"></i>Published / saved</span>
+    <span><i class="dot" style="background:var(--blur)"></i>Published with blur</span>
+    <span><i class="dot" style="background:var(--mod)"></i>Sent to moderators</span>
+    <span><i class="dot" style="background:var(--rej)"></i>Rejected (4xx)</span>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="stage"><svg id="svg" viewBox="0 0 1100 600" role="img" aria-label="CineLog flow diagram"></svg></div>
+      <div class="ctrls">
+        <button class="pri" id="play">Pause</button>
+        <label class="sl">Speed <input id="speed" type="range" min="0.3" max="3" step="0.1" value="1"></label>
+        <label class="sl">Traffic <input id="rate" type="range" min="0" max="10" step="1" value="4"></label>
+        <button id="reset">Reset</button>
+      </div>
+      <div class="ctrls">
+        <span class="sl" style="font-weight:700">Try:</span>
+        <div class="scen">
+          <button data-s="review">✍️ Write a review</button>
+          <button data-s="spoiler">💥 Spoiler-heavy review</button>
+          <button data-s="search">🔎 Search a title</button>
+          <button data-s="storm">🗳️ 50 members vote at once</button>
+          <button data-s="forged">🕵️ Forged token</button>
+          <button data-s="brute">🔐 6 logins in a minute</button>
+          <button data-s="grant">👑 Admin grants a role</button>
+          <button data-s="sync">🌙 Nightly TMDB sync</button>
+          <button data-s="crash">⚠️ Worker crashes</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="card pad">
+        <div class="k">Live counters</div>
+        <div class="stats">
+          <div class="st"><b id="sReq">0</b><small>requests</small></div>
+          <div class="st"><b id="sPub" style="color:var(--pub)">0</b><small>published / saved</small></div>
+          <div class="st"><b id="sBlur" style="color:var(--blur)">0</b><small>blurred</small></div>
+          <div class="st"><b id="sMod" style="color:var(--mod)">0</b><small>to moderators</small></div>
+          <div class="st"><b id="sRej" style="color:var(--rej)">0</b><small>rejected 4xx</small></div>
+          <div class="st"><b id="sVote">0</b><small>votes (dupes stopped: <span id="sDup">0</span>)</small></div>
+        </div>
+        <div style="margin-top:10px" class="sm">E3 queue <span id="qTxt">0 / 256</span></div>
+        <div class="bar"><i id="qBar"></i></div>
+      </div>
+      <div class="card pad" id="info">
+        <div class="k">Inspector</div>
+        <h3>Click a box</h3>
+        <p>Pick any role, engine or service on the diagram to see what it owns, what it receives and what happens if it fails.</p>
+      </div>
+      <div class="card pad">
+        <div class="k">Event log</div>
+        <ul id="log"></ul>
+      </div>
+    </div>
+  </div>
+  <p class="note">Spoiler thresholds follow the design (risk ≥ 0.7 blur, 0.3–0.7 moderators, below 0.3 show). Measured so far on real data: classifier AUC 0.772; the stress test caught about 98–99.6% of spoilers but blurred about 40–44% of clean reviews, so NFR-02 (≤ 10% wrong blurs) is not yet met. Team 16 · Goureesh N Doddamani (E1), Manish Singri (E2), Ashutosh Kulkarni (E3), Omkar A (E4).</p>
+</div>
+
+<script>
+(function(){
+const NS="http://www.w3.org/2000/svg", svg=document.getElementById('svg');
+const C={req:'#0ea5e9',job:'#f59e0b',pub:'#16a34a',blur:'#8b5cf6',mod:'#ea580c',rej:'#dc2626'};
+const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+
+// ---------- layout ----------
+const roles=[['viewer','Viewer','diary · reviews · votes'],['critic','Critic','critic picks · reviews'],['conv','Club Convener','clubs · polls'],['modr','Moderator','risk queue'],['admin','Admin','roles · audit']];
+const N={};
+roles.forEach((r,i)=>N[r[0]]={x:20,y:70+i*100,w:150,h:64,col:'#94a3b8',title:r[1],sub:r[2],kind:'role'});
+N.e4={x:250,y:120,w:170,h:380,col:'#7c3aed',title:'E4 Gateway',sub:'CN & Web Tech',tag:'E4',kind:'eng'};
+N.e3={x:500,y:60,w:240,h:150,col:'#d97706',title:'E3 Job Scheduler',sub:'OS · queue + 4 workers',tag:'E3',kind:'eng'};
+N.e1={x:500,y:250,w:240,h:120,col:'#2563eb',title:'E1 Search & Spoiler',sub:'DSA · trie · Aho–Corasick · ML',tag:'E1',kind:'eng'};
+N.e2={x:500,y:410,w:240,h:130,col:'#16a34a',title:'E2 Storage',sub:'DBMS · transactions · states',tag:'E2',kind:'eng'};
+const outs=[['oPub','Published','risk below 0.3',C.pub],['oBlur','Published + blur','Reveal on click',C.blur],['oMod','Moderator queue','risk 0.3–0.7',C.mod],['oVote','Saved / counted','live to members',C.pub],['oRej','Rejected','400 · 401 · 403 · 409 · 429',C.rej]];
+outs.forEach((o,i)=>N[o[0]]={x:880,y:60+i*104,w:200,h:62,col:o[3],title:o[1],sub:o[2],kind:'out'});
+N.tmdb={x:790,y:6,w:80,h:34,col:'#64748b',title:'TMDB',sub:'',kind:'ext'};
+N.smtp={x:690,y:6,w:80,h:34,col:'#64748b',title:'SMTP',sub:'',kind:'ext'};
+N.goog={x:255,y:58,w:160,h:40,col:'#64748b',title:'Google OAuth',sub:'',kind:'ext'};
+
+const INFO={
+ viewer:['Viewer','Logs films, rates 5 aspects, writes reviews, reports spoilers and votes in clubs they belong to.',['Every action goes to E4 first','Cannot moderate or grant roles (403)']],
+ critic:['Critic','A Viewer who can also publish critic picks. Reviews still pass the Spoiler Shield.',['Same review path as Viewer','Critic pick needs the Critic role']],
+ conv:['Club Convener','Runs a club: opens and closes polls, schedules watch-alongs. Club roles work only inside that club.',['Poll states: Draft → Open → Closed / Cancelled','Votes accepted only while Open']],
+ modr:['Moderator','Works the risk-ordered queue: approve, re-blur, remove, add spoiler terms.',['Queue is a max-heap on risk (E1)','Two moderators at once: first wins, second gets 409']],
+ admin:['Admin','The only role that can grant or revoke roles. Every change is written to the append-only audit log.',['Deny by default','Audit: who, what, when']],
+ e4:['E4 · CN & Web Tech Engine (Omkar A)','Signs users in, checks every request and routes it. Returns JSON with a clear status code and pushes live poll counts.',['OAuth 2.0 or e-mail + bcrypt → JWT in HTTP-only cookie','Role check against a deny-by-default matrix (401/403)','Token bucket: 5 logins a minute (429)','Input checked in browser and again on server (400)','WebSocket publish–subscribe for live polls']],
+ e3:['E3 · Background Job Scheduler (Ashutosh Kulkarni)','Runs slow work so users never wait: spoiler scans, nightly TMDB sync and e-mail.',['Bounded priority queue, capacity 256 (mutex + 2 semaphores)','4 worker threads, USER jobs before BATCH jobs','Retry 3 times with back-off, then mark failed','Token bucket + LRU cache for TMDB']],
+ e1:['E1 · Search & Spoiler Matching Engine (Goureesh N Doddamani)','Fast title search and the hybrid Spoiler Shield. Decides the risk of every review.',['Trie with top-10 on every node: O(L + K)','Inverted index + min-heap top-K for filters','Writer tags, Aho–Corasick word lists, cue words, plot match, TF-IDF + logistic regression','Risk ≥ 0.7 blur · 0.3–0.7 moderators · < 0.3 show']],
+ e2:['E2 · Storage & Transaction Engine (Manish Singri)','The only engine that writes to the database. Keeps states, votes and the audit log correct under many users.',['3NF tables with B+-tree indexes','UNIQUE(poll_id, user_id) inside a transaction → one vote per member','Compare-and-swap state changes → second actor gets 409','Trigger: 3rd distinct report hides a review']],
+ oPub:['Published','The review passed the scan with low risk and is visible to everyone.',[]],
+ oBlur:['Published with blur','Risky sentences are hidden. Blurred text reaches a reader only after they press Reveal.',[]],
+ oMod:['Moderator queue','Medium-risk reviews are published but also queued for a moderator, riskiest first.',[]],
+ oVote:['Saved / counted','Diary entries, ratings, role changes and votes committed by E2. Poll counts are pushed live by E4.',[]],
+ oRej:['Rejected','400 bad input · 401 no or forged token · 403 role not allowed · 409 duplicate vote or state race · 429 too many tries.',[]],
+ tmdb:['TMDB API','Film catalogue source. Synced nightly by E3 with back-off on HTTP 429; the old catalogue keeps working if TMDB is down.',[]],
+ smtp:['SMTP mail','Poll and moderation notifications sent by E3; retried 3 times if the mail server is down.',[]],
+ goog:['Google OAuth 2.0','Sign-in without CineLog ever seeing a Google password. If Google is down, e-mail sign-in is offered.',[]]
+};
+
+// wires (static)
+const gW=el('g',{});
+function cx(n){return N[n].x+N[n].w/2} function cy(n){return N[n].y+N[n].h/2}
+function R(n){return N[n].x+N[n].w} function L(n){return N[n].x}
+roles.forEach(r=>{el('path',{class:'wire',d:`M${R(r[0])},${cy(r[0])} C210,${cy(r[0])} 210,${cy('e4')} ${L('e4')},${cy('e4')}`},gW)});
+['e3','e1','e2'].forEach(e=>el('path',{class:'wire',d:`M${R('e4')},${cy('e4')} C460,${cy('e4')} 460,${cy(e)} ${L(e)},${cy(e)}`},gW));
+el('path',{class:'wire',d:`M${cx('e3')+60},${N.e3.y+N.e3.h} L${cx('e1')+60},${N.e1.y}`},gW);
+el('path',{class:'wire',d:`M${cx('e1')-60},${N.e1.y+N.e1.h} L${cx('e2')-60},${N.e2.y}`},gW);
+outs.forEach(o=>el('path',{class:'wire',d:`M${R('e2')},${cy('e2')} C820,${cy('e2')} 820,${cy(o[0])} ${L(o[0])},${cy(o[0])}`},gW));
+el('path',{class:'wire',d:`M${R('e4')},${N.e4.y+N.e4.h-30} C700,580 830,580 ${L('oRej')},${cy('oRej')}`},gW);
+el('path',{class:'wire',d:`M${R('e3')-20},${N.e3.y} L${cx('tmdb')},${N.tmdb.y+N.tmdb.h}`},gW);
+el('path',{class:'wire',d:`M${R('e3')-110},${N.e3.y} L${cx('smtp')},${N.smtp.y+N.smtp.h}`},gW);
+el('path',{class:'wire',d:`M${cx('goog')},${N.goog.y+N.goog.h} L${cx('e4')},${N.e4.y}`},gW);
+
+// nodes
+const nodeEls={};
+for(const k in N){const n=N[k];const g=el('g',{class:'node','data-k':k,tabindex:0});
+ el('rect',{class:'box',x:n.x,y:n.y,width:n.w,height:n.h,rx:12,stroke:n.col},g);
+ if(n.kind==='eng'){el('rect',{x:n.x,y:n.y,width:n.w,height:6,rx:3,fill:n.col},g);
+   el('rect',{x:n.x+12,y:n.y+16,width:34,height:22,rx:6,fill:n.col},g);el('text',{x:n.x+29,y:n.y+32,'text-anchor':'middle',class:'tag'},g).textContent=n.tag;
+   el('text',{x:n.x+54,y:n.y+32,class:'lbl'},g).textContent=n.title;el('text',{x:n.x+12,y:n.y+56,class:'sm'},g).textContent=n.sub;}
+ else if(n.kind==='ext'){el('text',{x:n.x+n.w/2,y:n.y+n.h/2+5,'text-anchor':'middle',class:'sm',style:'font-weight:700;fill:#475569'},g).textContent=n.title;}
+ else {if(n.kind==='out')el('circle',{cx:n.x+16,cy:n.y+22,r:6,fill:n.col},g);
+   el('text',{x:n.x+(n.kind==='out'?30:14),y:n.y+27,class:'lbl'},g).textContent=n.title;
+   el('text',{x:n.x+14,y:n.y+48,class:'sm'},g).textContent=n.sub;
+   if(n.kind==='out'){n.cnt=el('text',{x:n.x+n.w-12,y:n.y+27,'text-anchor':'end',class:'lbl',fill:n.col},g);n.cnt.textContent='0';}}
+ g.addEventListener('click',()=>select(k));g.addEventListener('keydown',e=>{if(e.key==='Enter')select(k)});
+ nodeEls[k]=g;}
+
+// E4 checks
+const checks=['JWT valid?','Role allowed?','Rate OK?','Input valid?'];
+N.e4.chk=checks.map((t,i)=>{const y=N.e4.y+90+i*62;const r=el('rect',{x:N.e4.x+14,y:y,width:N.e4.w-28,height:44,rx:9,fill:'#f5f3ff',stroke:'#ddd6fe'});
+ el('text',{x:N.e4.x+N.e4.w/2,y:y+27,'text-anchor':'middle',class:'sm',style:'font-weight:600;fill:#5b21b6'}).textContent=t;return r});
+// E3 queue slots + workers
+N.e3.slots=[];for(let i=0;i<12;i++)N.e3.slots.push(el('rect',{x:N.e3.x+14+i*17.5,y:N.e3.y+72,width:14,height:22,rx:3,fill:'#fef3c7',stroke:'#fde68a'}));
+el('text',{x:N.e3.x+14,y:N.e3.y+112,class:'sm'}).textContent='workers';
+N.e3.wk=[];for(let i=0;i<4;i++)N.e3.wk.push(el('circle',{cx:N.e3.x+80+i*30,cy:N.e3.y+108,r:9,fill:'#fde68a',stroke:'#d97706'}));
+N.e3.retry=el('text',{x:N.e3.x+14,y:N.e3.y+136,class:'sm'});N.e3.retry.textContent='retries: 0';
+// E1 risk meter
+el('text',{x:N.e1.x+12,y:N.e1.y+84,class:'sm'}).textContent='last risk';
+el('rect',{x:N.e1.x+70,y:N.e1.y+74,width:150,height:12,rx:6,fill:'#e0e7ff'});
+el('rect',{x:N.e1.x+70+150*0.3,y:N.e1.y+72,width:1.5,height:16,fill:'#94a3b8'});
+el('rect',{x:N.e1.x+70+150*0.7,y:N.e1.y+72,width:1.5,height:16,fill:'#94a3b8'});
+N.e1.risk=el('rect',{x:N.e1.x+70,y:N.e1.y+74,width:0,height:12,rx:6,fill:C.blur});
+N.e1.rt=el('text',{x:N.e1.x+12,y:N.e1.y+106,class:'sm'});N.e1.rt.textContent='waiting for a review…';
+// E2 counters
+N.e2.tx=el('text',{x:N.e2.x+12,y:N.e2.y+84,class:'sm'});N.e2.tx.textContent='transactions: 0 · rollbacks: 0';
+N.e2.st=el('text',{x:N.e2.x+12,y:N.e2.y+106,class:'sm'});N.e2.st.textContent='pending scan: 0';
+
+const pLayer=el('g',{});
+
+// ---------- simulation ----------
+let packets=[],playing=true,speed=1,rate=4,t=0,spawnAcc=0;
+const S={req:0,pub:0,blur:0,mod:0,rej:0,vote:0,dup:0,tx:0,rb:0,pend:0,retry:0};
+let queue=[],workers=[null,null,null,null],crashed=-1,voted=new Set();
+
+function pt(n,side){const o=N[n];if(side==='r')return[R(n),cy(n)];if(side==='l')return[L(n),cy(n)];if(side==='b')return[cx(n),o.y+o.h];if(side==='t')return[cx(n),o.y];return[cx(n),cy(n)]}
+function bez(a,b){const m=(a[0]+b[0])/2;return[a,[m,a[1]],[m,b[1]],b]}
+function mk(path,color,shape,dur,done,label){const g=el('g',{},pLayer);
+ const s=shape==='d'?el('rect',{x:-6,y:-6,width:12,height:12,fill:color,transform:'rotate(45)'},g):el('circle',{r:7,fill:color,stroke:'#fff','stroke-width':2},g);
+ packets.push({g,path,p:0,dur,done,label});}
+function curvePos(P,u){const[a,b,c,d]=P;const v=1-u;return[v*v*v*a[0]+3*v*v*u*b[0]+3*v*u*u*c[0]+u*u*u*d[0],v*v*v*a[1]+3*v*v*u*b[1]+3*v*u*u*c[1]+u*u*u*d[1]]}
+
+function flash(k,col){const r=nodeEls[k].querySelector('rect.box');r.style.transition='none';r.style.fill=col+'22';requestAnimationFrame(()=>{r.style.transition='fill .6s';r.style.fill='#fff'})}
+function chk(i,ok){const r=N.e4.chk[i];r.setAttribute('fill',ok?'#dcfce7':'#fee2e2');r.setAttribute('stroke',ok?'#86efac':'#fca5a5');setTimeout(()=>{r.setAttribute('fill','#f5f3ff');r.setAttribute('stroke','#ddd6fe')},500/speed)}
+const logEl=document.getElementById('log');
+function log(msg,col){const li=document.createElement('li');li.innerHTML='<i style="background:'+col+'"></i><span></span>';li.lastChild.textContent=msg;logEl.prepend(li);while(logEl.children.length>40)logEl.lastChild.remove()}
+function out(k,cls,msg){S[cls]++;N[k].cnt.textContent=(+N[k].cnt.textContent+1);flash(k,N[k].col);if(msg)log(msg,N[k].col);ui()}
+
+// stage: role -> e4
+function toGate(role,color,cb,label){S.req++;mk(bez(pt(role,'r'),pt('e4','l')),color||C.req,'c',0.9,()=>{flash('e4',N.e4.col);cb()},label);ui()}
+function reject(code,why){[0,1,2,3].forEach(i=>chk(i,i!==({401:0,403:1,429:2,400:3,409:1}[code])));
+ mk([pt('e4','r'),[700,580],[830,580],pt('oRej','l')],C.rej,'c',1.1,()=>out('oRej','rej',code+' — '+why))}
+function gatePass(){[0,1,2,3].forEach(i=>chk(i,true))}
+function e4to(e,color,shape,cb){mk(bez(pt('e4','r'),pt(e,'l')),color,shape||'c',0.8,()=>{flash(e,N[e].col);cb&&cb()})}
+
+const reviews=['Loved the score and the pacing.','The twist at the end where the brother dies changed everything.','Great acting, slow middle.','Turns out he was the killer all along!','Visuals are stunning, story is thin.','I did not expect Rose to let go of the door.'];
+function writeReview(role,spoil){toGate(role,C.req,()=>{gatePass();
+  e4to('e2',C.req,'c',()=>{S.tx++;S.pend++;ui();log('Review saved as Pending Scan → 202 to writer','#16a34a');
+   mk([pt('e2','l'),[460,cy('e2')],[460,cy('e3')],pt('e3','l')],C.job,'d',0.9,()=>{enqueue({type:'scan',spoil,prio:'USER'})})})},'review')}
+function enqueue(j){if(queue.length>=256){log('Queue full → USER job waits up to 2 s','#d97706');}
+ j.prio==='USER'?queue.splice(queue.findIndex(q=>q.prio!=='USER')<0?queue.length:queue.findIndex(q=>q.prio!=='USER'),0,j):queue.push(j);drawQ()}
+function drawQ(){N.e3.slots.forEach((s,i)=>{const j=queue[i];s.setAttribute('fill',j?(j.prio==='USER'?'#f59e0b':'#fcd34d'):'#fef3c7')});
+ const pct=Math.min(100,queue.length/256*100);document.getElementById('qBar').style.width=Math.max(pct,queue.length?2:0)+'%';document.getElementById('qTxt').textContent=queue.length+' / 256'}
+function runWorkers(){workers.forEach((w,i)=>{if(w||i===crashed||!queue.length)return;const j=queue.shift();workers[i]=j;N.e3.wk[i].setAttribute('fill','#f59e0b');drawQ();
+ if(j.type==='scan'){mk([[N.e3.x+80+i*30,N.e3.y+108],[cx('e3')+60,240],[cx('e1')+60,240],pt('e1','t')],C.job,'d',0.7,()=>scan(j,i))}
+ else if(j.type==='sync'){mk([[N.e3.x+80+i*30,N.e3.y+108],[cx('tmdb'),60],[cx('tmdb'),50],pt('tmdb','b')],C.job,'d',0.7,()=>{flash('tmdb','#64748b');
+   mk(bez(pt('e3','b'),pt('e2','t')),C.pub,'d',0.01,()=>{});
+   mk([pt('e3','l'),[460,cy('e3')],[460,cy('e2')],pt('e2','l')],C.job,'d',1,()=>{S.tx++;ui();mk([pt('e3','b'),[cx('e1')+60,230],[cx('e1')+60,240],pt('e1','t')],C.job,'d',0.6,()=>{log('TMDB synced → E1 rebuilt changed index entries (#8)','#2563eb');free(i)})})})}
+ else if(j.type==='mail'){mk([[N.e3.x+80+i*30,N.e3.y+108],[cx('smtp'),60],[cx('smtp'),50],pt('smtp','b')],C.job,'d',0.7,()=>{flash('smtp','#64748b');log('E-mail sent through SMTP','#64748b');free(i)})}
+ })}
+function free(i){workers[i]=null;N.e3.wk[i].setAttribute('fill','#fde68a')}
+function scan(j,i){const risk=j.spoil?0.72+Math.random()*0.26:(Math.random()<0.25?0.3+Math.random()*0.38:Math.random()*0.28);
+ N.e1.risk.setAttribute('width',150*risk);N.e1.risk.setAttribute('fill',risk>=0.7?C.blur:risk>=0.3?C.mod:C.pub);
+ const txt=j.spoil?reviews[[1,3,5][Math.floor(Math.random()*3)]]:reviews[[0,2,4][Math.floor(Math.random()*3)]];
+ N.e1.rt.textContent='risk '+risk.toFixed(2)+(risk>=0.7?' → blur':risk>=0.3?' → moderators':' → show');
+ mk([pt('e1','b'),[cx('e1')-60,390],[cx('e2')-60,400],pt('e2','t')],risk>=0.7?C.blur:risk>=0.3?C.mod:C.pub,'d',0.6,()=>{S.tx++;S.pend=Math.max(0,S.pend-1);free(i);ui();
+  const k=risk>=0.7?'oBlur':risk>=0.3?'oMod':'oPub';
+  mk(bez(pt('e2','r'),pt(k,'l')),N[k].col,'c',0.9,()=>out(k,k==='oBlur'?'blur':k==='oMod'?'mod':'pub','“'+txt.slice(0,38)+'…” risk '+risk.toFixed(2)))})}
+
+function search(role){toGate(role,C.req,()=>{gatePass();e4to('e1',C.req,'c',()=>{
+  mk([pt('e1','l'),[460,cy('e1')],[460,cy('e4')],pt('e4','r')],C.pub,'c',0.6,()=>{mk(bez(pt('e4','l'),pt(role,'r')),C.pub,'c',0.8,()=>log('Search “dar” → top-10 titles from the trie','#2563eb'))})})})}
+function vote(user){const role=['viewer','conv','critic'][user%3];toGate(role,C.req,()=>{gatePass();e4to('e2',C.req,'c',()=>{
+  if(voted.has(user)){S.dup++;S.rb++;ui();mk([pt('e2','r'),[820,cy('e2')],[820,cy('oRej')],pt('oRej','l')],C.rej,'c',0.9,()=>out('oRej','rej','409 — already voted (UNIQUE rule)'));return}
+  voted.add(user);S.tx++;S.vote++;mk(bez(pt('e2','r'),pt('oVote','l')),C.pub,'c',0.9,()=>{out('oVote','pub');})})})}
+function forged(){toGate('viewer',C.req,()=>reject(401,'forged token (signature check failed)'))}
+function wrongRole(){toGate('viewer',C.req,()=>reject(403,'Viewer tried to open the moderation queue'))}
+function badInput(){toGate('critic',C.req,()=>reject(400,'review shorter than 10 characters'))}
+function brute(){for(let k=0;k<6;k++)setTimeout(()=>toGate('viewer',C.req,()=>{if(k<5){gatePass();log('Login try '+(k+1)+' accepted for checking','#7c3aed')}else reject(429,'6th login in a minute (token bucket)')}),k*260/speed)}
+function grant(){toGate('admin',C.req,()=>{gatePass();e4to('e2',C.req,'c',()=>{S.tx++;mk(bez(pt('e2','r'),pt('oVote','l')),C.pub,'c',0.9,()=>out('oVote','pub','Role granted → audit entry (who, what, when)'))})})}
+function moderate(){toGate('modr',C.req,()=>{gatePass();e4to('e2',C.req,'c',()=>{if(Math.random()<0.25){S.rb++;mk([pt('e2','r'),[820,cy('e2')],[820,cy('oRej')],pt('oRej','l')],C.rej,'c',0.9,()=>out('oRej','rej','409 — another moderator acted first'))}else{S.tx++;mk(bez(pt('e2','r'),pt('oVote','l')),C.pub,'c',0.9,()=>out('oVote','pub','Moderator approved a held review'))}})})}
+function sync(){enqueue({type:'sync',prio:'BATCH'});enqueue({type:'mail',prio:'BATCH'});log('Timer → nightly TMDB sync queued as BATCH','#d97706')}
+function crash(){const i=Math.floor(Math.random()*4);crashed=i;N.e3.wk[i].setAttribute('fill','#fecaca');const j=workers[i];workers[i]=null;
+ if(j){S.retry++;queue.unshift(j);drawQ()}log('Worker '+(i+1)+' crashed → job retried (1 of 3); review stays Pending Scan','#dc2626');ui();
+ setTimeout(()=>{crashed=-1;N.e3.wk[i].setAttribute('fill','#fde68a');log('Worker '+(i+1)+' restarted','#16a34a')},3500/speed)}
+
+function randomEvent(){const r=Math.random();
+ if(r<0.30)writeReview(Math.random()<0.6?'viewer':'critic',Math.random()<0.3);
+ else if(r<0.50)search(['viewer','critic','conv'][Math.floor(Math.random()*3)]);
+ else if(r<0.66)vote(Math.floor(Math.random()*60));
+ else if(r<0.74)moderate();
+ else if(r<0.79)grant();
+ else if(r<0.85)forged();
+ else if(r<0.90)wrongRole();
+ else if(r<0.94)badInput();
+ else if(r<0.97)enqueue({type:'mail',prio:'BATCH'});
+ else sync();}
+
+const scen={review:()=>writeReview('critic',false),spoiler:()=>writeReview('viewer',true),search:()=>search('viewer'),
+ storm:()=>{for(let k=0;k<50;k++)setTimeout(()=>vote(1000+(k<44?k:k-44)),k*70/speed);log('50 members vote at once (6 try twice)','#0ea5e9')},
+ forged,brute,grant,sync,crash};
+
+function ui(){const s=(id,v)=>document.getElementById(id).textContent=v;s('sReq',S.req);s('sPub',S.pub);s('sBlur',S.blur);s('sMod',S.mod);s('sRej',S.rej);s('sVote',S.vote);s('sDup',S.dup);
+ N.e2.tx.textContent='transactions: '+S.tx+' · rollbacks: '+S.rb;N.e2.st.textContent='pending scan: '+S.pend;N.e3.retry.textContent='retries: '+S.retry+(crashed>=0?' · worker '+(crashed+1)+' down':'')}
+
+let last=performance.now();
+function frame(now){const dt=Math.min(0.05,(now-last)/1000);last=now;
+ if(playing){t+=dt*speed;spawnAcc+=dt*speed*rate*0.35;while(spawnAcc>=1){spawnAcc-=1;randomEvent()}
+  runWorkers();
+  for(let i=packets.length-1;i>=0;i--){const p=packets[i];p.p+=dt*speed/p.dur;if(p.p>=1){p.g.remove();packets.splice(i,1);p.done&&p.done();continue}
+   const[x,y]=curvePos(p.path,reduce?Math.round(p.p*2)/2:p.p);p.g.setAttribute('transform','translate('+x+','+y+')')}}
+ requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+
+function select(k){Object.values(nodeEls).forEach(g=>g.classList.remove('sel'));nodeEls[k].classList.add('sel');
+ const d=INFO[k],box=document.getElementById('info');box.innerHTML='<div class="k">Inspector</div><h3></h3><p></p><ul></ul>';
+ box.querySelector('h3').textContent=d[0];box.querySelector('p').textContent=d[1];const ul=box.querySelector('ul');d[2].forEach(x=>{const li=document.createElement('li');li.textContent=x;ul.appendChild(li)});if(!d[2].length)ul.remove();
+ const acts={viewer:'review',critic:'review',conv:'storm',modr:null,admin:'grant',e1:'spoiler',e3:'crash',e4:'forged',tmdb:'sync'};
+ if(acts[k]){const b=document.createElement('button');b.className='pri';b.style.marginTop='10px';b.textContent='Send one through';b.onclick=scen[acts[k]];box.appendChild(b)}}
+
+document.getElementById('play').onclick=e=>{playing=!playing;e.target.textContent=playing?'Pause':'Play'};
+document.getElementById('speed').oninput=e=>speed=+e.target.value;
+document.getElementById('rate').oninput=e=>rate=+e.target.value;
+document.getElementById('reset').onclick=()=>{packets.forEach(p=>p.g.remove());packets=[];queue=[];workers=[null,null,null,null];voted.clear();
+ for(const k in S)S[k]=0;outs.forEach(o=>N[o[0]].cnt.textContent='0');N.e3.wk.forEach(w=>w.setAttribute('fill','#fde68a'));drawQ();logEl.innerHTML='';ui()};
+document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>scen[b.dataset.s]());
+if(reduce){rate=1;document.getElementById('rate').value=1}
+log('Flow started — every request goes through E4 first','#7c3aed');
+})();
+</script>
+</body>
+</html>

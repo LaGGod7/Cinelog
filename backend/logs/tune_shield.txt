@@ -1,0 +1,10 @@
+RNN blend: weight 0.20  thr_low=0.514 thr_high=0.620
+  test AUC  ML 0.8249   RNN 0.7557   blend 0.8242   (gain 95% interval -0.0051 .. +0.0036)
+  blend validation {'n': 1018, 'spoilers_blurred': 0.429, 'spoilers_to_moderators': 0.197, 'clean_wrongly_blurred': 0.068, 'clean_to_moderators': 0.067}
+  blend test {'n': 1254, 'spoilers_blurred': 0.508, 'spoilers_to_moderators': 0.144, 'clean_wrongly_blurred': 0.089, 'clean_to_moderators': 0.082}
+thr_low=0.527 thr_high=0.639
+
+'possible spoilers' label from 0.402 (target: flag 80% of spoiler reviews)
+  on films never seen: 79% of spoiler reviews flagged (blurred, to moderators or labelled), at the price of 30% of clean reviews flagged the same way
+validation {'n': 1018, 'spoilers_blurred': 0.461, 'spoilers_to_moderators': 0.185, 'clean_wrongly_blurred': 0.081, 'clean_to_moderators': 0.069}
+test {'n': 1254, 'spoilers_blurred': 0.508, 'spoilers_to_moderators': 0.157, 'clean_wrongly_blurred': 0.102, 'clean_to_moderators': 0.074}

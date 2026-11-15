@@ -1,0 +1,49 @@
+{
+ "thr_blur": 0.3730026566982269,
+ "thr_warn": 0.3081981658935547,
+ "blur_fpr": 0.03,
+ "warn_fpr": 0.1,
+ "max_short_sentences": 6,
+ "report": {
+  "calibrated_on_clean_short_reviews": 1783,
+  "test_short_clean": 205,
+  "test_short_spoiler_flagged": 31,
+  "test_clean_over_blur": 0.04390243902439024,
+  "test_clean_over_warn": 0.15121951219512195,
+  "test_imdb_spoiler_over_blur": 0.06451612903225806,
+  "test_imdb_spoiler_over_warn": 0.16129032258064516,
+  "test_long_clean": 736,
+  "test_long_clean_over_blur_flat_cutoff": 0.11956521739130435,
+  "test_long_clean_over_blur_length_adjusted": 0.02309782608695652
+ },
+ "encoder": "all-MiniLM-L6-v2 (int8 ONNX)",
+ "sentence_tail": {
+  "p": [
+   0.2,
+   0.1,
+   0.05,
+   0.03,
+   0.02,
+   0.01,
+   0.005,
+   0.003,
+   0.002,
+   0.001,
+   0.0005
+  ],
+  "score": [
+   0.20507586002349854,
+   0.25097471475601196,
+   0.29288819432258606,
+   0.3199229836463928,
+   0.3390205502510071,
+   0.3720492124557495,
+   0.4016001224517822,
+   0.42250704765319824,
+   0.44190502166748047,
+   0.47641095519065857,
+   0.49785295128822327
+  ],
+  "n_sentences": 30776
+ }
+}

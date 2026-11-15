@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: cinelog
+      POSTGRES_PASSWORD: cinelog
+      POSTGRES_DB: cinelog
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cinelog"]
+      interval: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    env_file: [.env]
+    environment:
+      DATABASE_URL: postgresql+psycopg://cinelog:cinelog@db:5432/cinelog
+      MODEL_DIR: /app/models
+      CORS_ORIGINS: http://localhost:8080
+    volumes: ["./backend/models:/app/models"]   # put the trained spoiler_ml.joblib here
+    depends_on:
+      db: { condition: service_healthy }
+
+  frontend:
+    build: ./frontend
+    ports: ["8080:80"]
+    depends_on: [backend]
+
+volumes:
+  pgdata:

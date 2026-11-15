@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CineLog Use Case Explorer</title>
+<style>
+:root{--bg:#eff3f6;--surface:#fff;--surface2:#f0f4f7;--ink:#11202b;--muted:#526471;--line:#d3dce3;
+--allow:#16794a;--allow-bg:#e2f4ea;--deny:#b42335;--deny-bg:#fbe5e8;--warn:#a86400;--warn-bg:#fff3dc;
+--brand:#cf4210;--brand-bg:#fff0e5;--teal:#0a7479;--teal-bg:#def2f2;--violet:#5646b0;--violet-bg:#eae7f8;--focus:#1b6fd1;
+--sans:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;--mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 var(--sans)}
+.page{max-width:1180px;margin:0 auto;padding:22px 16px 34px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+[hidden]{display:none!important}
+.head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
+.brand{font-weight:800;font-size:32px;letter-spacing:-.02em;color:var(--brand);line-height:1}
+h1{font-size:23px;margin:0;font-weight:700}
+.sub{color:var(--muted);margin:8px 0 14px;max-width:82ch}
+.mono{font-family:var(--mono)}
+.eyebrow{font:600 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.card{background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:16px;min-width:0}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{border:1.5px solid var(--line);background:var(--surface);border-radius:99px;padding:6px 12px;font-size:13px;font-weight:600}
+.pill[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.pill .n{font-family:var(--mono);font-size:11px;opacity:.7;margin-left:4px}
+.btn{border:1.5px solid var(--ink);background:var(--surface);border-radius:9px;padding:7px 14px;font-weight:600;font-size:13px}
+.btn.primary{background:var(--ink);color:#fff}
+.btn.brand{background:var(--brand);border-color:var(--brand);color:#fff}
+.tag{display:inline-block;font:600 10.5px var(--mono);letter-spacing:.06em;padding:2px 8px;border-radius:99px;border:1.5px solid var(--line);background:var(--surface2);white-space:nowrap}
+.tag.m{border-color:var(--teal);color:var(--teal);background:var(--teal-bg)}
+.tag.c{border-color:var(--brand);color:var(--brand);background:var(--brand-bg)}
+.tag.ok{border-color:var(--allow);color:var(--allow);background:var(--allow-bg)}
+.tag.bad{border-color:var(--deny);color:var(--deny);background:var(--deny-bg)}
+.tag.warn{border-color:var(--warn);color:var(--warn);background:var(--warn-bg)}
+.stats{display:flex;flex-wrap:wrap;gap:8px}
+.stat{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:6px 12px;text-align:center;min-width:84px}
+.stat b{display:block;font-size:20px}.stat span{font-size:11px;color:var(--muted)}
+input[type=search]{border:1.5px solid var(--line);border-radius:9px;padding:7px 10px;font:inherit;min-width:0;width:100%;max-width:320px;background:var(--surface)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 14px}
+.tabs button{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 14px;font-weight:700;font-size:13px;display:inline-flex;gap:7px;align-items:center;cursor:pointer;color:var(--ink)}
+.tabs button[aria-selected=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tabs .ic{font-size:15px;line-height:1}
+button{font-family:inherit;cursor:pointer;color:inherit}
+.actors{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.av{border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:8px 12px 8px 8px;display:flex;gap:9px;align-items:center;text-align:left;transition:transform .15s,box-shadow .15s,border-color .15s}
+.av:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(17,32,43,.08)}
+.av[aria-pressed=true]{border-color:var(--brand);background:var(--brand-bg);box-shadow:0 0 0 3px rgba(207,66,16,.15)}
+.av .face{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:18px;background:var(--c,#ccc);color:#fff;flex:none}
+.av b{display:block;font-size:13px}.av span span{font-size:11px;color:var(--muted)}
+.play{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:16px;align-items:start}
+.ucpick{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.ucpick button{border:1.5px solid var(--line);background:var(--surface2);border-radius:8px;padding:5px 9px;font-size:12.5px;font-weight:600}
+.ucpick button[aria-pressed=true]{border-color:var(--teal);background:var(--teal-bg);color:var(--teal)}
+.ucpick .done{font-size:10px;margin-left:4px;color:var(--allow)}
+.story h2{margin:2px 0 6px;font-size:19px}
+.say{font-size:14.5px;line-height:1.5;margin:8px 0 12px;min-height:44px}
+.choices{display:grid;gap:7px}
+.ch{text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:11px;padding:9px 12px;font-size:13.5px;font-weight:600;display:flex;gap:10px;align-items:center;transition:transform .12s,border-color .12s}
+.ch:hover{transform:translateX(3px);border-color:var(--ink)}
+.ch .k{font:700 10px var(--mono);letter-spacing:.06em;padding:2px 7px;border-radius:99px;border:1.5px solid;flex:none}
+.ch.main .k{color:var(--allow);border-color:var(--allow);background:var(--allow-bg)}
+.ch.alt .k{color:var(--warn);border-color:var(--warn);background:var(--warn-bg)}
+.ch.exc .k{color:var(--deny);border-color:var(--deny);background:var(--deny-bg)}
+.crumbs{display:flex;flex-wrap:wrap;gap:4px;margin:10px 0 0;font:11px var(--mono);color:var(--muted)}
+.crumbs span{padding:2px 7px;border-radius:99px;background:var(--surface2);border:1px solid var(--line)}
+.crumbs span.alt{border-color:var(--warn);color:var(--warn)}.crumbs span.exc{border-color:var(--deny);color:var(--deny)}
+.endcard{border-radius:12px;padding:10px 12px;margin:6px 0 10px;font-weight:600;font-size:13.5px}
+.endcard.ok{background:var(--allow-bg);color:var(--allow);border:1.5px solid var(--allow)}
+.endcard.hd{background:var(--warn-bg);color:var(--warn);border:1.5px solid var(--warn)}
+.paths{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font:11px var(--mono);color:var(--muted);margin-top:10px}
+.paths i{display:inline-block;width:14px;height:14px;border-radius:4px;background:var(--surface2);border:1.5px solid var(--line);vertical-align:-3px}
+.paths i.on{background:var(--brand);border-color:var(--brand)}
+.device{border:1.5px solid var(--ink);border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 10px 30px rgba(17,32,43,.12)}
+.chrome{display:flex;align-items:center;gap:6px;padding:7px 10px;background:#e8edf1;border-bottom:1.5px solid var(--line)}
+.chrome i{width:9px;height:9px;border-radius:50%;background:#c9d2d9;flex:none}
+.chrome .url{flex:1;min-width:0;margin-left:6px;background:#fff;border:1px solid var(--line);border-radius:7px;padding:3px 8px;font:11px var(--mono);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appbar{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line)}
+.appbar b{color:var(--brand);font-weight:800}
+.appbar span{margin-left:auto;font:11px var(--mono);color:var(--muted)}
+.scr{padding:14px 14px 56px;min-height:250px;font-size:13px;position:relative;overflow-wrap:anywhere}
+.scr .fld{border:1.5px solid var(--line);border-radius:8px;padding:7px 9px;margin:6px 0;background:#fff;font-size:12.5px}
+.scr .fld.typing::after{content:"▍";color:var(--brand);animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.scr .b{display:inline-block;border-radius:8px;padding:6px 11px;font-weight:700;font-size:12px;margin:4px 4px 0 0;border:1.5px solid var(--ink)}
+.scr .b.p{background:var(--ink);color:#fff}
+.scr .b.g{background:#fff}
+.scr .row{display:flex;gap:8px;align-items:center;padding:6px 8px;border:1px solid var(--line);border-radius:8px;margin:5px 0;background:#fff}
+.scr .row .r{margin-left:auto;font:11px var(--mono);text-align:right}
+.scr .toast{position:absolute;left:14px;right:14px;bottom:12px;border-radius:9px;padding:8px 10px;font-weight:600;font-size:12.5px;animation:pop .35s}
+.scr .toast.ok{background:var(--allow-bg);color:var(--allow);border:1.5px solid var(--allow)}
+.scr .toast.bad{background:var(--deny-bg);color:var(--deny);border:1.5px solid var(--deny)}
+.scr .toast.warn{background:var(--warn-bg);color:var(--warn);border:1.5px solid var(--warn)}
+.scr .toast.info{background:var(--teal-bg);color:var(--teal);border:1.5px solid var(--teal)}
+@keyframes pop{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
+.scr .blur{filter:blur(4px);background:#dfe5ea;border-radius:4px;padding:0 3px}
+.scr .stars{color:#e8a200;letter-spacing:2px}
+.scr .bar2{height:8px;border-radius:99px;background:#e3e9ee;overflow:hidden;margin:3px 0 7px}
+.scr .bar2 i{display:block;height:100%;background:var(--teal);animation:grow .8s ease-out}
+@keyframes grow{from{width:0!important}}
+.scr .muted{color:var(--muted);font-size:12px}
+.scr .code{font:11.5px var(--mono);background:var(--surface2);border-radius:6px;padding:2px 6px}
+.scr .spin{display:inline-block;width:12px;height:12px;border:2px solid var(--brand);border-right-color:transparent;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.diag{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;align-items:start}
+.dwrap{background:var(--surface);border:1.5px solid var(--line);border-radius:14px;overflow:hidden}
+#dsvg{width:100%;height:auto;display:block;touch-action:none;user-select:none}
+.dn{cursor:grab}.dn:active{cursor:grabbing}
+.ov{fill:#fff;stroke:var(--teal);stroke-width:1.6;transition:fill .2s}
+.dn:hover .ov{fill:var(--teal-bg)}
+.dn.sel .ov{fill:var(--brand-bg);stroke:var(--brand);stroke-width:2.4}
+.ov.inc{stroke:var(--violet);stroke-dasharray:4 3}
+.lnk{stroke:#9fb0bc;stroke-width:1.2}
+.lnk.hot{stroke:var(--brand);stroke-width:2.6}
+.rel{stroke:var(--violet);stroke-width:1.6;stroke-dasharray:6 5;fill:none;animation:march 1.4s linear infinite}
+.rel.hot{stroke-width:3;animation-duration:.4s}
+@keyframes march{to{stroke-dashoffset:-22}}
+.rl{font:700 10px var(--mono);fill:var(--violet);paint-order:stroke;stroke:#f7fafb;stroke-width:4px;stroke-linejoin:round}
+.pkt{fill:var(--brand)}
+.flowlist{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.flowlist li{border:1.5px solid var(--line);border-radius:9px;padding:7px 9px;font-size:13px;display:flex;gap:8px;align-items:flex-start;transition:background .3s,border-color .3s}
+.flowlist li i{font:700 11px var(--mono);font-style:normal;color:var(--muted);min-width:18px}
+.flowlist li.on{border-color:var(--brand);background:var(--brand-bg)}
+.flowlist li.done{border-color:var(--allow);background:var(--allow-bg)}
+.flowlist li.x{border-color:var(--deny);background:var(--deny-bg)}
+.hm{overflow-x:auto}
+.hm table{border-collapse:separate;border-spacing:4px;font-size:12px}
+.hm th{font:600 11px var(--mono);color:var(--ink);text-align:left;white-space:nowrap}
+.hm th.uc{writing-mode:vertical-rl;transform:rotate(180deg);height:58px;text-align:left;padding:2px 0;color:var(--muted)}
+.hm td.c{width:34px;min-width:28px;height:30px;border-radius:7px;text-align:center;cursor:pointer;font:700 11px var(--mono);transition:transform .12s}
+.hm td.c:hover{transform:scale(1.15)}
+.hm td.l0{background:#f0f4f7;color:#c3ced6}.hm td.l1{background:#bfe3e3;color:var(--teal)}.hm td.l2{background:var(--teal);color:#fff}
+.hm td.tot{font:700 11px var(--mono);color:var(--muted);text-align:center}
+.hm tr:hover th{color:var(--brand)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-3px;margin-right:5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+.uc{border:1.5px solid var(--line);background:var(--surface);border-radius:13px;padding:12px 14px}
+.uc h3{margin:0 0 4px;font-size:14px;display:flex;gap:8px;align-items:baseline}
+.uc h3 .id{font:700 12px var(--mono);color:var(--brand);flex:none}
+.uc .who{font-size:12px;color:var(--muted);margin-bottom:6px}
+.uc .fl{font-size:12.5px;margin:4px 0}
+.uc .fl b{font:700 10.5px var(--mono);letter-spacing:.06em;display:block;color:var(--teal)}
+.uc .fl.x b{color:var(--deny)}
+mark{background:#ffe08a;color:inherit;border-radius:3px;padding:0 1px}
+.uc .go{margin-top:8px}
+.note{font-size:12px;color:var(--muted);margin-top:10px}
+.lbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:10px}
+.lbar input{min-width:0;flex:1 1 220px;max-width:340px}
+@media (max-width:860px){.play,.diag{grid-template-columns:1fr}}
+@media (max-width:520px){.grid{grid-template-columns:1fr}.tabs button{padding:7px 10px;font-size:12.5px}.av{padding:6px 9px 6px 6px}.av .face{width:28px;height:28px;font-size:15px}}
+@media (prefers-reduced-motion:reduce){.rel{animation:none}.scr .toast,.scr .bar2 i{animation:none}}
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="head"><span class="brand">CineLog</span><h1>Use case explorer</h1></div>
+  <p class="sub">Eleven use cases across eight actors. <b>Play as an actor</b> to walk a use case as a story and trigger its alternative and exception paths. Drag the <b>diagram</b> around and click an oval to play its flow, or check which actor touches which use case on the <b>heatmap</b>.</p>
+  <div class="stats" style="margin-bottom:12px"><div class="stat"><b>11</b><span>use cases</span></div><div class="stat"><b>8</b><span>actors</span></div><div class="stat"><b id="sBr">0</b><span>branches explored</span></div><div class="stat"><b id="sTot">0</b><span>alt + exception branches</span></div></div>
+  <div class="tabs" role="tablist">
+    <button role="tab" data-tab="play" aria-selected="true"><span class="ic">🎬</span>Play as actor</button>
+    <button role="tab" data-tab="diag" aria-selected="false"><span class="ic">◎</span>Diagram</button>
+    <button role="tab" data-tab="heat" aria-selected="false"><span class="ic">▦</span>Heatmap</button>
+    <button role="tab" data-tab="list" aria-selected="false"><span class="ic">☰</span>All use cases</button>
+  </div>
+
+  <section id="t-play">
+    <div class="actors" id="actors"></div>
+    <div class="play">
+      <div class="card story">
+        <div class="ucpick" id="ucpick"></div>
+        <div class="eyebrow" id="sEy"></div>
+        <h2 id="sTitle"></h2>
+        <div class="say" id="say" aria-live="polite"></div>
+        <div id="endc"></div>
+        <div class="choices" id="choices"></div>
+        <div class="crumbs" id="crumbs"></div>
+        <div class="paths" id="paths"></div>
+      </div>
+      <div>
+        <div class="device"><div class="chrome"><i></i><i></i><i></i><div class="url" id="url">cinelog.local</div></div>
+          <div class="appbar"><b>CineLog</b><span id="who">signed out</span></div>
+          <div class="scr" id="scr"></div></div>
+        <p class="note">The mock screen illustrates the flow written in the requirements. It is not a recording of the app.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="t-diag" hidden>
+    <div class="diag">
+      <div class="dwrap"><svg id="dsvg" viewBox="0 0 860 620" role="img" aria-label="Use case diagram"></svg></div>
+      <div class="card">
+        <div class="eyebrow">Selected use case</div>
+        <h2 id="dTitle" style="margin:4px 0 6px;font-size:18px">Click an oval</h2>
+        <p id="dDesc" style="margin:0 0 10px;color:var(--muted);font-size:13px">Drag actors and ovals to rearrange. Hover a dashed «include» / «extend» arrow to speed it up. Click an oval to play its main flow.</p>
+        <ol class="flowlist" id="dFlow"></ol>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="dExc" hidden>Play exception path</button><button class="btn brand" id="dStory" hidden>Play as story ▸</button><button class="btn" id="dReset">Reset layout</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="t-heat" hidden>
+    <div class="card hm"><div id="hm"></div>
+      <div class="legend"><span><i style="background:var(--teal)"></i>Primary actor</span><span><i style="background:#bfe3e3"></i>Also involved</span><span><i style="background:#f0f4f7"></i>Not involved</span><span>Click a cell to play that use case.</span></div></div>
+  </section>
+
+  <section id="t-list" hidden>
+    <div class="lbar">
+      <div class="pills" id="lf"></div>
+      <input type="search" id="q" placeholder="Search… try “409” or “TMDB”" aria-label="Search use cases">
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+</main>
+<script>
+(function(){
+"use strict";
+var DATA={"FR": [["FR-01", "The system shall sign in a user via Google (OAuth 2.0) or email + password when valid credentials are given, producing a secure session.", "Mandatory"], ["FR-02", "The system shall check every request against the role–permission matrix (site roles + club roles), allowing it or refusing with HTTP 403.", "Mandatory"], ["FR-03", "The system shall let an Admin grant or revoke roles for a selected user, producing the new role and an audit entry (who, what, when).", "Mandatory"], ["FR-04", "The system shall show up to 10 title suggestions when 2+ letters are typed, and filter results by genre, cast and year.", "Mandatory"], ["FR-05", "The system shall keep a local film catalogue synced from TMDB, fetching missing films on demand and showing TMDB attribution.", "Mandatory"], ["FR-06", "The system shall save a diary entry (date, 0.5–5 stars, format, rewatch, notes) or a watchlist item in one click.", "Mandatory"], ["FR-07", "The system shall record ratings on 5 aspects (Story, Acting, Visuals, Music, Pacing), producing film averages and a personal taste profile.", "Mandatory"], ["FR-08", "The system shall scan every new review for spoilers before it is visible (word list, plot matching and a trained classifier), blurring risky sentences behind a Reveal button.", "Mandatory"], ["FR-09", "The system shall move each review through a fixed lifecycle (Pending Scan → Published / Held → Published / Removed), rejecting any invalid transition with HTTP 409.", "Mandatory"], ["FR-10", "The system shall hide a review automatically when 3 different users report it and place it in the moderator queue.", "Mandatory"], ["FR-11", "The system shall show Moderators flagged reviews ordered by risk, allowing approve, re-blur, remove and adding terms to the film's spoiler word list.", "Mandatory"], ["FR-12", "The system shall let a Club Convener create a club, invite or remove members, assign club roles and manage a shared watchlist.", "Mandatory"], ["FR-13", "The system shall move each club poll through Draft → Open → Closed (or Cancelled), accepting votes only while Open and keeping closed results in club history.", "Mandatory"], ["FR-14", "The system shall accept exactly one vote per member per poll, even when members vote at the same moment.", "Mandatory"], ["FR-15", "The system shall notify users when a poll opens, a screening is fixed or their review is actioned, unless they switch notifications off.", "Mandatory"], ["FR-16", "The system shall offer every function through one responsive web app, validating every input in the browser and again on the server.", "Mandatory"], ["FR-17", "The system shall update poll results on members' screens live, without a page reload.", "Challenge"], ["FR-18", "The system shall let users follow others and show a merged feed of their recent activity.", "Challenge"], ["FR-19", "The system shall suggest films and users with similar taste based on ratings.", "Challenge"], ["FR-20", "The system shall apply strikes and temporary mutes to repeat offenders (3 strikes in 30 days → 3-day mute).", "Challenge"]], "NFR": [["NFR-01", "The search engine shall return autocomplete suggestions quickly over the full catalogue.", "Performance", "p95 ≤ 100 ms (server-side) over 10,000+ titles"], ["NFR-02", "The Spoiler Shield shall catch most spoiler reviews while keeping wrong blurs low.", "Accuracy", "≥ 85% of spoiler reviews caught; ≤ 10% of clean reviews wrongly blurred on a labelled test set"], ["NFR-03", "The API shall respond within target under concurrent load.", "Performance", "p95 ≤ 300 ms with 100 concurrent users"], ["NFR-04", "The storage engine shall keep data correct under concurrent writes.", "Reliability", "0 duplicate votes and 0 lost updates in a 100-user concurrent test"], ["NFR-05", "The background scheduler shall process jobs reliably under sustained load.", "Reliability", "≥ 50 jobs/min; 0 lost jobs and 0 deadlocks in a 1-hour soak test"], ["NFR-06", "The system shall resist common web attacks.", "Security", "bcrypt passwords; CSRF and rate-limit checks; 0 high/critical OWASP ZAP findings"], ["NFR-07", "Every engine shall be independently testable.", "Maintainability", "Automated tests per engine; ≥ 80% line coverage on engine code"], ["NFR-08", "A new user shall log a film quickly without training.", "Usability", "Median ≤ 30 s and ≤ 3 clicks (10-user timed test); usable at 360 px width"], ["NFR-09", "The system shall run on one laptop and stay within TMDB terms.", "Portability / Compliance", "CPU only, no GPU; TMDB calls kept below its rate limit with back-off on HTTP 429"]], "UC": [["UC-01", "Any user", "As a user, I want to sign in with Google or email so that my logs and roles are safe.", "Choose Google or email → identity verified → session created → home page opens.", "First Google sign-in creates a Viewer account; 6th attempt within 1 min → HTTP 429; Google down → email sign-in offered."], ["UC-02", "Viewer", "As a viewer, I want to find a film and log it in seconds.", "Type 2+ letters → pick a suggestion → set date and stars → save to diary.", "1 letter → no suggestions; film not in catalogue → fetched from TMDB; same film again → saved as a rewatch."], ["UC-03", "Viewer", "As a viewer, I want to rate a film by aspect so others know why I liked it.", "Open a logged film → rate the aspects → film averages and taste profile update.", "Rate only some aspects; value outside 0.5–5 rejected."], ["UC-04", "Viewer, Critic", "As a writer, I want my review checked for spoilers before others read it.", "Write and submit → HTTP 202, review Pending Scan → Spoiler Shield scans it → Published with risky sentences blurred.", "Medium risk → held for a moderator; empty or over-length review rejected; muted user cannot post."], ["UC-05", "Viewer", "As a reader, I want spoiler-safe reviews so I can decide whether to watch.", "Open film page → read reviews with spoiler sentences blurred → press Reveal to see one.", "Hidden / Removed reviews never listed; blurred text is sent only to the reader who reveals it."], ["UC-06", "Viewer", "As a reader, I want to report a spoiler that slipped through.", "Click Report and pick a reason → 3rd distinct report → review hidden and queued.", "2 reports do not hide; repeat report ignored; own review cannot be reported."], ["UC-07", "Moderator", "As a moderator, I want the riskiest reviews first.", "Open queue sorted by risk → approve, re-blur or remove → action logged, writer notified.", "Add terms without changing status; two moderators act at once → first wins, second gets 409."], ["UC-08", "Club Convener", "As a convener, I want one place to manage my club.", "Create club → invite members → add films to shared watchlist.", "Make club public or private; non-member opening a private club → HTTP 403."], ["UC-09", "Club Convener, Club Member", "As a club, we want a fair poll with a permanent result.", "Convener creates poll → opens it → each member votes once → results update live → poll closes and result is saved.", "Second vote → 'already voted'; vote after close → rejected; convener cancels a draft poll."], ["UC-10", "Admin", "As an admin, I want to grant or revoke roles safely.", "Search user → grant or revoke role → applies on next request and is audit-logged.", "Non-admin → 403; tampered token → 401; last Admin cannot be removed."], ["UC-11", "Admin, TMDB API", "As an admin, I want the catalogue kept up to date automatically.", "Scheduler starts sync → changed titles fetched from TMDB → catalogue stored → search index rebuilt.", "TMDB 429 or down → back-off and retry; the existing catalogue keeps working."]], "AC": [["FR-01", "Google and email sign-in both create an HTTP-only session, wrong credentials show a generic error, and signed-out users are redirected from protected pages.", "Functional test + manual Google login"], ["FR-02", "Every role performs exactly the matrix actions, and privilege-escalation attempts (e.g. Viewer calling a moderator action, edited token) are refused.", "Automated access-control test matrix (normal + negative)"], ["FR-03", "A role change applies on the next request and appears in the audit log with actor, action and time.", "Functional test + audit-log check"], ["FR-04", "2+ letters return ≤ 10 suggestions, filters return only matching films, and predefined queries return the expected top results.", "Automated query test set"], ["FR-05", "Missing films are fetched from TMDB and cached, attribution is visible, and sync backs off and resumes on HTTP 429.", "Sync test with mocked 429"], ["FR-06", "A diary entry saves all fields (0.5-star steps), the watchlist toggles in one click, and data persists after reload.", "Functional UI test"], ["FR-07", "Any subset of aspects can be rated and film averages match a manual calculation.", "Functional test + calculation check"], ["FR-08", "No review is visible before its scan completes, risky sentences are blurred with Reveal, and blurred text is not sent to the browser until revealed.", "Labelled review set + API test"], ["FR-09", "Every valid transition succeeds and every invalid one returns 409 with no state change.", "State-transition test (all pairs)"], ["FR-10", "The 3rd distinct report hides and queues the review; 2 reports do not; duplicate and self-reports are ignored.", "Functional + boundary test"], ["FR-11", "The queue is ordered by risk, moderator actions apply immediately and are logged, and non-moderators get 403.", "Functional + role test"], ["FR-12", "A convener can manage members and the shared watchlist, members can only view, and non-members get 403 on private clubs.", "Functional + role test"], ["FR-13", "Votes succeed only while Open, Draft can be cancelled, Closed polls are read-only, and invalid transitions return 409.", "State-transition test"], ["FR-14", "After 100 members each vote twice at the same moment, exactly 100 votes are stored.", "100-user concurrent vote test"], ["FR-15", "Notifications for the 3 events are delivered, failed e-mails are retried, and opted-out users receive none.", "Test outbox / SMTP inbox"], ["FR-16", "FR-01 to FR-15 are reachable in the web app, invalid input is rejected by both browser and API, and layout works at 360 px and desktop width.", "UI test + direct API calls"], ["FR-17", "A vote appears on other members' screens within 2 s, with automatic reconnect if the live link drops.", "Two-browser WebSocket test"], ["FR-18", "Follow/unfollow works and the feed shows the latest activities of followed users, newest first.", "Functional test on seeded data"], ["FR-19", "Suggestions match a hand-computed similarity on seeded ratings.", "Calculation check on seeded data"], ["FR-20", "The 3rd strike within 30 days mutes the account for 3 days; a muted user can read but not post.", "Functional + time-boundary test"], ["NFR-01", "p95 ≤ 100 ms over 1,000 random prefixes on 10,000+ titles.", "Benchmark script"], ["NFR-02", "≥ 85% of spoiler reviews caught and ≤ 10% of clean reviews wrongly blurred on the held-out labelled set.", "Labelled test set evaluation"], ["NFR-03", "p95 ≤ 300 ms during a 10-minute run with 100 concurrent users.", "Load test"], ["NFR-04", "0 duplicate votes and 0 lost updates after the concurrent test.", "Concurrency script + database count"], ["NFR-05", "≥ 50 jobs/min with 0 lost jobs and 0 deadlocks over 1 hour.", "Soak test with job counters"], ["NFR-06", "Passwords are bcrypt-only, CSRF and rate limits hold, and ZAP reports 0 high/critical issues.", "OWASP ZAP scan + security tests"], ["NFR-07", "Each engine has its own test suite with ≥ 80% coverage.", "Coverage report"], ["NFR-08", "Median time to log a film is ≤ 30 s with ≤ 3 clicks across 10 users.", "Timed usability test"], ["NFR-09", "The system runs on a CPU-only laptop and no TMDB burst exceeds the limit.", "Deployment test + request-rate log"]], "ENG": [["E1", "Search & Spoiler Matching (DSA)", "Fast in-memory lookup and spoiler matching over film and review text: trie, inverted index, Aho–Corasick, TF-IDF plot matching, risk ordering.", "FR-04, FR-08, FR-11, FR-18, FR-19, NFR-01, NFR-02", "Manish Singri"], ["E2", "Storage & Transaction (DBMS)", "Consistent permanent storage and correct concurrent updates: 3NF schema, ACID transactions, unique vote rule, indexes.", "FR-06, FR-07, FR-14, NFR-03, NFR-04", "Goureesh N Doddamani"], ["E3", "Background Job Scheduler (OS)", "Runs slow work (spoiler scans, TMDB sync, e-mail) off the request path on a bounded priority queue and worker thread pool, with retries and LRU caching.", "FR-05, FR-15, NFR-05, NFR-09", "Ashutosh Kulkarni"], ["E4", "Secure Access & Communication (CN & Security)", "Authentication, sessions and traffic control: OAuth 2.0, JWT cookies, bcrypt, CSRF tokens, token-bucket rate limiting, TMDB and SMTP clients.", "FR-01, NFR-06", "Goureesh N Doddamani"], ["E5", "Role, Permission & Workflow (SE)", "Role-based authorisation, review and poll state machines, report threshold, strikes and the audit trail; deny by default.", "FR-02, FR-03, FR-09, FR-10, FR-12, FR-13, FR-20, NFR-07", "Ashutosh Kulkarni"], ["E6", "Client–Server Interaction (Web Tech)", "REST API contract, client and server validation, WebSocket live poll results, responsive role-based views.", "FR-16, FR-17, NFR-08", "Omkar A"]]};
+var $=function(s){return document.querySelector(s)};
+var reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+var ACT=[
+ {id:"Any user",f:"👤",c:"#526471",s:"signs in"},
+ {id:"Viewer",f:"🍿",c:"#cf4210",s:"logs, rates, reads"},
+ {id:"Critic",f:"✒️",c:"#a86400",s:"writes reviews"},
+ {id:"Moderator",f:"🛡",c:"#b42335",s:"reviews flags"},
+ {id:"Club Convener",f:"🎟",c:"#5646b0",s:"runs a club"},
+ {id:"Club Member",f:"🗳",c:"#7a68d6",s:"votes in polls"},
+ {id:"Admin",f:"⚙️",c:"#0a7479",s:"roles & catalogue"},
+ {id:"TMDB API",f:"🎞",c:"#11202b",s:"external film data"}];
+var UC={};DATA.UC.forEach(function(u){UC[u[0]]={id:u[0],actors:u[1].split(/,\s*/),story:u[2],main:u[3],alt:u[4]}});
+var ALSO={"UC-02":["TMDB API"],"UC-04":["Moderator"],"UC-05":["Critic"],"UC-06":["Moderator"],"UC-07":["Viewer","Critic"],"UC-09":["Viewer"],"UC-10":["Moderator","Critic"],"UC-01":["Viewer","Critic","Moderator","Club Convener","Club Member","Admin"]};
+function level(a,u){if(UC[u].actors.indexOf(a)>-1)return 2;if((ALSO[u]||[]).indexOf(a)>-1)return 1;return 0;}
+function T(cls,msg){return '<div class="toast '+cls+'">'+msg+'</div>'}
+var S={
+"UC-01":{start:{say:"You open CineLog and want your logs and roles kept safe. How do you sign in?",url:"cinelog.local/login",scr:'<b>Sign in</b><div class="fld">viewer@test.cinelog</div><div class="fld">••••••••</div><span class="b g">G&nbsp; Continue with Google</span><span class="b p">Sign in</span>',ch:[["Continue with Google","g1","main"],["Use e-mail + password","e1","main"],["Google is down right now","gdown","exc"],["Hammer the login button 6 times","rl","exc"]]},
+ g1:{say:"Google asks you to share your name and e-mail with CineLog. This is your first visit.",url:"accounts.google.com/o/oauth2 · state=7f3a…",scr:'<b>Google</b><div class="muted">CineLog wants to see your e-mail and basic profile</div><span class="b p">Allow</span><span class="b g">Cancel</span><div class="muted" style="margin-top:10px">The state parameter is checked on return (blocks login-CSRF).</div>',ch:[["Allow","new","main"]]},
+ new:{say:"First Google sign-in, so CineLog creates your account with the Viewer role and sets an HTTP-only session cookie.",url:"cinelog.local/",scr:'<b>Welcome!</b><div class="row">Role<span class="r">Viewer</span></div><div class="row">Session<span class="r">HttpOnly · SameSite=Lax</span></div>'+T("ok","Account created · signed in"),who:"viewer",end:"ok"},
+ e1:{say:"You type your e-mail and password.",url:"cinelog.local/login",scr:'<b>Sign in</b><div class="fld">viewer@test.cinelog</div><div class="fld typing">••••••••</div><span class="b p">Sign in</span>',ch:[["Correct password","home","main"],["Wrong password","wrong","alt"]]},
+ home:{say:"Identity verified, session created, home page opens.",url:"cinelog.local/",scr:'<b>Home</b><div class="row">🎬 Film of the day<span class="r">Inception</span></div><div class="row">📓 Your diary<span class="r">12 films</span></div>'+T("ok","Signed in · 200 OK"),who:"viewer",end:"ok"},
+ wrong:{say:"CineLog shows a generic error. It never says whether the e-mail exists, so nobody can probe for accounts.",url:"cinelog.local/login",scr:'<b>Sign in</b><div class="fld">viewer@test.cinelog</div><div class="fld">••••••</div>'+T("bad","Invalid credentials"),ch:[["Try again","e1","main"]]},
+ gdown:{say:"The Google button reports an outage. E-mail sign-in is still offered as the fallback.",url:"cinelog.local/login",scr:'<b>Sign in</b><br><span class="b g" style="opacity:.4">G&nbsp; Continue with Google</span>'+T("warn","Google sign-in unavailable — use e-mail"),ch:[["Use e-mail instead","e1","main"]]},
+ rl:{say:"The sixth attempt inside a minute hits the token-bucket limiter.",url:"POST /auth/login",scr:'<div class="code">POST /auth/login ×6</div><div class="bar2"><i style="width:100%;background:var(--deny)"></i></div><div class="muted">bucket: 5 per minute per IP</div>'+T("bad","429 Too Many Requests · wait 1 min"),end:"hd"}},
+"UC-02":{start:{say:"You just watched a film and want to log it in seconds. Start typing in search.",url:"cinelog.local/",scr:'<div class="fld typing">Search films…</div><div class="muted">Suggestions appear after 2 letters.</div>',ch:[["Type “in”","sugg","main"],["Type just “i”","one","alt"],["Search “Oppenheimer” (not in the catalogue yet)","tmdb","alt"]]},
+ sugg:{say:"The trie returns up to 10 suggestions instantly.",url:"GET /films/autocomplete?q=in",scr:'<div class="fld">in</div><div class="row">Inception<span class="r">2010</span></div><div class="row">Interstellar<span class="r">2014</span></div><div class="row">Inside Out<span class="r">2015</span></div><div class="row">Into the Wild<span class="r">2007</span></div><div class="muted">≤ 10 results · p95 ≤ 100 ms target</div>',ch:[["Pick Inception","log","main"]]},
+ one:{say:"One letter is too broad, so no suggestions yet.",url:"GET /films/autocomplete?q=i",scr:'<div class="fld typing">i</div><div class="muted">Type at least 2 letters</div>',ch:[["Type another letter","sugg","main"]]},
+ tmdb:{say:"It's not in the local catalogue, so CineLog fetches it from TMDB once and caches it.",url:"GET /films/search?q=Oppenheimer",scr:'<div class="fld">Oppenheimer</div><div class="row"><span class="spin"></span>Fetching from TMDB…<span class="r">rate-limited</span></div><div class="row">Oppenheimer<span class="r">2023 · cached</span></div><div class="muted">Film data from TMDB</div>',ch:[["Pick Oppenheimer","log","main"]]},
+ log:{say:"Set the date, stars and format, then save.",url:"cinelog.local/films/27205",scr:'<b>Log this film</b><div class="fld">12 Nov 2026 · Theatre</div><div class="stars">★★★★½</div><label class="muted"><input type="checkbox"> Rewatch</label><br><span class="b p">Save to diary</span>',ch:[["Save","saved","main"],["Log the same film and date again","rew","alt"]]},
+ saved:{say:"Saved in one click. It's still there after a reload.",url:"POST /diary → 201",scr:'<b>Diary</b><div class="row">Inception<span class="r">★★★★½ · today</span></div>'+T("ok","201 Created · logged"),who:"viewer",end:"ok"},
+ rew:{say:"Same film again, so it is stored as a rewatch rather than a duplicate.",url:"POST /diary → 201",scr:'<b>Diary</b><div class="row">Inception<span class="r">rewatch #2</span></div>'+T("info","Saved as a rewatch"),who:"viewer",end:"ok"}},
+"UC-03":{start:{say:"Open a film you logged and rate it by aspect so others know why you liked it.",url:"cinelog.local/films/27205",scr:'<b>Rate Inception</b><div class="muted">Story</div><div class="bar2"><i style="width:0"></i></div><div class="muted">Acting</div><div class="bar2"><i style="width:0"></i></div><div class="muted">Visuals</div><div class="bar2"><i style="width:0"></i></div>',ch:[["Rate all five aspects","avg","main"],["Rate only Story and Music","part","alt"],["Enter 7 out of 5","bad","exc"]]},
+ avg:{say:"Film averages and your taste profile update straight away.",url:"PUT /films/27205/aspects",scr:'<b>Inception · averages</b><div class="muted">Story 4.6</div><div class="bar2"><i style="width:92%"></i></div><div class="muted">Acting 4.2</div><div class="bar2"><i style="width:84%"></i></div><div class="muted">Visuals 4.8</div><div class="bar2"><i style="width:96%"></i></div>'+T("ok","Ratings saved"),who:"viewer",end:"ok"},
+ part:{say:"Any subset is fine; only the aspects you rated count.",url:"PUT /films/27205/aspects",scr:'<div class="muted">Story 4.5 · Music 5.0 · others skipped</div>'+T("ok","Partial ratings saved"),who:"viewer",end:"ok"},
+ bad:{say:"Out of range. The browser warns, and the API rejects it as well.",url:"PUT /films/27205/aspects → 422",scr:'<div class="fld">Story: 7</div>'+T("bad","422 · value must be 0.5–5 in 0.5 steps"),ch:[["Fix it to 4.5","avg","main"]]}},
+"UC-04":{start:{say:"You've written a review. It must be checked for spoilers before anyone else reads it.",url:"cinelog.local/films/1885/review",scr:'<b>Write a review</b><div class="fld typing">Great twist, the ending floored me…</div><span class="b p">Publish</span>',ch:[["Submit a clean review","acc","main"],["Submit one that reveals the twist","accs","alt"],["Submit while your account is muted","mute","exc"],["Submit an empty review","empty","exc"]]},
+ acc:{say:"CineLog accepts it with 202 and keeps it hidden while the Spoiler Shield scans it in the background.",url:"POST /films/1885/reviews → 202",scr:'<div class="row"><span class="spin"></span>pending_scan<span class="r">invisible to others</span></div><div class="muted">queued as a USER-priority job</div>',ch:[["Wait for the scan","pub","main"]]},
+ pub:{say:"Low risk, so it is published untouched.",url:"cinelog.local/films/1885",scr:'<div class="row">Your review<span class="r">risk 0.08</span></div><div>Great twist, the ending floored me.</div>'+T("ok","Published"),who:"critic",end:"ok"},
+ accs:{say:"Accepted with 202 and queued for the scan.",url:"POST /films/1885/reviews → 202",scr:'<div class="row"><span class="spin"></span>pending_scan<span class="r">scanning…</span></div>',ch:[["Wait for the scan","blur","main"],["What if the risk is only medium?","held","alt"]]},
+ blur:{say:"The risky sentence scores high, so it is blurred. Its text is not even sent to readers until they press Reveal.",url:"cinelog.local/films/1885",scr:'<div class="row">Your review<span class="r">risk 0.91</span></div><div>Loved it. <span class="blur">He was dead the whole time.</span></div><span class="b g">Reveal</span>'+T("warn","Published · 1 sentence blurred"),who:"critic",end:"ok"},
+ held:{say:"A risk between 0.3 and 0.7 goes to a moderator instead of guessing.",url:"cinelog.local/films/1885",scr:'<div class="row">Your review<span class="r">risk 0.54</span></div>'+T("info","Held for a moderator"),who:"critic",end:"hd"},
+ mute:{say:"Three strikes in 30 days muted you. You can read but not post.",url:"POST /films/1885/reviews → 403",scr:T("bad","403 · muted until 15 Nov"),end:"hd"},
+ empty:{say:"Empty or over-length reviews are rejected before any scan.",url:"POST /films/1885/reviews → 422",scr:'<div class="fld">&nbsp;</div>'+T("bad","422 · review must be 10–5,000 characters"),ch:[["Write something","acc","main"]]}},
+"UC-05":{start:{say:"You're deciding whether to watch a film. Read its reviews safely.",url:"cinelog.local/films/1885",scr:'<b>Reviews</b><div class="row">critic_ana<span class="r">★★★★</span></div><div>Superb. <span class="blur">The doctor is a ghost.</span></div><span class="b g">Reveal</span>',ch:[["Press Reveal","rev","main"],["Open DevTools and look for the text","dev","alt"]]},
+ rev:{say:"Only you get the hidden sentence, from a separate Reveal endpoint.",url:"GET /reviews/88/reveal",scr:'<div>Superb. <b>The doctor is a ghost.</b></div>'+T("info","Revealed for you only"),who:"viewer",end:"ok"},
+ dev:{say:"The API response only carries the blurred sentence's position and length, so there's nothing to peek at.",url:"GET /films/1885/reviews",scr:'<div class="code">{"blurred":[{"i":1,"len":24}]}</div>'+T("ok","No spoiler text in the payload"),who:"viewer",end:"ok"}},
+"UC-06":{start:{say:"A spoiler slipped through. Report it.",url:"cinelog.local/films/1885",scr:'<div class="row">user_x<span class="r">⚑ 2 reports</span></div><div>The killer is the butler.</div><span class="b g">⚑ Report</span>',ch:[["Report it (you're the 3rd person)","hid","main"],["Report it twice","dup","alt"],["Report your own review","own","exc"]]},
+ hid:{say:"Third distinct report, so the review is hidden and queued for moderators.",url:"POST /reviews/91/report",scr:'<div class="row">user_x<span class="r">⚑ 3 reports</span></div>'+T("warn","Hidden · sent to the moderation queue"),who:"viewer",end:"ok"},
+ dup:{say:"Repeat reports from the same person are ignored.",url:"POST /reviews/91/report",scr:T("info","Already reported · ignored"),end:"hd"},
+ own:{say:"You can't report your own review.",url:"POST /reviews/91/report → 409",scr:T("bad","Can't report your own review"),end:"hd"}},
+"UC-07":{start:{say:"Open the moderation queue. The riskiest reviews come first.",url:"cinelog.local/moderation",scr:'<b>Queue</b><div class="row">review #91<span class="r">0.81</span></div><div class="row">review #77<span class="r">0.66</span></div><div class="row">review #64<span class="r">0.58</span></div>',ch:[["Approve #91","ok","main"],["Re-blur a sentence in #91","rb","main"],["Another moderator acts on #91 at the same moment","race","exc"]]},
+ ok:{say:"Approved, logged, and the writer is notified.",url:"POST /moderation/91/approve",scr:'<div class="row">#91<span class="r">published</span></div><div class="muted">audit: mod_sam approve #91 17:20</div>'+T("ok","Approved · writer notified"),who:"moderator",end:"ok"},
+ rb:{say:"The sentence is blurred and saved as a confirmed spoiler that the Shield will use next time.",url:"POST /moderation/91/reblur",scr:'<div><span class="blur">The killer is the butler.</span></div>'+T("ok","Re-blurred · added to confirmed spoilers"),who:"moderator",end:"ok"},
+ race:{say:"Compare-and-swap: the first change wins, and the second sees the new state and gets 409.",url:"POST /moderation/91/remove → 409",scr:T("bad","409 · review already approved by mod_sam"),end:"hd"}},
+"UC-08":{start:{say:"You run a campus film club. Set it up.",url:"cinelog.local/clubs/new",scr:'<b>New club</b><div class="fld typing">Reel Talk</div><span class="b p">Create</span>',ch:[["Create “Reel Talk”","cr","main"],["Someone outside opens a private club","p403","exc"]]},
+ cr:{say:"Club created. You are its convener.",url:"cinelog.local/clubs/12",scr:'<b>Reel Talk</b><div class="row">Convener<span class="r">you</span></div>',ch:[["Invite three members","mem","main"],["Make it private first","pri","alt"]]},
+ pri:{say:"Private clubs are visible to members only.",url:"PATCH /clubs/12",scr:'<b>Reel Talk 🔒</b>'+T("info","Club is now private"),ch:[["Invite three members","mem","main"]]},
+ mem:{say:"Members joined. Add a film to the shared watchlist.",url:"cinelog.local/clubs/12",scr:'<div class="row">ana · ravi · mei<span class="r">members</span></div>',ch:[["Add Inception to the watchlist","wl","main"]]},
+ wl:{say:"Members can see it, but only you can edit the list.",url:"POST /clubs/12/watchlist",scr:'<div class="row">Inception<span class="r">watchlist</span></div>'+T("ok","Added"),who:"convener",end:"ok"},
+ p403:{say:"Non-members get 403 on a private club.",url:"GET /clubs/12 → 403",scr:T("bad","403 · members only"),end:"hd"}},
+"UC-09":{start:{say:"Your club needs to pick Friday's film fairly.",url:"cinelog.local/clubs/12/polls/new",scr:'<b>Draft poll</b><div class="row">Inception</div><div class="row">Parasite</div><div class="row">Whiplash</div>',ch:[["Open the poll","open","main"],["Cancel the draft","cancel","alt"]]},
+ cancel:{say:"Draft polls can be cancelled.",url:"PATCH /polls/5 → cancelled",scr:T("info","Poll cancelled"),end:"hd"},
+ open:{say:"The poll is open and members are notified. Results update live over WebSocket.",url:"wss://cinelog.local/ws/polls/5",scr:'<b>Live tally</b><div class="muted">Inception</div><div class="bar2"><i style="width:30%"></i></div><div class="muted">Parasite</div><div class="bar2"><i style="width:45%"></i></div><div class="muted">Whiplash</div><div class="bar2"><i style="width:25%"></i></div>',ch:[["Vote Parasite","voted","main"],["Vote again","twice","exc"],["100 members vote at the same moment","burst","alt"]]},
+ voted:{say:"One vote recorded and pushed to everyone's screen.",url:"POST /polls/5/vote → 201",scr:'<div class="muted">Parasite</div><div class="bar2"><i style="width:52%"></i></div>'+T("ok","Vote counted"),ch:[["Close the poll","closed","main"]]},
+ twice:{say:"UNIQUE(poll_id, user_id) refuses the second vote.",url:"POST /polls/5/vote → 409",scr:T("bad","409 · you already voted"),ch:[["Close the poll","closed","main"]]},
+ burst:{say:"200 requests arrive at once (each member votes twice). Exactly 100 are stored; 100 get 409.",url:"POST /polls/5/vote ×200",scr:'<div class="row">accepted<span class="r" style="color:var(--allow)">100</span></div><div class="row">refused 409<span class="r" style="color:var(--deny)">100</span></div>',ch:[["Close the poll","closed","main"]]},
+ closed:{say:"Closed. The result is frozen and kept in the club's history.",url:"PATCH /polls/5 → closed",scr:'<b>Winner: Parasite</b>'+T("ok","Result saved to club history"),who:"convener",ch:[["Try to vote after it closed","late","exc"]],end:"ok"},
+ late:{say:"Votes after closing are rejected.",url:"POST /polls/5/vote → 409",scr:T("bad","409 · poll is closed"),end:"hd"}},
+"UC-10":{start:{say:"A user asked to become a critic. Grant the role safely.",url:"cinelog.local/admin/users",scr:'<div class="fld">user#57</div><div class="row">ana@test<span class="r">Viewer</span></div>',ch:[["Grant Critic","gr","main"],["Remove the last Admin","last","exc"],["A Viewer tries this page","nv","exc"]]},
+ gr:{say:"It applies on the next request and is written to the append-only audit log.",url:"POST /admin/users/57/roles",scr:'<div class="row">ana@test<span class="r">Viewer · Critic</span></div><div class="muted">audit: admin_ravi grant Critic → #57</div>'+T("ok","Role granted"),who:"admin",end:"ok"},
+ last:{say:"Blocked: the system always keeps at least one Admin.",url:"DELETE /admin/users/1/roles/admin → 409",scr:T("bad","Can't remove the last Admin"),end:"hd"},
+ nv:{say:"Deny by default: a Viewer has no role.manage permission.",url:"GET /admin/users → 403",scr:T("bad","403 Forbidden"),end:"hd"}},
+"UC-11":{start:{say:"Keep the catalogue fresh from TMDB.",url:"cinelog.local/admin/catalogue",scr:'<b>Catalogue sync</b><div class="row">Titles<span class="r">10,412</span></div><span class="b p">Start sync</span>',ch:[["Start the sync","run","main"]]},
+ run:{say:"The scheduler queues a BATCH job; changed titles are fetched at ≤ 30 requests per second.",url:"job: sync_catalogue",scr:'<div class="row"><span class="spin"></span>fetching changes<span class="r">token bucket</span></div>',ch:[["TMDB answers normally","done","main"],["TMDB returns 429","bo","alt"],["TMDB is down","down","exc"]]},
+ bo:{say:"CineLog waits for Retry-After, doubles the delay and retries.",url:"GET api.themoviedb.org → 429",scr:'<div class="row">retry in<span class="r">2 s → 4 s</span></div>'+T("warn","Backing off"),ch:[["Retry","done","main"]]},
+ done:{say:"Catalogue stored, and the search index is rebuilt off to the side, then swapped in.",url:"job done",scr:'<div class="row">Titles<span class="r">10,437 (+25)</span></div>'+T("ok","Sync complete · index rebuilt"),who:"admin",end:"ok"},
+ down:{say:"The old catalogue keeps working; searches skip TMDB for 45 s.",url:"GET api.themoviedb.org → timeout",scr:T("warn","TMDB unavailable · using cached catalogue"),end:"hd"}}
+};
+function branches(u){var out=[];Object.keys(S[u]).forEach(function(n){(S[u][n].ch||[]).forEach(function(c){if(c[2]!=="main")out.push(u+":"+n+":"+c[1])})});return out}
+var TOTAL=0;Object.keys(S).forEach(function(u){TOTAL+=branches(u).length});
+var seen={};
+var st={actor:"Viewer",uc:"UC-04",node:"start",path:[]};
+function ucsFor(a){return Object.keys(UC).filter(function(u){return level(a,u)===2})}
+function renderActors(){
+  $("#actors").innerHTML=ACT.map(function(a){return '<button class="av" type="button" data-actor="'+esc(a.id)+'" aria-pressed="'+(st.actor===a.id)+'" style="--c:'+a.c+'"><span class="face">'+a.f+'</span><span><b>'+esc(a.id)+'</b><span>'+a.s+' · '+ucsFor(a.id).length+' UC</span></span></button>'}).join("");
+}
+function renderPick(){var L=ucsFor(st.actor);if(L.indexOf(st.uc)<0){st.uc=L[0];st.node="start";st.path=[]}
+  $("#ucpick").innerHTML=L.map(function(u){var b=branches(u),got=b.filter(function(k){return seen[k]}).length;return '<button type="button" data-uc="'+u+'" aria-pressed="'+(st.uc===u)+'">'+u+(b.length&&got===b.length?'<span class="done">✓ all</span>':'')+'</button>'}).join("");}
+var typer=null;
+function typeSay(txt){var el=$("#say");clearInterval(typer);if(reduce){el.textContent=txt;return}var i=0;el.textContent="";typer=setInterval(function(){i+=2;el.textContent=txt.slice(0,i);if(i>=txt.length)clearInterval(typer)},14)}
+function title(u){var s=UC[u].story;var m=s.match(/(?:I|we) want (?:to )?(.*?)(?: so (?:that )?.*)?$/i);s=m?m[1]:s;s=s.replace(/\.$/,"");return s.charAt(0).toUpperCase()+s.slice(1)}
+function renderStory(){
+  var s=S[st.uc],n=s[st.node];
+  $("#sEy").textContent=st.uc+" · playing as "+st.actor;
+  $("#sTitle").textContent=title(st.uc);
+  typeSay(n.say);
+  $("#url").textContent=n.url;$("#scr").innerHTML=n.scr;
+  if(st.node==="start")$("#who").textContent=st.actor==="Any user"?"signed out":st.actor==="TMDB API"?"system job":"signed in · "+st.actor.toLowerCase();
+  else if(n.who)$("#who").textContent="signed in · "+n.who;
+  $("#endc").innerHTML=n.end?('<div class="endcard '+n.end+'">'+(n.end==="ok"?"✓ Goal reached — the expected result of the flow.":"⚑ Handled safely — one of the exception or boundary paths in the requirements.")+'</div>'):"";
+  var ch=(n.ch||[]).slice();if(n.end)ch.push(["↺ Replay from the start","__restart","main"]);
+  $("#choices").innerHTML=ch.map(function(c){var k=c[1]==="__restart"?"AGAIN":c[2]==="main"?"MAIN":c[2]==="alt"?"ALT":"EXCEPTION";var sn=c[2]!=="main"&&seen[st.uc+":"+st.node+":"+c[1]];return '<button type="button" class="ch '+c[2]+'" data-go="'+c[1]+'" data-kind="'+c[2]+'" data-label="'+esc(c[0])+'"><span class="k">'+k+'</span><span>'+esc(c[0])+(sn?' <span style="color:var(--muted);font-weight:500">· seen</span>':'')+'</span></button>'}).join("");
+  $("#crumbs").innerHTML=st.path.length?'<span>start</span>'+st.path.map(function(p){return '<span class="'+p[1]+'">'+esc(p[0])+'</span>'}).join(""):"";
+  var b=branches(st.uc),got=b.filter(function(k){return seen[k]}).length;
+  $("#paths").innerHTML='Alt / exception paths explored: '+b.map(function(k){return '<i class="'+(seen[k]?"on":"")+'"></i>'}).join("")+' '+got+'/'+b.length;
+  $("#sBr").textContent=Object.keys(seen).length;$("#sTot").textContent=TOTAL;
+}
+function go(next,kind,label){
+  if(next==="__restart"){st.node="start";st.path=[];renderStory();renderPick();return}
+  if(kind!=="main")seen[st.uc+":"+st.node+":"+next]=true;
+  st.path.push([label,kind]);st.node=next;renderStory();renderPick();
+}
+document.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
+  if(b.dataset.actor){st.actor=b.dataset.actor;st.path=[];st.node="start";renderActors();renderPick();renderStory()}
+  else if(b.dataset.uc){st.uc=b.dataset.uc;st.node="start";st.path=[];renderPick();renderStory()}
+  else if(b.dataset.go){go(b.dataset.go,b.dataset.kind,b.dataset.label)}
+  else if(b.dataset.tab){showTab(b.dataset.tab)}
+  else if(b.dataset.lf!==undefined){lf=b.dataset.lf;renderList()}
+  else if(b.dataset.play){var u=b.dataset.play;playAs(UC[u].actors[0],u)}
+});
+function showTab(t){[].forEach.call(document.querySelectorAll("[data-tab]"),function(b){b.setAttribute("aria-selected",String(b.dataset.tab===t))});["play","diag","heat","list"].forEach(function(x){$("#t-"+x).hidden=x!==t});if(t==="diag")drawD();}
+function playAs(actor,uc){st.actor=actor;st.uc=uc;st.node="start";st.path=[];renderActors();renderPick();renderStory();showTab("play");window.scrollTo({top:0,behavior:reduce?"auto":"smooth"})}
+/* ---------- diagram ---------- */
+var NS="http://www.w3.org/2000/svg",svg=$("#dsvg");
+var DA=[["Any user",55,80],["Viewer",55,290],["Critic",55,480],["Club Convener",805,70],["Club Member",805,215],["Moderator",805,345],["Admin",805,470],["TMDB API",805,555]];
+var DU=[["UC-01",250,70],["UC-02",250,160],["UC-03",250,250],["UC-04",250,340],["UC-05",250,430],["UC-06",250,520],["UC-08",610,80],["UC-09",610,190],["UC-07",610,330],["UC-10",610,450],["UC-11",610,550],["NOTIFY",435,170],["SCAN",435,310],["BADGE",435,400],["REVEAL",435,485],["BACKOFF",435,565]];
+var EXTRA={SCAN:"Scan for spoilers",NOTIFY:"Send notification",REVEAL:"Reveal spoiler",BADGE:"Add critic badge",BACKOFF:"Back off & retry"};
+var REL=[["UC-04","SCAN","include"],["UC-09","NOTIFY","include"],["REVEAL","UC-05","extend"],["BADGE","UC-04","extend"],["BACKOFF","UC-11","extend"],["UC-07","SCAN","include"]];
+var pos={},dsel=null,dragging=null,pkt=null;
+function resetPos(){pos={};DA.forEach(function(a){pos["A:"+a[0]]={x:a[1],y:a[2]}});DU.forEach(function(u){pos[u[0]]={x:u[1],y:u[2]}})}
+resetPos();
+function mk(t,a){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);return e}
+function short(u){var s=title(u);return s.length>30?s.slice(0,28)+"…":s}
+function edge(p,q,rx,ry){var dx=p.x-q.x,dy=p.y-q.y;var t=1/Math.sqrt((dx*dx)/(rx*rx)+(dy*dy)/(ry*ry)||1);return{x:q.x+dx*t,y:q.y+dy*t}}
+function drawD(){
+  svg.textContent="";
+  var defs=mk("defs",{});var m=mk("marker",{id:"ar",markerWidth:9,markerHeight:9,refX:8,refY:4.5,orient:"auto"});m.appendChild(mk("path",{d:"M0,0 L9,4.5 L0,9 z",fill:"#5646b0"}));defs.appendChild(m);svg.appendChild(defs);
+  svg.appendChild(mk("rect",{x:150,y:28,width:560,height:585,rx:18,fill:"#f7fafb",stroke:"#11202b","stroke-width":1.5}));
+  var t=mk("text",{x:430,y:20,"text-anchor":"middle","font-size":12,"font-weight":700,fill:"#11202b"});t.textContent="CineLog system boundary";svg.appendChild(t);
+  var gL=mk("g",{}),gR=mk("g",{}),gN=mk("g",{}),gP=mk("g",{});svg.appendChild(gL);svg.appendChild(gN);svg.appendChild(gR);svg.appendChild(gP);
+  Object.keys(UC).forEach(function(u){UC[u].actors.forEach(function(a){var p=pos["A:"+a],q=pos[u];if(!p)return;gL.appendChild(mk("line",{x1:p.x,y1:p.y,x2:q.x,y2:q.y,"class":"lnk"+(dsel===u?" hot":"")}))})});
+  REL.forEach(function(r){var p=pos[r[0]],q=pos[r[1]];var e=edge(p,q,EXTRA[r[1]]?64:76,EXTRA[r[1]]?22:28),s0=edge(q,p,EXTRA[r[0]]?62:74,EXTRA[r[0]]?20:26);p=s0;
+    var g=mk("g",{});var hl=mk("line",{x1:p.x,y1:p.y,x2:e.x,y2:e.y,stroke:"transparent","stroke-width":16});var ln=mk("line",{x1:p.x,y1:p.y,x2:e.x,y2:e.y,"class":"rel"+(dsel===r[0]||dsel===r[1]?" hot":""),"marker-end":"url(#ar)"});
+    var lb=mk("text",{x:(p.x+e.x)/2+6,y:(p.y+e.y)/2-5,"class":"rl"});lb.textContent="«"+r[2]+"»";
+    g.appendChild(hl);g.appendChild(ln);g.appendChild(lb);g.addEventListener("pointerenter",function(){ln.classList.add("hot")});g.addEventListener("pointerleave",function(){if(!(dsel===r[0]||dsel===r[1]))ln.classList.remove("hot")});gR.appendChild(g)});
+  DA.forEach(function(a){var p=pos["A:"+a[0]];var ac=ACT.filter(function(x){return x.id===a[0]})[0];var g=mk("g",{"class":"dn",transform:"translate("+p.x+","+p.y+")"});
+    g.appendChild(mk("rect",{x:-40,y:-36,width:80,height:84,fill:"transparent"}));
+    g.appendChild(mk("circle",{cy:-22,r:10,fill:"#fff",stroke:ac.c,"stroke-width":2}));g.appendChild(mk("path",{d:"M0,-12 V8 M-13,-4 H13 M0,8 L-10,24 M0,8 L10,24",stroke:ac.c,"stroke-width":2,fill:"none"}));
+    var tx=mk("text",{y:40,"text-anchor":"middle","font-size":11,"font-weight":700,fill:"#11202b"});tx.textContent=a[0];g.appendChild(tx);hook(g,"A:"+a[0]);gN.appendChild(g)});
+  DU.forEach(function(u){var p=pos[u[0]],ex=!!EXTRA[u[0]];var g=mk("g",{"class":"dn"+(dsel===u[0]?" sel":""),transform:"translate("+p.x+","+p.y+")"});
+    if(!ex){g.setAttribute("tabindex","0");g.setAttribute("role","button");g.setAttribute("aria-label",u[0]+" "+title(u[0]))}
+    g.appendChild(mk("ellipse",{rx:ex?62:74,ry:ex?20:26,"class":"ov"+(ex?" inc":"")}));
+    var t1=mk("text",{y:ex?4:-4,"text-anchor":"middle","font-size":ex?10.5:10,"font-weight":700,fill:ex?"#5646b0":"#cf4210","font-family":"ui-monospace,monospace"});t1.textContent=ex?EXTRA[u[0]]:u[0];g.appendChild(t1);
+    if(!ex){var t2=mk("text",{y:10,"text-anchor":"middle","font-size":9.5,fill:"#11202b"});t2.textContent=short(u[0]);g.appendChild(t2)}
+    hook(g,u[0]);g.addEventListener("keydown",function(e){if(e.key==="Enter"&&!ex)selectUC(u[0])});gN.appendChild(g)});
+  pkt=gP;
+}
+function svgPt(e){var r=svg.getBoundingClientRect();return{x:(e.clientX-r.left)*860/r.width,y:(e.clientY-r.top)*620/r.height}}
+function hook(g,key){g.addEventListener("pointerdown",function(e){e.preventDefault();var p=svgPt(e);dragging={k:key,ox:pos[key].x-p.x,oy:pos[key].y-p.y,m:0};try{svg.setPointerCapture(e.pointerId)}catch(_){}})}
+svg.addEventListener("pointermove",function(e){if(!dragging)return;var p=svgPt(e);var k=dragging.k;var nx=Math.max(30,Math.min(830,p.x+dragging.ox)),ny=Math.max(40,Math.min(590,p.y+dragging.oy));dragging.m+=Math.abs(nx-pos[k].x)+Math.abs(ny-pos[k].y);pos[k]={x:nx,y:ny};drawD()});
+function endDrag(){if(!dragging)return;var k=dragging.k,m=dragging.m;dragging=null;if(m<4&&UC[k])selectUC(k)}
+svg.addEventListener("pointerup",endDrag);svg.addEventListener("pointercancel",function(){dragging=null});
+var flowTimer=null,raf=null;
+function sendPacket(u){if(reduce||!pkt)return;cancelAnimationFrame(raf);var a=pos["A:"+UC[u].actors[0]],b=pos[u];if(!a)return;var c=mk("circle",{r:7,"class":"pkt"});pkt.appendChild(c);var t0=null;
+  function f(ts){if(!t0)t0=ts;var k=Math.min(1,(ts-t0)/700);var e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;c.setAttribute("cx",a.x+(b.x-a.x)*e);c.setAttribute("cy",a.y+(b.y-a.y)*e);if(k<1)raf=requestAnimationFrame(f);else{c.setAttribute("r",14);c.style.opacity=.25;setTimeout(function(){if(c.parentNode)c.parentNode.removeChild(c)},300)}}
+  raf=requestAnimationFrame(f)}
+function selectUC(u){dsel=u;drawD();sendPacket(u);var x=UC[u];$("#dTitle").textContent=u+" · "+x.actors.join(", ");$("#dDesc").textContent=x.story;
+  $("#dFlow").innerHTML=x.main.split(/\s*(?:→|->)\s*/).map(function(s,i){return '<li><i>'+(i+1)+'</i><span>'+esc(s)+'</span></li>'}).join("");
+  $("#dExc").hidden=false;$("#dStory").hidden=false;playFlow(false);}
+function playFlow(exc){clearInterval(flowTimer);if(exc){$("#dFlow").innerHTML=UC[dsel].alt.split(/;\s*/).map(function(s){return '<li><i>!</i><span>'+esc(s)+'</span></li>'}).join("")}
+  var li=[].slice.call(document.querySelectorAll("#dFlow li"));
+  if(reduce){li.forEach(function(l){l.className=exc?"x":"done"});return}
+  var i=0;flowTimer=setInterval(function(){li.forEach(function(l,j){l.className=j<i?(exc?"x":"done"):(j===i?"on":"")});i++;if(i>li.length)clearInterval(flowTimer)},600)}
+$("#dExc").addEventListener("click",function(){if(dsel)playFlow(true)});
+$("#dStory").addEventListener("click",function(){if(dsel)playAs(UC[dsel].actors[0],dsel)});
+$("#dReset").addEventListener("click",function(){resetPos();drawD()});
+/* ---------- heatmap ---------- */
+function drawHM(){var U=Object.keys(UC);var h='<table><thead><tr><th></th>'+U.map(function(u){return '<th class="uc">'+u+'</th>'}).join("")+'<th class="uc">total</th></tr></thead><tbody>';
+  ACT.forEach(function(a){var tot=0;h+='<tr><th>'+a.f+' '+esc(a.id)+'</th>'+U.map(function(u){var l=level(a.id,u);if(l)tot++;return '<td class="c l'+l+'" data-hm="'+esc(a.id)+'|'+u+'" title="'+esc(a.id)+' · '+u+(l===2?" (primary)":l===1?" (involved)":"")+'">'+(l===2?"●":l===1?"○":"")+'</td>'}).join("")+'<td class="tot">'+tot+'</td></tr>'});
+  h+='<tr><th>actors per UC</th>'+U.map(function(u){return '<td class="tot">'+ACT.filter(function(a){return level(a.id,u)}).length+'</td>'}).join("")+'<td></td></tr></tbody></table>';$("#hm").innerHTML=h;}
+$("#hm").addEventListener("click",function(e){var td=e.target.closest("td[data-hm]");if(!td)return;var p=td.dataset.hm.split("|");var a=p[0],u=p[1];if(level(a,u)!==2)a=UC[u].actors[0];playAs(a,u)});
+/* ---------- list ---------- */
+var lf="All",q="";
+function hl(t){t=esc(t);if(!q)return t;var re=new RegExp("("+esc(q).replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","ig");return t.replace(re,"<mark>$1</mark>")}
+function renderList(){
+  var A=["All"].concat(ACT.map(function(a){return a.id}));
+  $("#lf").innerHTML=A.map(function(a){var n=a==="All"?11:Object.keys(UC).filter(function(u){return level(a,u)}).length;return '<button class="pill" type="button" data-lf="'+esc(a)+'" aria-pressed="'+(lf===a)+'">'+esc(a)+' <span class="n">'+n+'</span></button>'}).join("");
+  var L=Object.keys(UC).filter(function(u){var x=UC[u];return (lf==="All"||level(lf,u))&&(!q||(u+" "+x.actors.join(" ")+" "+x.story+" "+x.main+" "+x.alt).toLowerCase().indexOf(q.toLowerCase())>-1)});
+  $("#grid").innerHTML=L.length?L.map(function(u){var x=UC[u];return '<article class="uc"><h3><span class="id">'+hl(u)+'</span><span>'+hl(x.story)+'</span></h3><div class="who">'+hl(x.actors.join(", "))+'</div><div class="fl"><b>MAIN FLOW</b>'+hl(x.main)+'</div><div class="fl x"><b>ALTERNATIVE / EXCEPTION</b>'+hl(x.alt)+'</div><button class="btn go" type="button" data-play="'+u+'">Play this use case ▸</button></article>'}).join(""):'<p class="note">No use case matches “'+esc(q)+'”.</p>';
+}
+$("#q").addEventListener("input",function(){q=this.value.trim();renderList()});
+renderActors();renderPick();renderStory();drawHM();renderList();
+})();
+</script>
+</body>
+</html>

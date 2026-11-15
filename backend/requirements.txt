@@ -1,0 +1,16 @@
+fastapi>=0.110
+email-validator>=2.0
+uvicorn[standard]>=0.29
+SQLAlchemy>=2.0
+PyJWT>=2.8
+bcrypt>=4.1
+httpx>=0.27
+websockets>=12
+numpy
+scipy
+scikit-learn
+pandas
+joblib
+psycopg[binary]>=3.1   # only needed for PostgreSQL
+onnxruntime      # semantic plot matching (a 23 MB sentence encoder); the layer switches itself off if these are missing
+tokenizers

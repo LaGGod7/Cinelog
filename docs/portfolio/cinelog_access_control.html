@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CineLog Access Control</title>
+<style>
+:root{--bg:#eff3f6;--surface:#fff;--surface2:#f0f4f7;--ink:#11202b;--muted:#526471;--line:#d3dce3;
+--allow:#16794a;--allow-bg:#e2f4ea;--deny:#b42335;--deny-bg:#fbe5e8;--none:#6b7a86;--none-bg:#eef1f4;
+--brand:#cf4210;--brand-bg:#fff0e5;--gate:#0a7479;--gate-bg:#def2f2;--focus:#1b6fd1;
+--sans:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;--mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 var(--sans)}
+.page{max-width:1220px;margin:0 auto;padding:24px 16px 36px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
+.brand{font-weight:800;font-size:34px;letter-spacing:-.02em;color:var(--brand);line-height:1}
+h1{font-size:24px;margin:0;font-weight:700}
+.sub{color:var(--muted);margin:8px 0 0;max-width:82ch}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin:14px 0 14px;font-size:13px;font-weight:600}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.k{width:18px;height:18px;border-radius:5px;display:inline-grid;place-items:center;font-size:12px;font-weight:800;border:1.5px solid;font-style:normal}
+.k.a{color:var(--allow);border-color:var(--allow);background:var(--allow-bg)}
+.k.d{color:var(--deny);border-color:var(--deny);background:var(--deny-bg)}
+.k.n{color:var(--none);border-color:var(--none);background:var(--none-bg);border-style:dashed}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.btn{border:1.5px solid var(--ink);background:var(--surface);border-radius:9px;padding:7px 14px;font-weight:600;font-size:13px}
+.btn.primary{background:var(--ink);color:var(--surface)}
+.btn[aria-pressed=true]{background:var(--brand);border-color:var(--brand);color:#fff}
+.speed{display:inline-flex;border:1.5px solid var(--line);border-radius:9px;overflow:hidden;background:var(--surface)}
+.speed button{border:0;background:none;padding:6px 10px;font-size:12px;font-weight:600}
+.speed button[aria-pressed=true]{background:var(--ink);color:#fff}
+.prog{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:18px;align-items:start}
+.card{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:18px;min-width:0}
+.flow{position:relative;display:grid;grid-template-columns:190px 170px minmax(0,1fr);gap:14px;align-items:stretch}
+#fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:5}
+.roles{display:flex;flex-direction:column;gap:8px}
+.role{position:relative;text-align:left;border:1.5px solid var(--line);background:var(--surface2);border-radius:11px;padding:8px 11px;transition:transform .2s,box-shadow .2s}
+.role b{display:block;font-size:13.5px}.role span{font-size:11.5px;color:var(--muted)}
+.role[aria-pressed=true]{border-color:var(--brand);background:var(--brand-bg);box-shadow:0 0 0 3px rgba(207,66,16,.15)}
+.role.auto{border-style:dashed}
+.role.firing{transform:translateX(4px)}
+.gates{display:flex;gap:12px;justify-content:center}
+.gate{flex:1;border:1.5px solid var(--gate);background:var(--gate-bg);border-radius:12px;display:flex;flex-direction:column;align-items:center;padding:10px 2px;text-align:center;font-size:11px;font-weight:700;color:var(--gate);transition:background .25s,border-color .25s,color .25s,box-shadow .25s}
+.gate b{white-space:nowrap}
+.gate small{font-weight:500;color:var(--muted);font-size:10.5px}
+.gate .ico{margin-top:auto;margin-bottom:6px;font-size:18px;line-height:1;opacity:.85}
+.gate.pass{background:var(--allow-bg);border-color:var(--allow);color:var(--allow);box-shadow:0 0 0 4px rgba(22,121,74,.15)}
+.gate.fail{background:var(--deny-bg);border-color:var(--deny);color:var(--deny);box-shadow:0 0 0 4px rgba(180,35,53,.18);animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.groups{display:grid;gap:8px;min-width:0}
+.grp{border:1.5px solid var(--line);border-radius:11px;padding:8px 10px;background:var(--surface)}
+.grp h3{margin:0 0 6px;font:600 10.5px var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.acts{display:flex;flex-wrap:wrap;gap:6px}
+.act{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:8px;padding:4px 8px;font-size:12.5px;background:var(--surface);transition:transform .2s,box-shadow .2s}
+.act .k{width:16px;height:16px;font-size:11px}
+.act.a{border-color:var(--allow);background:var(--allow-bg)}
+.act.d{border-color:var(--deny);background:var(--deny-bg)}
+.act.n{border-style:dashed;color:var(--muted)}
+.act.cur{outline:3px solid var(--brand);outline-offset:1px}
+.act.hit{transform:scale(1.08);box-shadow:0 0 0 5px rgba(22,121,74,.25)}
+.log{margin-top:14px;border:1.5px solid var(--deny);border-radius:11px;background:var(--deny-bg);padding:9px 12px;font-size:12.5px}
+.log b{color:var(--deny)}
+.log ol{margin:6px 0 0;padding-left:18px;font-family:var(--mono);font-size:11.5px;max-height:120px;overflow:auto}
+.log li.new{animation:flash 1s}
+@keyframes flash{from{background:#fff}to{background:transparent}}
+.panel h2{margin:4px 0 6px;font-size:21px}
+.panel p{margin:0 0 10px;color:var(--muted)}
+.panel h4{font:600 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+.res{border-radius:10px;padding:10px 12px;font-weight:700;margin:8px 0}
+.res.a{background:var(--allow-bg);color:var(--allow)}.res.d{background:var(--deny-bg);color:var(--deny)}.res.n{background:var(--none-bg);color:var(--none)}
+.code{font-family:var(--mono);font-size:12px}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.steps li{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+.steps li i{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:800;border:1.5px solid var(--line);background:var(--surface2)}
+.steps li.ok{color:var(--ink)}.steps li.ok i{border-color:var(--allow);background:var(--allow-bg);color:var(--allow)}
+.steps li.bad{color:var(--deny)}.steps li.bad i{border-color:var(--deny);background:var(--deny-bg);color:var(--deny)}
+ul.rules{margin:0;padding-left:18px}ul.rules li{margin:4px 0}
+.mute{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.stats div{border:1.5px solid var(--line);border-radius:9px;padding:6px;text-align:center}
+.stats b{display:block;font-size:18px}.stats span{font-size:11px;color:var(--muted)}
+@media (max-width:980px){.stage{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.gates{min-height:80px}.roles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}#fx{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="head"><span class="brand">CineLog</span><h1>Access control</h1></div>
+  <p class="sub">Every request travels as a packet through two checks: <b>1 · Sign-in</b> (is there a valid session?) and <b>2 · Permission</b> (does this role hold the right?). Anything not granted is refused and logged. Press <b>Play demo</b> to send every role through every action, or click any action yourself.</p>
+  <div class="legend"><span><i class="k a">✓</i>Allowed</span><span><i class="k d">✕</i>Explicitly denied</span><span><i class="k n">·</i>Not granted (denied by default)</span><span style="color:var(--brand)">● packet in flight</span></div>
+  <div class="controls">
+    <button class="btn primary" id="demo" type="button" aria-pressed="false">▶ Play demo</button>
+    <button class="btn" id="anon" type="button">Try without signing in</button>
+    <button class="btn" id="sys" type="button">Run a system job</button>
+    <button class="btn" id="burst" type="button">Send all actions for this role</button>
+    <span class="speed" id="speed"><button type="button" data-s="1.6">Slow</button><button type="button" data-s="1" aria-pressed="true">Normal</button><button type="button" data-s="0.5">Fast</button></span>
+    <span class="prog" id="prog"></span>
+  </div>
+  <div class="stage">
+    <section class="card">
+      <div class="flow" id="flow">
+        <svg id="fx" aria-hidden="true"></svg>
+        <div class="roles" id="roles"></div>
+        <div class="gates"><div class="gate" id="g1"><b>1 · Sign-in</b><small>session check</small><span class="ico">🔑</span></div><div class="gate" id="g2"><b>2 · Permission</b><small>role → action</small><span class="ico">🛡</span></div></div>
+        <div class="groups" id="groups"></div>
+      </div>
+      <div class="log"><b>Activity log</b> · refused requests are recorded here (<span id="nrej">0</span> refused)<ol id="log"></ol></div>
+    </section>
+    <aside class="card panel" id="panel" aria-live="polite"></aside>
+  </div>
+</main>
+<script>
+(function(){
+"use strict";
+var ROLES=[
+ {id:"viewer",n:"Viewer",s:"logs, rates, reviews, votes"},
+ {id:"critic",n:"Critic",s:"viewer + critic badge & picks"},
+ {id:"convener",n:"Club Convener",s:"runs a club (club-level role)"},
+ {id:"moderator",n:"Moderator",s:"reviews flags, strikes, mutes"},
+ {id:"admin",n:"Administrator",s:"roles, health, audit log"},
+ {id:"anon",n:"Signed-out visitor",s:"no session"},
+ {id:"system",n:"System job",s:"background worker · no user role",auto:true}
+];
+var SIGNED=["viewer","critic","convener","moderator","admin"];
+var G=[
+ {g:"Catalogue",a:[["search","Search films",["*"]],["film","Open a film page",["*"]]]},
+ {g:"Diary",a:[["log","Log a viewing",SIGNED],["rate","Rate aspects",SIGNED],["watch","Edit watchlist",SIGNED]]},
+ {g:"Reviews",a:[["write","Write a review",SIGNED,"muted"],["reveal","Reveal a spoiler",SIGNED],["report","Report a review",SIGNED],["pick","Add a critic pick",["critic"]]]},
+ {g:"Moderation",a:[["queue","Open the risk queue",["moderator","admin"]],["reblur","Approve / re-blur / remove",["moderator","admin"]],["strike","Strike or mute a user",["moderator","admin"],"rank"]]},
+ {g:"Clubs",a:[["vote","Vote in a club poll",SIGNED,"once"],["poll","Create / close a poll",["convener"]],["members","Manage club members",["convener"]]]},
+ {g:"Admin console",a:[["roles","Grant or revoke roles",["admin"]],["health","View system health",["admin"]],["audit","Read the audit log",["admin"]],["auditedit","Edit or delete audit entries",[],"never"]]},
+ {g:"System jobs",a:[["scan","Scan a review for spoilers",["system"]],["sync","Sync catalogue from TMDB",["system","admin"]]]}
+];
+var EXPL={muted:"A muted account can read but cannot post until the mute ends.",rank:"A moderator cannot sanction someone of equal or higher rank.",never:"The audit log is append-only. Nobody, not even an admin, can edit or delete an entry.",once:"One vote per member per poll; the database refuses a second vote."};
+var ACTS=[];G.forEach(function(g){g.a.forEach(function(a){ACTS.push(a)})});
+var st={role:"viewer",act:null,muted:false,rej:0,ok:0,sent:0,speed:1,demo:false,busy:false,queue:[],last:null};
+var $=function(s){return document.querySelector(s)},NS="http://www.w3.org/2000/svg";
+var reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function find(id){for(var i=0;i<ACTS.length;i++)if(ACTS[i][0]===id)return ACTS[i];}
+function rname(id){return ROLES.filter(function(r){return r.id===id})[0].n}
+function decide(role,a){
+  var id=a[0],who=a[2],flag=a[3];
+  if(flag==="never")return{r:"d",gate:2,why:EXPL.never,code:"403 Forbidden"};
+  if(role==="anon"){if(who[0]==="*")return{r:"a",gate:0,why:"Public pages need no session.",code:"200 OK"};return{r:"d",gate:1,why:"No valid session, so the request stops at the sign-in check.",code:"401 Unauthorized"};}
+  if(role==="system"){if(who.indexOf("system")>-1||who[0]==="*")return{r:"a",gate:0,why:"System jobs bypass sign-in and run only predefined rules.",code:"job done"};return{r:"n",gate:2,why:"System jobs can only do the work they were built for.",code:"refused"};}
+  if(flag==="muted"&&st.muted)return{r:"d",gate:2,why:EXPL.muted,code:"403 Forbidden"};
+  if(who[0]==="*"||who.indexOf(role)>-1)return{r:"a",gate:0,why:(flag&&EXPL[flag])?EXPL[flag]:"This role holds the permission.",code:id==="write"?"202 Accepted (scan queued)":"200 OK"};
+  return{r:"n",gate:2,why:"Not in this role's permission set, so it is denied by default.",code:"403 Forbidden"};
+}
+function esc(t){return String(t).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c]})}
+function render(){
+  $("#roles").innerHTML=ROLES.map(function(r){return '<button type="button" class="role'+(r.auto?' auto':'')+'" data-r="'+r.id+'" aria-pressed="'+(st.role===r.id)+'"><b>'+r.n+'</b><span>'+r.s+'</span></button>'}).join("");
+  $("#groups").innerHTML=G.map(function(g){return '<div class="grp"><h3>'+g.g+'</h3><div class="acts">'+g.a.map(function(a){var d=decide(st.role,a);var sym=d.r==="a"?"✓":d.r==="d"?"✕":"·";return '<button type="button" class="act '+d.r+(st.act===a[0]?' cur':'')+'" data-a="'+a[0]+'"><i class="k '+d.r+'">'+sym+'</i>'+esc(a[1])+'</button>'}).join("")+'</div></div>'}).join("");
+  panel();
+}
+function panel(stage){
+  var r=ROLES.filter(function(x){return x.id===st.role})[0],h="";
+  var na=ACTS.filter(function(a){return decide(st.role,a).r==="a"}).length;
+  h+='<span class="code">ROLE</span><h2>'+r.n+'</h2><p>'+r.s+'. Allowed '+na+' of '+ACTS.length+' actions.</p>';
+  if(st.role==="viewer"||st.role==="critic")h+='<label class="mute"><input type="checkbox" id="mutebox"'+(st.muted?' checked':'')+'> Account is muted (3 strikes in 30 days)</label>';
+  if(st.last){var a=find(st.last.a),d=decide(st.last.role,a),s=stage==null?9:stage;
+    var s1=d.gate===1?(s>=1?"bad":""):(s>=1?"ok":""),s2=d.gate===1?"":(s>=2?(d.r==="a"?"ok":"bad"):""),s3=s>=3&&d.r==="a"?"ok":"";
+    h+='<h4>Packet in flight</h4><div><b>'+esc(rname(st.last.role))+' → '+esc(a[1])+'</b></div><ul class="steps"><li class="'+s1+'"><i>1</i>Sign-in check'+(d.gate===1&&s>=1?' · no session':'')+'</li><li class="'+s2+'"><i>2</i>Permission check</li><li class="'+s3+'"><i>3</i>Action runs</li></ul>';
+    if(s>=3||(d.r!=="a"&&s>=d.gate))h+='<div class="res '+d.r+'">'+(d.r==="a"?"Allowed":"Refused")+' · <span class="code">'+d.code+'</span></div><p>'+esc(d.why)+'</p>';}
+  else h+='<h4>Try it</h4><p>Click any action to send a request packet through the two checks, or press Play demo.</p>';
+  h+='<div class="stats"><div><b>'+st.sent+'</b><span>sent</span></div><div><b style="color:var(--allow)">'+st.ok+'</b><span>allowed</span></div><div><b style="color:var(--deny)">'+st.rej+'</b><span>refused</span></div></div>';
+  h+='<h4>Governance rules</h4><ul class="rules"><li>Deny by default: a missing rule never grants access.</li><li>Rights are the union of a user\'s roles; club roles apply only inside that club.</li><li>Checked on the server, not just hidden in the interface.</li><li>Blurred spoiler text is never sent until the reader presses Reveal.</li><li>Every role, moderation and sanction action is written to an append-only audit log.</li></ul>';
+  $("#panel").innerHTML=h;
+  var mb=$("#mutebox");if(mb)mb.addEventListener("change",function(){st.muted=mb.checked;render()});
+}
+/* ---------- packet animation ---------- */
+function rel(el){var f=$("#flow").getBoundingClientRect(),r=el.getBoundingClientRect();return{l:r.left-f.left,r:r.right-f.left,t:r.top-f.top,b:r.bottom-f.top,cx:(r.left+r.right)/2-f.left,cy:(r.top+r.bottom)/2-f.top}}
+function mk(t,a){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);return e}
+function tween(dur,fn){return new Promise(function(res){if(reduce||dur<=0){fn(1);res();return;}var t0=performance.now();(function step(t){var p=Math.min(1,(t-t0)/dur);fn(p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2);if(p<1)requestAnimationFrame(step);else res();})(t0);});}
+function wait(ms){return new Promise(function(r){setTimeout(r,reduce?0:ms)})}
+function send(roleId,actId){
+  st.role=roleId;st.act=actId;st.last={role:roleId,a:actId};
+  render();panel(0);
+  var a=find(actId),d=decide(roleId,a),svg=$("#fx");
+  var fl=$("#flow").getBoundingClientRect();svg.setAttribute("viewBox","0 0 "+fl.width+" "+fl.height);
+  var roleEl=document.querySelector('[data-r="'+roleId+'"]'),actEl=document.querySelector('[data-a="'+actId+'"]');
+  var R=rel(roleEl),A=rel(actEl),G1=rel($("#g1")),G2=rel($("#g2"));
+  var y=R.cy, color=d.r==="a"?"#16794a":"#b42335";
+  var p0={x:R.r,y:y},p1={x:G1.cx,y:y},p2={x:G2.cx,y:y},p3={x:A.l,y:A.cy};
+  svg.textContent="";
+  var trail=mk("path",{d:"M"+p0.x+" "+p0.y+" L"+p1.x+" "+p1.y+" L"+p2.x+" "+p2.y+" C"+(p2.x+60)+" "+p2.y+" "+(p3.x-60)+" "+p3.y+" "+p3.x+" "+p3.y,fill:"none",stroke:"#cf4210","stroke-width":2,"stroke-dasharray":"4 5",opacity:.35});
+  svg.appendChild(trail);
+  var g=mk("g",{}),halo=mk("circle",{r:13,fill:"#cf4210",opacity:.18}),dot=mk("circle",{r:7,fill:"#cf4210",stroke:"#fff","stroke-width":2});
+  var lbl=mk("text",{"font-size":10,"font-family":"ui-monospace,monospace","fill":"#11202b","y":-14,"text-anchor":"middle"});lbl.textContent=actId.toUpperCase();
+  g.appendChild(halo);g.appendChild(dot);g.appendChild(lbl);svg.appendChild(g);
+  function at(x,y){g.setAttribute("transform","translate("+x+","+y+")")}
+  function lerp(a,b,t){return{x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t}}
+  function bez(t){var c1={x:p2.x+60,y:p2.y},c2={x:p3.x-60,y:p3.y},u=1-t;return{x:u*u*u*p2.x+3*u*u*t*c1.x+3*u*t*t*c2.x+t*t*t*p3.x,y:u*u*u*p2.y+3*u*u*t*c1.y+3*u*t*t*c2.y+t*t*t*p3.y}}
+  var sp=st.speed,g1=$("#g1"),g2=$("#g2");g1.className="gate";g2.className="gate";
+  roleEl.classList.add("firing");at(p0.x,p0.y);st.sent++;
+  function stop(gEl,stage){
+    gEl.className="gate fail";dot.setAttribute("fill","#b42335");halo.setAttribute("fill","#b42335");panel(stage);
+    st.rej++;$("#nrej").textContent=st.rej;var li=document.createElement("li");li.className="new";li.textContent=rname(roleId)+" → "+a[1]+" · "+d.code;$("#log").prepend(li);
+    return tween(300*sp,function(t){var s=1+Math.sin(t*Math.PI)*0.8;dot.setAttribute("r",7*s);halo.setAttribute("opacity",.3*(1-t))}).then(function(){return wait(500*sp)});
+  }
+  return tween(500*sp,function(t){var q=lerp(p0,p1,t);at(q.x,q.y)})
+  .then(function(){
+    if(d.gate===1)return stop(g1,1);
+    g1.className="gate pass";panel(1);
+    return tween(450*sp,function(t){var q=lerp(p1,p2,t);at(q.x,q.y)}).then(function(){
+      if(d.r!=="a")return stop(g2,2);
+      g2.className="gate pass";panel(2);dot.setAttribute("fill","#16794a");halo.setAttribute("fill","#16794a");
+      return tween(650*sp,function(t){var q=bez(t);at(q.x,q.y)}).then(function(){
+        st.ok++;actEl=document.querySelector('[data-a="'+actId+'"]');if(actEl)actEl.classList.add("hit");panel(3);
+        return tween(300*sp,function(t){halo.setAttribute("r",13+t*20);halo.setAttribute("opacity",.3*(1-t))}).then(function(){return wait(350*sp)});
+      });
+    });
+  }).then(function(){roleEl.classList.remove("firing");svg.textContent="";g1.className="gate";g2.className="gate";var e=document.querySelector('[data-a="'+actId+'"]');if(e)e.classList.remove("hit");});
+}
+function runQueue(){
+  if(st.busy)return;
+  var next=st.queue.shift();
+  if(!next){if(st.demo){buildDemo();next=st.queue.shift();}else{$("#prog").textContent="";return;}}
+  st.busy=true;
+  $("#prog").textContent=st.demo?("demo · "+rname(next[0])+" · "+(st.total-st.queue.length)+"/"+st.total):(st.queue.length?st.queue.length+" left":"");
+  send(next[0],next[1]).then(function(){st.busy=false;if(st.demo||st.queue.length)setTimeout(runQueue,120);else $("#prog").textContent="";});
+}
+function buildDemo(){st.queue=[];ROLES.forEach(function(r){ACTS.forEach(function(a){st.queue.push([r.id,a[0]])})});st.total=st.queue.length;}
+document.addEventListener("click",function(e){
+  var b=e.target.closest("button");if(!b)return;
+  if(b.dataset.r&&!st.demo){st.role=b.dataset.r;st.act=null;st.last=null;if(b.dataset.r!=="viewer"&&b.dataset.r!=="critic")st.muted=false;render();}
+  else if(b.dataset.a&&!st.demo){st.queue.push([st.role,b.dataset.a]);runQueue();}
+  else if(b.dataset.s){st.speed=+b.dataset.s;[].forEach.call($("#speed").children,function(x){x.setAttribute("aria-pressed",x===b)});}
+});
+$("#anon").addEventListener("click",function(){if(st.demo)return;st.queue.push(["anon","log"],["anon","search"]);runQueue();});
+$("#sys").addEventListener("click",function(){if(st.demo)return;st.queue.push(["system","scan"],["system","roles"]);runQueue();});
+$("#burst").addEventListener("click",function(){if(st.demo)return;ACTS.forEach(function(a){st.queue.push([st.role,a[0]])});runQueue();});
+$("#demo").addEventListener("click",function(){
+  st.demo=!st.demo;this.setAttribute("aria-pressed",st.demo);this.textContent=st.demo?"❚❚ Pause demo":"▶ Play demo";
+  if(st.demo){buildDemo();runQueue();}else{st.queue=[];}
+});
+render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CineLog Acceptance Tests</title>
+<style>
+:root{--bg:#eff3f6;--surface:#fff;--surface2:#f0f4f7;--ink:#11202b;--muted:#526471;--line:#d3dce3;
+--allow:#16794a;--allow-bg:#e2f4ea;--deny:#b42335;--deny-bg:#fbe5e8;--warn:#a86400;--warn-bg:#fff3dc;
+--brand:#cf4210;--brand-bg:#fff0e5;--teal:#0a7479;--teal-bg:#def2f2;--violet:#5646b0;--violet-bg:#eae7f8;--focus:#1b6fd1;
+--sans:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;--mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 var(--sans)}
+.page{max-width:1180px;margin:0 auto;padding:22px 16px 34px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+[hidden]{display:none!important}
+.head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
+.brand{font-weight:800;font-size:32px;letter-spacing:-.02em;color:var(--brand);line-height:1}
+h1{font-size:23px;margin:0;font-weight:700}
+.sub{color:var(--muted);margin:8px 0 14px;max-width:82ch}
+.mono{font-family:var(--mono)}
+.eyebrow{font:600 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.card{background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:16px;min-width:0}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{border:1.5px solid var(--line);background:var(--surface);border-radius:99px;padding:6px 12px;font-size:13px;font-weight:600}
+.pill[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.pill .n{font-family:var(--mono);font-size:11px;opacity:.7;margin-left:4px}
+.btn{border:1.5px solid var(--ink);background:var(--surface);border-radius:9px;padding:7px 14px;font-weight:600;font-size:13px}
+.btn.primary{background:var(--ink);color:#fff}
+.btn.brand{background:var(--brand);border-color:var(--brand);color:#fff}
+.tag{display:inline-block;font:600 10.5px var(--mono);letter-spacing:.06em;padding:2px 8px;border-radius:99px;border:1.5px solid var(--line);background:var(--surface2);white-space:nowrap}
+.tag.m{border-color:var(--teal);color:var(--teal);background:var(--teal-bg)}
+.tag.c{border-color:var(--brand);color:var(--brand);background:var(--brand-bg)}
+.tag.ok{border-color:var(--allow);color:var(--allow);background:var(--allow-bg)}
+.tag.bad{border-color:var(--deny);color:var(--deny);background:var(--deny-bg)}
+.tag.warn{border-color:var(--warn);color:var(--warn);background:var(--warn-bg)}
+.stats{display:flex;flex-wrap:wrap;gap:8px}
+.stat{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:6px 12px;text-align:center;min-width:84px}
+.stat b{display:block;font-size:20px}.stat span{font-size:11px;color:var(--muted)}
+input[type=search]{border:1.5px solid var(--line);border-radius:9px;padding:7px 10px;font:inherit;min-width:0;width:100%;max-width:320px;background:var(--surface)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+button{font-family:inherit;cursor:pointer;color:inherit}
+.top{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center}
+.donut{position:relative;width:132px;height:132px}
+.donut svg{width:100%;height:100%;transform:rotate(-90deg)}
+.donut circle{fill:none;stroke-width:14;transition:stroke-dasharray .5s,stroke-dashoffset .5s}
+.donut .ctr{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.donut .ctr b{font:800 26px var(--sans);display:block;line-height:1}
+.donut .ctr span{font:10px var(--mono);color:var(--muted)}
+.leg{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--muted);margin-top:6px}
+.leg i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.meter{position:relative;height:16px;border-radius:99px;background:linear-gradient(90deg,#f6d3d6 0,#f9e6c5 60%,#cfeedd 100%);margin:10px 0 6px;overflow:hidden;border:1.5px solid var(--line)}
+.meter i{position:absolute;left:0;top:0;bottom:0;background:var(--ink);opacity:.85;border-radius:99px;transition:width .5s}
+.meter .gate{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--brand)}
+.verdict{font-weight:800;font-size:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.verdict .tag{font-size:11px}
+.small{font-size:12.5px;color:var(--muted)}
+.waive{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;margin-top:8px}
+.waive input{margin-top:2px}
+.lab{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:14px;align-items:start;margin-top:14px}
+.fault{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--line);border-radius:11px;padding:9px 10px;margin-bottom:7px;background:var(--surface);transition:border-color .2s,background .2s}
+.fault.on{border-color:var(--deny);background:var(--deny-bg)}
+.fault b{font-size:13px;display:block}
+.fault span{font-size:11.5px;color:var(--muted);display:block;margin-top:2px}
+.fault .tg{position:relative;flex:none;width:38px;height:22px;border-radius:99px;background:#cfd8de;border:0;padding:0;transition:background .2s;margin-top:1px}
+.fault .tg::after{content:"";position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.fault .tg[aria-pressed=true]{background:var(--deny)}
+.fault .tg[aria-pressed=true]::after{transform:translateX(16px)}
+.fault .aff{font:10.5px var(--mono);color:var(--deny);margin-top:4px}
+.term{background:#fff;border-radius:16px;border:1.5px solid var(--line);overflow:hidden;box-shadow:0 8px 28px rgba(17,32,43,.08)}
+.tbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:9px 12px;background:var(--surface2);border-bottom:1.5px solid var(--line)}
+.tbar .dots i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;background:#d5dde3}
+.tbar .dots i:first-child{background:#f3a3a3}.tbar .dots i:nth-child(2){background:#f5d38a}.tbar .dots i:nth-child(3){background:#9fd8b4}
+.tbar .tt{font:600 11px var(--mono);color:var(--muted);margin-right:auto}
+.tb{font:600 12px var(--sans);border-radius:99px;border:1.5px solid var(--line);background:#fff;color:var(--ink);padding:5px 11px;transition:transform .12s,border-color .12s}
+.tb:hover{border-color:var(--ink);transform:translateY(-1px)}
+.tb.go{background:var(--brand);border-color:var(--brand);color:#fff;box-shadow:0 4px 12px rgba(207,66,16,.25)}
+.tb[disabled]{opacity:.4;cursor:not-allowed;transform:none}
+.tb.spd{font-family:var(--mono);padding:5px 9px}
+.tb.spd[aria-pressed=true]{background:var(--teal-bg);border-color:var(--teal);color:var(--teal)}
+.out{height:340px;overflow-y:auto;padding:14px 16px;font:12px/1.65 var(--mono);color:var(--ink);white-space:pre-wrap;overflow-wrap:anywhere;background:#fcfdfe}
+.out .h{color:var(--brand);font-weight:700}
+.out .g{color:var(--teal);font-weight:700}.out .w{color:var(--violet);font-weight:700}.out .t{color:var(--allow);font-weight:700}
+.out .k{color:var(--muted)}
+.out .p{color:var(--allow);font-weight:700;background:var(--allow-bg);border-radius:6px;padding:0 6px}.out .f{color:var(--deny);font-weight:700;background:var(--deny-bg);border-radius:6px;padding:0 6px}
+.out .x{color:var(--deny);display:block;background:var(--deny-bg);border-radius:8px;padding:5px 9px;margin:3px 0 5px;font-family:var(--sans)}
+.out .kn{color:var(--warn);display:block;background:var(--warn-bg);border-radius:8px;padding:5px 9px;margin:3px 0 5px;font-family:var(--sans)}
+.out .sum{color:var(--ink);font-weight:800}
+.out .cur::after{content:"▍";color:var(--brand);animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.prog{height:4px;background:var(--surface2)}.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--brand),var(--teal));transition:width .25s}
+.mid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;margin-top:14px;align-items:start}
+.board{overflow-x:auto}
+.board table{border-collapse:separate;border-spacing:3px;font-size:11px}
+.board th{font:600 10.5px var(--mono);color:var(--muted);text-align:left;white-space:nowrap;padding-right:4px}
+.board th.ty{text-align:center;white-space:normal;line-height:1.15;min-width:48px;vertical-align:bottom}
+.board td{width:48px;height:17px;border-radius:4px;transition:background .3s,transform .3s}
+.board td.na{background:repeating-linear-gradient(45deg,#f3f6f8 0 4px,#fff 4px 8px)}
+.board td.idle{background:#dfe6eb}
+.board td.pass{background:var(--allow)}
+.board td.fail{background:var(--deny)}
+.board td.part{background:#9fd6b6}
+.board td.flash{transform:scale(1.25)}
+.board tr.hi th{color:var(--brand)}
+.fails{display:grid;gap:8px}
+.fl{border:1.5px solid var(--deny);background:var(--deny-bg);border-radius:11px;padding:9px 11px;font-size:12.5px}
+.fl.kn{border-color:var(--warn);background:var(--warn-bg)}
+.fl b{font:700 12px var(--mono)}
+.fl .why{margin:4px 0}
+.fl .req{color:var(--muted);font-size:12px}
+.fl .btn{margin-top:6px;font-size:12px;padding:5px 10px}
+.empty{font-size:13px;color:var(--muted);padding:10px;border:1.5px dashed var(--line);border-radius:11px;text-align:center}
+.lbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:16px 0 10px}
+.lbar input{min-width:0;flex:1 1 200px;max-width:320px}
+.case{border:1.5px solid var(--line);background:var(--surface);border-radius:12px;margin-bottom:7px;overflow:hidden}
+.case>button.hd{width:100%;display:flex;gap:10px;align-items:center;background:none;border:0;padding:10px 12px;text-align:left}
+.case .id{font:700 12px var(--mono);color:var(--brand);flex:none;min-width:52px}
+.case .cr{font-size:13px;flex:1;min-width:0}
+.case .dots{display:flex;gap:3px;flex:none}
+.case .dots i{width:10px;height:10px;border-radius:3px;background:#dfe6eb}
+.case .dots i.pass{background:var(--allow)}.case .dots i.fail{background:var(--deny)}
+.case .bd{padding:0 12px 12px;display:grid;gap:8px}
+.sc{border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12.5px;background:var(--surface2)}
+.sc.pass{border-color:var(--allow)}.sc.fail{border-color:var(--deny)}
+.sc .nm{display:flex;gap:8px;align-items:center;font-weight:700;margin-bottom:3px;flex-wrap:wrap}
+.sc .ln{margin:2px 0}.sc .ln b{font:700 10.5px var(--mono);letter-spacing:.05em;color:var(--teal);margin-right:6px}
+.sc .dt{font:11px var(--mono);color:var(--muted);margin-top:3px}
+mark{background:#ffe08a;color:inherit;border-radius:3px;padding:0 1px}
+.note{font-size:12px;color:var(--muted);margin-top:10px}
+@media (max-width:860px){.lab,.mid{grid-template-columns:1fr}}
+@media (max-width:520px){.top{grid-template-columns:1fr;justify-items:start}.out{height:300px;font-size:11.5px}.case .cr{font-size:12.5px}}
+@media (prefers-reduced-motion:reduce){.out .cur::after{animation:none}}
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="head"><span class="brand">CineLog</span><h1>Acceptance test lab</h1></div>
+  <p class="sub"><b id="nCases">29</b> acceptance cases with <b id="nSc">39</b> Given / When / Then scenarios. <b>Break the system</b> with a fault switch, <b>run the suite</b> in the console, watch the coverage board fill in, then fix the fault and re-run. Runs here are <b>simulations</b> of the written test plan, not live test results, except NFR-02, which shows the real measured failure.</p>
+
+  <div class="card top">
+    <div>
+      <div class="donut"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="40" stroke="#e3e9ee"/><circle id="dP" cx="50" cy="50" r="40" stroke="var(--allow)" stroke-dasharray="0 252"/><circle id="dF" cx="50" cy="50" r="40" stroke="var(--deny)" stroke-dasharray="0 252"/></svg>
+        <div class="ctr"><div><b id="pct">0%</b><span id="pctS">0 / 39 run</span></div></div></div>
+      <div class="leg"><span><i style="background:var(--allow)"></i><b id="nP">0</b> pass</span><span><i style="background:var(--deny)"></i><b id="nF">0</b> fail</span><span><i style="background:#e3e9ee"></i><b id="nN">39</b> not run</span></div>
+    </div>
+    <div>
+      <div class="eyebrow">Gate 1 readiness</div>
+      <div class="verdict" id="verdict">Not assessed — run the suite</div>
+      <div class="meter" aria-hidden="true"><i id="mBar" style="width:0"></i><span class="gate" style="left:calc(100% - 2px)"></span></div>
+      <div class="small" id="mTxt">Gate 1 needs every scenario run, every high-risk case passing, and no unexplained failures.</div>
+      <label class="waive"><input type="checkbox" id="waive"><span>Record NFR-02 as a <b>documented known issue</b> for Gate 1 (team decision, not a pass).</span></label>
+    </div>
+  </div>
+
+  <div class="lab">
+    <div class="card">
+      <div class="eyebrow">Fault injection</div>
+      <p class="small" style="margin:4px 0 10px">Flip a switch to break one safeguard, then run the suite and see which tests catch it.</p>
+      <div id="faults"></div>
+      <button class="btn" type="button" id="fixAll" style="margin-top:4px">Fix everything</button>
+    </div>
+    <div>
+      <div class="term">
+        <div class="tbar"><span class="dots"><i></i><i></i><i></i></span><span class="tt">test runner · simulated</span>
+          <button class="tb go" type="button" id="runAll">▶ Run all</button>
+          <button class="tb" type="button" id="runHi">▶ High-risk</button>
+          <button class="tb" type="button" id="runFail">↻ Re-run failing</button>
+          <button class="tb" type="button" id="stop" disabled>■ Stop</button>
+          <button class="tb spd" type="button" data-spd="1" aria-pressed="false">1×</button>
+          <button class="tb spd" type="button" data-spd="4" aria-pressed="true">4×</button>
+          <button class="tb spd" type="button" data-spd="0" aria-pressed="false">⚡</button>
+        </div>
+        <div class="prog"><i id="prog"></i></div>
+        <div class="out" id="out" aria-live="polite"><span class="k">$ cinelog test --suite acceptance
+# 39 scenarios ready. Press ▶ Run all, or flip a fault switch first.
+</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mid">
+    <div class="card board">
+      <div class="eyebrow">Coverage board · requirement × test type</div>
+      <div id="board" style="margin-top:8px"></div>
+      <div class="leg"><span><i style="background:var(--allow)"></i>passing</span><span><i style="background:var(--deny)"></i>failing</span><span><i style="background:#9fd6b6"></i>partly run</span><span><i style="background:#dfe6eb"></i>not run</span><span><i style="background:repeating-linear-gradient(45deg,#f3f6f8 0 3px,#fff 3px 6px);border:1px solid var(--line)"></i>no test of this type</span></div>
+    </div>
+    <div class="card">
+      <div class="eyebrow">Failures &amp; what they mean</div>
+      <div class="fails" id="fails" style="margin-top:8px"><div class="empty">No failures yet. Run the suite.</div></div>
+    </div>
+  </div>
+
+  <div class="lbar"><div class="pills" id="filters"></div><input type="search" id="q" placeholder="Search cases… try “409” or “blur”" aria-label="Search cases"></div>
+  <div id="list"></div>
+  <p class="note">Durations shown in the console are simulated. NFR-02 figures come from the 3,000-review stress test of the Spoiler Shield.</p>
+</main>
+<script>
+(function(){
+"use strict";
+var DATA={"FR": [["FR-01", "The system shall sign in a user via Google (OAuth 2.0) or email + password when valid credentials are given, producing a secure session.", "Mandatory"], ["FR-02", "The system shall check every request against the role–permission matrix (site roles + club roles), allowing it or refusing with HTTP 403.", "Mandatory"], ["FR-03", "The system shall let an Admin grant or revoke roles for a selected user, producing the new role and an audit entry (who, what, when).", "Mandatory"], ["FR-04", "The system shall show up to 10 title suggestions when 2+ letters are typed, and filter results by genre, cast and year.", "Mandatory"], ["FR-05", "The system shall keep a local film catalogue synced from TMDB, fetching missing films on demand and showing TMDB attribution.", "Mandatory"], ["FR-06", "The system shall save a diary entry (date, 0.5–5 stars, format, rewatch, notes) or a watchlist item in one click.", "Mandatory"], ["FR-07", "The system shall record ratings on 5 aspects (Story, Acting, Visuals, Music, Pacing), producing film averages and a personal taste profile.", "Mandatory"], ["FR-08", "The system shall scan every new review for spoilers before it is visible (word list, plot matching and a trained classifier), blurring risky sentences behind a Reveal button.", "Mandatory"], ["FR-09", "The system shall move each review through a fixed lifecycle (Pending Scan → Published / Held → Published / Removed), rejecting any invalid transition with HTTP 409.", "Mandatory"], ["FR-10", "The system shall hide a review automatically when 3 different users report it and place it in the moderator queue.", "Mandatory"], ["FR-11", "The system shall show Moderators flagged reviews ordered by risk, allowing approve, re-blur, remove and adding terms to the film's spoiler word list.", "Mandatory"], ["FR-12", "The system shall let a Club Convener create a club, invite or remove members, assign club roles and manage a shared watchlist.", "Mandatory"], ["FR-13", "The system shall move each club poll through Draft → Open → Closed (or Cancelled), accepting votes only while Open and keeping closed results in club history.", "Mandatory"], ["FR-14", "The system shall accept exactly one vote per member per poll, even when members vote at the same moment.", "Mandatory"], ["FR-15", "The system shall notify users when a poll opens, a screening is fixed or their review is actioned, unless they switch notifications off.", "Mandatory"], ["FR-16", "The system shall offer every function through one responsive web app, validating every input in the browser and again on the server.", "Mandatory"], ["FR-17", "The system shall update poll results on members' screens live, without a page reload.", "Challenge"], ["FR-18", "The system shall let users follow others and show a merged feed of their recent activity.", "Challenge"], ["FR-19", "The system shall suggest films and users with similar taste based on ratings.", "Challenge"], ["FR-20", "The system shall apply strikes and temporary mutes to repeat offenders (3 strikes in 30 days → 3-day mute).", "Challenge"]], "NFR": [["NFR-01", "The search engine shall return autocomplete suggestions quickly over the full catalogue.", "Performance", "p95 ≤ 100 ms (server-side) over 10,000+ titles"], ["NFR-02", "The Spoiler Shield shall catch most spoiler reviews while keeping wrong blurs low.", "Accuracy", "≥ 85% of spoiler reviews caught; ≤ 10% of clean reviews wrongly blurred on a labelled test set"], ["NFR-03", "The API shall respond within target under concurrent load.", "Performance", "p95 ≤ 300 ms with 100 concurrent users"], ["NFR-04", "The storage engine shall keep data correct under concurrent writes.", "Reliability", "0 duplicate votes and 0 lost updates in a 100-user concurrent test"], ["NFR-05", "The background scheduler shall process jobs reliably under sustained load.", "Reliability", "≥ 50 jobs/min; 0 lost jobs and 0 deadlocks in a 1-hour soak test"], ["NFR-06", "The system shall resist common web attacks.", "Security", "bcrypt passwords; CSRF and rate-limit checks; 0 high/critical OWASP ZAP findings"], ["NFR-07", "Every engine shall be independently testable.", "Maintainability", "Automated tests per engine; ≥ 80% line coverage on engine code"], ["NFR-08", "A new user shall log a film quickly without training.", "Usability", "Median ≤ 30 s and ≤ 3 clicks (10-user timed test); usable at 360 px width"], ["NFR-09", "The system shall run on one laptop and stay within TMDB terms.", "Portability / Compliance", "CPU only, no GPU; TMDB calls kept below its rate limit with back-off on HTTP 429"]], "UC": [["UC-01", "Any user", "As a user, I want to sign in with Google or email so that my logs and roles are safe.", "Choose Google or email → identity verified → session created → home page opens.", "First Google sign-in creates a Viewer account; 6th attempt within 1 min → HTTP 429; Google down → email sign-in offered."], ["UC-02", "Viewer", "As a viewer, I want to find a film and log it in seconds.", "Type 2+ letters → pick a suggestion → set date and stars → save to diary.", "1 letter → no suggestions; film not in catalogue → fetched from TMDB; same film again → saved as a rewatch."], ["UC-03", "Viewer", "As a viewer, I want to rate a film by aspect so others know why I liked it.", "Open a logged film → rate the aspects → film averages and taste profile update.", "Rate only some aspects; value outside 0.5–5 rejected."], ["UC-04", "Viewer, Critic", "As a writer, I want my review checked for spoilers before others read it.", "Write and submit → HTTP 202, review Pending Scan → Spoiler Shield scans it → Published with risky sentences blurred.", "Medium risk → held for a moderator; empty or over-length review rejected; muted user cannot post."], ["UC-05", "Viewer", "As a reader, I want spoiler-safe reviews so I can decide whether to watch.", "Open film page → read reviews with spoiler sentences blurred → press Reveal to see one.", "Hidden / Removed reviews never listed; blurred text is sent only to the reader who reveals it."], ["UC-06", "Viewer", "As a reader, I want to report a spoiler that slipped through.", "Click Report and pick a reason → 3rd distinct report → review hidden and queued.", "2 reports do not hide; repeat report ignored; own review cannot be reported."], ["UC-07", "Moderator", "As a moderator, I want the riskiest reviews first.", "Open queue sorted by risk → approve, re-blur or remove → action logged, writer notified.", "Add terms without changing status; two moderators act at once → first wins, second gets 409."], ["UC-08", "Club Convener", "As a convener, I want one place to manage my club.", "Create club → invite members → add films to shared watchlist.", "Make club public or private; non-member opening a private club → HTTP 403."], ["UC-09", "Club Convener, Club Member", "As a club, we want a fair poll with a permanent result.", "Convener creates poll → opens it → each member votes once → results update live → poll closes and result is saved.", "Second vote → 'already voted'; vote after close → rejected; convener cancels a draft poll."], ["UC-10", "Admin", "As an admin, I want to grant or revoke roles safely.", "Search user → grant or revoke role → applies on next request and is audit-logged.", "Non-admin → 403; tampered token → 401; last Admin cannot be removed."], ["UC-11", "Admin, TMDB API", "As an admin, I want the catalogue kept up to date automatically.", "Scheduler starts sync → changed titles fetched from TMDB → catalogue stored → search index rebuilt.", "TMDB 429 or down → back-off and retry; the existing catalogue keeps working."]], "AC": [["FR-01", "Google and email sign-in both create an HTTP-only session, wrong credentials show a generic error, and signed-out users are redirected from protected pages.", "Functional test + manual Google login"], ["FR-02", "Every role performs exactly the matrix actions, and privilege-escalation attempts (e.g. Viewer calling a moderator action, edited token) are refused.", "Automated access-control test matrix (normal + negative)"], ["FR-03", "A role change applies on the next request and appears in the audit log with actor, action and time.", "Functional test + audit-log check"], ["FR-04", "2+ letters return ≤ 10 suggestions, filters return only matching films, and predefined queries return the expected top results.", "Automated query test set"], ["FR-05", "Missing films are fetched from TMDB and cached, attribution is visible, and sync backs off and resumes on HTTP 429.", "Sync test with mocked 429"], ["FR-06", "A diary entry saves all fields (0.5-star steps), the watchlist toggles in one click, and data persists after reload.", "Functional UI test"], ["FR-07", "Any subset of aspects can be rated and film averages match a manual calculation.", "Functional test + calculation check"], ["FR-08", "No review is visible before its scan completes, risky sentences are blurred with Reveal, and blurred text is not sent to the browser until revealed.", "Labelled review set + API test"], ["FR-09", "Every valid transition succeeds and every invalid one returns 409 with no state change.", "State-transition test (all pairs)"], ["FR-10", "The 3rd distinct report hides and queues the review; 2 reports do not; duplicate and self-reports are ignored.", "Functional + boundary test"], ["FR-11", "The queue is ordered by risk, moderator actions apply immediately and are logged, and non-moderators get 403.", "Functional + role test"], ["FR-12", "A convener can manage members and the shared watchlist, members can only view, and non-members get 403 on private clubs.", "Functional + role test"], ["FR-13", "Votes succeed only while Open, Draft can be cancelled, Closed polls are read-only, and invalid transitions return 409.", "State-transition test"], ["FR-14", "After 100 members each vote twice at the same moment, exactly 100 votes are stored.", "100-user concurrent vote test"], ["FR-15", "Notifications for the 3 events are delivered, failed e-mails are retried, and opted-out users receive none.", "Test outbox / SMTP inbox"], ["FR-16", "FR-01 to FR-15 are reachable in the web app, invalid input is rejected by both browser and API, and layout works at 360 px and desktop width.", "UI test + direct API calls"], ["FR-17", "A vote appears on other members' screens within 2 s, with automatic reconnect if the live link drops.", "Two-browser WebSocket test"], ["FR-18", "Follow/unfollow works and the feed shows the latest activities of followed users, newest first.", "Functional test on seeded data"], ["FR-19", "Suggestions match a hand-computed similarity on seeded ratings.", "Calculation check on seeded data"], ["FR-20", "The 3rd strike within 30 days mutes the account for 3 days; a muted user can read but not post.", "Functional + time-boundary test"], ["NFR-01", "p95 ≤ 100 ms over 1,000 random prefixes on 10,000+ titles.", "Benchmark script"], ["NFR-02", "≥ 85% of spoiler reviews caught and ≤ 10% of clean reviews wrongly blurred on the held-out labelled set.", "Labelled test set evaluation"], ["NFR-03", "p95 ≤ 300 ms during a 10-minute run with 100 concurrent users.", "Load test"], ["NFR-04", "0 duplicate votes and 0 lost updates after the concurrent test.", "Concurrency script + database count"], ["NFR-05", "≥ 50 jobs/min with 0 lost jobs and 0 deadlocks over 1 hour.", "Soak test with job counters"], ["NFR-06", "Passwords are bcrypt-only, CSRF and rate limits hold, and ZAP reports 0 high/critical issues.", "OWASP ZAP scan + security tests"], ["NFR-07", "Each engine has its own test suite with ≥ 80% coverage.", "Coverage report"], ["NFR-08", "Median time to log a film is ≤ 30 s with ≤ 3 clicks across 10 users.", "Timed usability test"], ["NFR-09", "The system runs on a CPU-only laptop and no TMDB burst exceeds the limit.", "Deployment test + request-rate log"]], "ENG": [["E1", "Search & Spoiler Matching (DSA)", "Fast in-memory lookup and spoiler matching over film and review text: trie, inverted index, Aho–Corasick, TF-IDF plot matching, risk ordering.", "FR-04, FR-08, FR-11, FR-18, FR-19, NFR-01, NFR-02", "Manish Singri"], ["E2", "Storage & Transaction (DBMS)", "Consistent permanent storage and correct concurrent updates: 3NF schema, ACID transactions, unique vote rule, indexes.", "FR-06, FR-07, FR-14, NFR-03, NFR-04", "Goureesh N Doddamani"], ["E3", "Background Job Scheduler (OS)", "Runs slow work (spoiler scans, TMDB sync, e-mail) off the request path on a bounded priority queue and worker thread pool, with retries and LRU caching.", "FR-05, FR-15, NFR-05, NFR-09", "Ashutosh Kulkarni"], ["E4", "Secure Access & Communication (CN & Security)", "Authentication, sessions and traffic control: OAuth 2.0, JWT cookies, bcrypt, CSRF tokens, token-bucket rate limiting, TMDB and SMTP clients.", "FR-01, NFR-06", "Goureesh N Doddamani"], ["E5", "Role, Permission & Workflow (SE)", "Role-based authorisation, review and poll state machines, report threshold, strikes and the audit trail; deny by default.", "FR-02, FR-03, FR-09, FR-10, FR-12, FR-13, FR-20, NFR-07", "Ashutosh Kulkarni"], ["E6", "Client–Server Interaction (Web Tech)", "REST API contract, client and server validation, WebSocket live poll results, responsive role-based views.", "FR-16, FR-17, NFR-08", "Omkar A"]]};
+var $=function(s){return document.querySelector(s)};
+var reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+var SC={
+"FR-01":[["Normal","a registered user and Google sign-in configured","they sign in with Google or e-mail","an HTTP-only session cookie is set and the home page opens","viewer@test.cinelog / valid password"],["Negative","a registered user","they enter a wrong password","a generic “invalid credentials” error is shown (no hint whether the e-mail exists)","wrong password ×1"]],
+"FR-02":[["Normal","each of the 5 roles signed in","they call every endpoint in the matrix","allowed actions return 2xx and all others return 403","5 roles × 21 actions"],["Escalation","a Viewer session","they call a moderator endpoint or send an edited token","the request is refused (403 / 401) and logged","POST /moderation/approve, tampered JWT"]],
+"FR-03":[["Normal","an admin and a Viewer account","the admin grants Moderator","the next request carries the new role and the audit log shows actor, action and time","user#57"]],
+"FR-04":[["Normal","10,000+ titles indexed","the user types “in”","≤ 10 suggestions return, all starting with “in”","prefix “in”"],["Boundary","the same catalogue","the user types one letter","no suggestions are returned","prefix “i”"]],
+"FR-05":[["Normal","a film missing from the local catalogue","a user searches for it","it is fetched once from TMDB, cached and shown with attribution","“Oppenheimer”"],["Rate limit","TMDB replies 429 with Retry-After","the sync job runs","it waits, retries and resumes without losing titles","mocked 429"]],
+"FR-06":[["Normal","a signed-in Viewer","they log a film with date, 4.5 stars, format and rewatch","the entry is saved (201) and still there after reload","Inception · 4.5 · Theatre"]],
+"FR-07":[["Normal","3 users rating the same film","each rates some of the 5 aspects","film averages equal a hand calculation","Story 4.5/3.5/4.0"]],
+"FR-08":[["Hidden until scanned","a new review","it is submitted","the API returns 202 and no other user can see it before the scan ends","review with 3 sentences"],["Blur","a review with a high-risk sentence","the scan finishes","that sentence is blurred and its text is not in the API response","risk 0.86 sentence"],["Reveal","a blurred review","a reader presses Reveal","only that reader receives the hidden text","GET /reviews/{id}/reveal"]],
+"FR-09":[["Valid","a review in pending_scan","the scan completes","it moves to published or held","state pairs"],["Invalid","a removed review","anyone tries to publish it","409 is returned and the state is unchanged","removed → published"]],
+"FR-10":[["Threshold","a published review","3 different users report it","it is hidden and queued","users A, B, C"],["Boundary","a published review","2 users report it, or one user reports twice","it stays visible","A, B · A ×2"]],
+"FR-11":[["Ordering","3 flagged reviews with risk 0.58, 0.81, 0.66","a moderator opens the queue","they appear 0.81, 0.66, 0.58","3 seeded reviews"],["Role","a Viewer session","they open the queue","403 is returned","GET /moderation/queue"]],
+"FR-12":[["Normal","a club and its convener","the convener invites, removes and edits the watchlist","members see the changes but cannot edit","club “Reel Talk”"]],
+"FR-13":[["Lifecycle","a draft poll","the convener opens then closes it","votes are accepted only while open; closed results are read-only","draft → open → closed"]],
+"FR-14":[["Concurrency","an open poll with 100 members","every member votes twice at the same moment","exactly 100 votes are stored and 100 requests get 409","200 parallel requests"]],
+"FR-15":[["Normal","members with notifications on, one opted out","a poll opens","everyone but the opted-out member is notified; failed sends are retried","3 members"]],
+"FR-16":[["Validation","the web app at 360 px and desktop","a user submits an invalid form","both the browser and the API reject it with a clear message","rating 7 / 5"]],
+"FR-17":[["Live","two browsers on the same poll","one votes","the other updates within 2 s; it reconnects if the socket drops","2 browser tabs"]],
+"FR-18":[["Feed","user A follows B","B logs a film","it appears at the top of A’s feed","seeded users"]],
+"FR-19":[["Similarity","seeded ratings for 5 users","suggestions are computed","they match a hand-computed similarity","5 × 10 ratings"]],
+"FR-20":[["Mute","a writer with 2 strikes in 30 days","a moderator issues a 3rd strike","the account is muted 3 days: reads work, posts return 403","strike dates −20 d, −5 d, now"],["Expiry","a writer with 2 strikes, one 31 days old","a 3rd strike is issued","no mute (only 2 in the window)","strike dates −31 d, −5 d, now"]],
+"NFR-01":[["Benchmark","10,000+ titles loaded","1,000 random prefixes are queried","server-side p95 ≤ 100 ms","benchmark script"]],
+"NFR-02":[["Accuracy","a held-out labelled review set","the Shield scores every review","≥ 85% of spoilers caught and ≤ 10% of clean reviews wrongly blurred","held-out test split"]],
+"NFR-03":[["Load","100 concurrent virtual users","they browse and write for 10 minutes","API p95 ≤ 300 ms","load script"]],
+"NFR-04":[["Integrity","the concurrent vote and rating test","the database is counted afterwards","0 duplicate votes and 0 lost updates","DB count queries"]],
+"NFR-05":[["Soak","a steady stream of scan, sync and e-mail jobs","the scheduler runs for 1 hour","≥ 50 jobs/min, 0 lost jobs, 0 deadlocks","job counters"]],
+"NFR-06":[["Security","the deployed app","OWASP ZAP and the security tests run","0 high/critical findings; CSRF and rate limits hold","ZAP baseline scan"]],
+"NFR-07":[["Coverage","each engine’s test suite","the coverage report is generated","≥ 80% line coverage per engine","pytest --cov"]],
+"NFR-08":[["Usability","10 first-time users","each logs a film","median ≤ 30 s and ≤ 3 clicks","stopwatch + click count"]],
+"NFR-09":[["Footprint","a CPU-only laptop","the full system runs and syncs","no GPU needed and TMDB stays under its rate limit","request-rate log"]]
+};
+var HIGH=["FR-02","FR-08","FR-09","FR-10","FR-13","FR-14","FR-20","NFR-02","NFR-04","NFR-06"];
+
+var CASES=DATA.AC.map(function(a){return{id:a[0],crit:a[1],method:a[2],sc:SC[a[0]]||[],kind:a[0].indexOf("NFR")===0?"NFR":"FR",hi:HIGH.indexOf(a[0])>-1}});
+var REQ={};(DATA.FR||[]).forEach(function(r){REQ[r[0]]=r[1]});(DATA.NFR||[]).forEach(function(r){REQ[r[0]]=r[1]+(r[3]?" (target: "+r[3]+")":"")});
+var ALL=[];CASES.forEach(function(c){c.sc.forEach(function(s){ALL.push({c:c,s:s,k:c.id+":"+s[0]})})});
+/* test types */
+var TYPES=[["fn","Functional"],["neg","Negative / boundary"],["con","Concurrency"],["sec","Security"],["q","Quality / perf"],["us","Usability"]];
+var TMAP={Negative:"neg",Boundary:"neg",Invalid:"neg",Validation:"neg",Expiry:"neg","Rate limit":"neg",Concurrency:"con",Integrity:"con",Escalation:"sec",Role:"sec",Security:"sec",Benchmark:"q",Accuracy:"q",Load:"q",Soak:"q",Coverage:"q",Footprint:"q",Usability:"us"};
+function typeOf(n){return TMAP[n]||"fn"}
+/* the one real, known failure */
+var KNOWN={"NFR-02:Accuracy":"Measured on the 3,000-review stress set: 98–99.6% of spoilers caught (target ≥ 85% ✓), but ~40–44% of clean reviews wrongly blurred (target ≤ 10% ✗). Fixing it needs engine work (calibration / better negatives), so no switch here can make it pass."};
+/* faults */
+var FAULTS=[
+ {id:"uniq",n:"Drop UNIQUE(poll_id, user_id)",d:"Remove the database constraint that allows one vote per member.",b:{"FR-14:Concurrency":"expected 100 votes stored, got 137: duplicate votes from the same members slipped through the race.","NFR-04:Integrity":"integrity sweep found 37 duplicate (poll_id, user_id) rows."}},
+ {id:"csrf",n:"Disable CSRF check",d:"Accept state-changing POSTs without the CSRF token.",b:{"NFR-06:Security":"a forged cross-site POST /diary returned 201; expected 403."}},
+ {id:"scan",n:"Skip the spoiler scan",d:"Publish reviews immediately instead of holding them as pending_scan.",b:{"FR-08:Hidden until scanned":"review was visible to other users 40 ms after submit, before any scan.","FR-08:Blur":"no sentence was blurred because the scan never ran."}},
+ {id:"thr",n:"Raise blur threshold 0.70 → 0.95",d:"Only blur sentences the model is almost certain about.",b:{"FR-08:Blur":"a sentence scored 0.91 was published unblurred; expected blurred at ≥ 0.70."}},
+ {id:"leak",n:"Send blurred text in the API",d:"Include the hidden sentence in the review JSON and just blur it with CSS.",b:{"FR-08:Reveal":"the blurred sentence's text was found in the GET /reviews response before Reveal was pressed."}},
+ {id:"deny",n:"Remove deny-by-default",d:"Let any route that is missing from the permission matrix through.",b:{"FR-02:Normal":"Viewer called an unlisted action (/admin/export) and got 200; expected 403.","FR-02:Escalation":"a tampered token reached a moderator endpoint and got 200.","FR-11:Role":"a Viewer opened the moderation queue."}},
+ {id:"rep",n:"Report threshold = 2",d:"Hide a review after two reports instead of three.",b:{"FR-10:Boundary":"review hidden after 2 distinct reports; expected visible until the 3rd."}},
+ {id:"mute",n:"Mute window off by one",d:"Compare mute expiry with ≤ instead of <.",b:{"FR-20:Expiry":"user was still muted at exactly 3 days 0 s; expected the mute to have ended."}},
+ {id:"bo",n:"Ignore TMDB Retry-After",d:"Retry TMDB instantly after a 429 instead of backing off.",b:{"FR-05:Rate limit":"after the mocked 429 the job retried 40 times in 1 s and lost 12 titles."}}
+];
+var ON={};
+var RES={};/* k -> {s:'pass'|'fail', ms, why, kn} */
+var st={f:"All",q:"",open:{}};
+var speed=4,running=false,stopFlag=false;
+function seedMs(k){var h=0;for(var i=0;i<k.length;i++)h=(h*31+k.charCodeAt(i))>>>0;var base=k.indexOf("NFR-05")===0?5400:k.indexOf("NFR-03")===0?2100:k.indexOf("Concurrency")>0?860:40;return base+h%380}
+function verdictFor(k){if(KNOWN[k])return{s:"fail",why:KNOWN[k],kn:true};for(var i=0;i<FAULTS.length;i++){var f=FAULTS[i];if(ON[f.id]&&f.b[k])return{s:"fail",why:f.b[k],fault:f.id}}return{s:"pass"}}
+/* ---------- faults UI ---------- */
+function renderFaults(){$("#faults").innerHTML=FAULTS.map(function(f){var keys=Object.keys(f.b);return '<div class="fault'+(ON[f.id]?" on":"")+'"><button class="tg" type="button" data-fault="'+f.id+'" aria-pressed="'+!!ON[f.id]+'" aria-label="'+esc(f.n)+'"></button><div><b>'+esc(f.n)+'</b><span>'+esc(f.d)+'</span>'+(ON[f.id]?'<div class="aff">breaks → '+keys.map(function(k){return esc(k.replace(":"," · "))}).join(", ")+'</div>':'')+'</div></div>'}).join("")}
+/* ---------- console ---------- */
+var out=$("#out");
+function wait(ms){return new Promise(function(r){setTimeout(r,ms)})}
+function scroll(){out.scrollTop=out.scrollHeight}
+function span(cls,txt){var s=document.createElement("span");if(cls)s.className=cls;s.textContent=txt||"";out.appendChild(s);scroll();return s}
+async function typeOut(cls,txt){if(speed===0||reduce){span(cls,txt);return}var s=span(cls+" cur","");var step=speed===1?1:4;for(var i=0;i<txt.length;i+=step){if(stopFlag)break;s.textContent=txt.slice(0,i+step);scroll();await wait(speed===1?12:6)}s.textContent=txt;s.classList.remove("cur")}
+function setBusy(b){running=b;["#runAll","#runHi","#runFail"].forEach(function(id){$(id).disabled=b});$("#stop").disabled=!b}
+async function runKeys(keys,label){
+  if(running)return;if(!keys.length){span("k","\n# nothing to run\n");return}
+  setBusy(true);stopFlag=false;var p=0,f=0,t0=0;
+  span("k","\n$ cinelog test "+label+"   ("+keys.length+" scenario"+(keys.length>1?"s":"")+", faults: "+(Object.keys(ON).filter(function(x){return ON[x]}).join(", ")||"none")+")\n");
+  for(var i=0;i<keys.length;i++){
+    if(stopFlag){span("f","\n■ stopped by user\n");break}
+    var it=ALL.filter(function(a){return a.k===keys[i]})[0];if(!it)continue;
+    var s=it.s;if(keys.length===1)st.open[it.c.id]=true;
+    await typeOut("h","\n▶ "+it.c.id+" · "+s[0]+(it.c.hi?"  [high risk]":"")+"\n");
+    await typeOut("k","  data: "+s[4]+"\n");
+    span("g","  GIVEN ");await typeOut("","",0);await typeOut("",s[1]+"\n");
+    span("w","  WHEN  ");await typeOut("",s[2]+"\n");
+    span("t","  THEN  ");await typeOut("",s[3]+"\n");
+    var ms=seedMs(it.k);if(speed!==0&&!reduce)await wait(Math.min(700,ms/(speed===1?2:6)));
+    var v=verdictFor(it.k);RES[it.k]={s:v.s,ms:ms,why:v.why,kn:v.kn,fault:v.fault};t0+=ms;
+    if(v.s==="pass"){p++;span("p","  ✓ PASS");span("k","  ("+ms+" ms)\n")}
+    else{f++;span("f","  ✗ FAIL");span("k","  ("+ms+" ms)\n");span(v.kn?"kn":"x",(v.kn?"KNOWN FAILURE — ":"")+v.why)}
+    $("#prog").style.width=((i+1)/keys.length*100)+"%";
+    flash(it.c.id,typeOf(s[0]));updateAll();
+  }
+  span("sum","\n"+(f?"✗ ":"✓ ")+p+" passed, "+f+" failed · "+(t0/1000).toFixed(1)+" s simulated\n");
+  setBusy(false);updateAll();
+}
+function flash(id,ty){var td=document.querySelector('#board td[data-c="'+id+'|'+ty+'"]');if(td&&!reduce){td.classList.add("flash");setTimeout(function(){td.classList.remove("flash")},300)}}
+/* ---------- board ---------- */
+function cellState(id,ty){var ks=ALL.filter(function(a){return a.c.id===id&&typeOf(a.s[0])===ty});if(!ks.length)return"na";var run=ks.filter(function(a){return RES[a.k]});if(!run.length)return"idle";if(run.some(function(a){return RES[a.k].s==="fail"}))return"fail";return run.length===ks.length?"pass":"part"}
+function renderBoard(){var h='<table><thead><tr><th></th>'+TYPES.map(function(t){return '<th class="ty">'+t[1]+'</th>'}).join("")+'</tr></thead><tbody>';
+  CASES.forEach(function(c){h+='<tr class="'+(c.hi?"hi":"")+'"><th title="'+esc(REQ[c.id]||c.crit)+'">'+c.id+(c.hi?" ▲":"")+'</th>'+TYPES.map(function(t){var s=cellState(c.id,t[0]);return '<td class="'+s+'" data-c="'+c.id+'|'+t[0]+'" title="'+c.id+' · '+t[1]+': '+s+'"></td>'}).join("")+'</tr>'});
+  $("#board").innerHTML=h+'</tbody></table><div class="small" style="margin-top:4px">▲ high-risk requirement</div>';}
+function updateBoard(){[].forEach.call(document.querySelectorAll("#board td[data-c]"),function(td){var p=td.dataset.c.split("|");var s=cellState(p[0],p[1]);var fl=td.classList.contains("flash");td.className=s+(fl?" flash":"");td.title=p[0]+" · "+p[1]+": "+s})}
+/* ---------- summary ---------- */
+function updateAll(){
+  var tot=ALL.length,P=0,F=0;ALL.forEach(function(a){var r=RES[a.k];if(r){if(r.s==="pass")P++;else F++}});var N=tot-P-F;
+  var C=2*Math.PI*40;$("#dP").setAttribute("stroke-dasharray",(P/tot*C)+" "+C);$("#dF").setAttribute("stroke-dasharray",(F/tot*C)+" "+C);$("#dF").setAttribute("stroke-dashoffset",-(P/tot*C));
+  $("#pct").textContent=Math.round(P/tot*100)+"%";$("#pctS").textContent=(P+F)+" / "+tot+" run";$("#nP").textContent=P;$("#nF").textContent=F;$("#nN").textContent=N;
+  $("#mBar").style.width=(P/tot*100)+"%";
+  var fails=ALL.filter(function(a){return RES[a.k]&&RES[a.k].s==="fail"});var real=fails.filter(function(a){return !RES[a.k].kn});var kn=fails.length-real.length;
+  var hiFail=fails.some(function(a){return a.c.hi&&!RES[a.k].kn});var w=$("#waive").checked;var v,tag;
+  if(P+F===0){v="Not assessed — run the suite";tag=""}
+  else if(real.length){v="Not ready";tag='<span class="tag bad">'+real.length+' failure'+(real.length>1?"s":"")+' from injected faults'+(hiFail?" · high risk":"")+'</span>'}
+  else if(N>0){v="Incomplete";tag='<span class="tag warn">'+N+' scenario'+(N>1?"s":"")+' not run</span>'}
+  else if(kn&&!w){v="Not ready";tag='<span class="tag bad">1 known failure (NFR-02)</span>'}
+  else if(kn&&w){v="Conditionally ready";tag='<span class="tag warn">NFR-02 recorded as a known issue</span>'}
+  else{v="Ready";tag='<span class="tag ok">all scenarios pass</span>'}
+  $("#verdict").innerHTML=v+" "+tag;
+  $("#mTxt").textContent=P+" of "+tot+" scenarios passing. "+(kn&&!real.length&&!N?"Only NFR-02 (spoiler false-positive rate) stands between the suite and Gate 1.":"Gate 1 needs every scenario run, every high-risk case passing, and no unexplained failures.");
+  updateBoard();renderFails(fails);renderList();
+}
+function renderFails(fails){
+  if(!fails.length){$("#fails").innerHTML='<div class="empty">'+(Object.keys(RES).length?"No failures in the last run. Flip a fault switch and run again.":"No failures yet. Run the suite.")+'</div>';return}
+  fails.sort(function(a,b){return (RES[a.k].kn?1:0)-(RES[b.k].kn?1:0)});
+  $("#fails").innerHTML=fails.map(function(a){var r=RES[a.k];var f=r.fault&&FAULTS.filter(function(x){return x.id===r.fault})[0];
+    return '<div class="fl'+(r.kn?" kn":"")+'"><b>'+a.c.id+' · '+esc(a.s[0])+'</b>'+(r.kn?' <span class="tag warn">known · real measurement</span>':' <span class="tag bad">caused by: '+esc(f?f.n:"fault")+'</span>')+
+    '<div class="why">'+esc(r.why)+'</div><div class="req"><b style="font-family:var(--sans)">Broken requirement:</b> '+esc(REQ[a.c.id]||a.c.crit)+'</div>'+
+    (r.kn?'':(ON[r.fault]?'<button class="btn" type="button" data-fixrun="'+r.fault+'">Fix “'+esc(f.n)+'” &amp; re-run</button>':'<button class="btn" type="button" data-rerun="'+a.k+'">Fault fixed — re-run this test</button>'))+'</div>'}).join("");
+}
+/* ---------- list ---------- */
+function hl(t){t=esc(t);if(!st.q)return t;var re=new RegExp("("+esc(st.q).replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","ig");return t.replace(re,"<mark>$1</mark>")}
+function isFail(c){return c.sc.some(function(s){var r=RES[c.id+":"+s[0]];return r&&r.s==="fail"})}
+function renderList(){
+  var F=[["All",CASES.length],["FR",CASES.filter(function(c){return c.kind==="FR"}).length],["NFR",CASES.filter(function(c){return c.kind==="NFR"}).length],["High risk",HIGH.length],["Failing",CASES.filter(isFail).length]];
+  $("#filters").innerHTML=F.map(function(f){return '<button class="pill" type="button" data-f="'+f[0]+'" aria-pressed="'+(st.f===f[0])+'">'+f[0]+' <span class="n">'+f[1]+'</span></button>'}).join("");
+  var q=st.q.toLowerCase();
+  var L=CASES.filter(function(c){return (st.f==="All"||(st.f==="High risk"?c.hi:st.f==="Failing"?isFail(c):c.kind===st.f))&&(!q||(c.id+" "+c.crit+" "+c.method+" "+JSON.stringify(c.sc)).toLowerCase().indexOf(q)>-1)});
+  $("#list").innerHTML=L.length?L.map(function(c){var op=st.open[c.id]||(q&&L.length<6);
+    return '<div class="case"><button class="hd" type="button" data-open="'+c.id+'" aria-expanded="'+!!op+'"><span class="id">'+hl(c.id)+'</span><span class="cr">'+hl(c.crit)+'</span>'+(c.hi?'<span class="tag warn">high</span>':'')+'<span class="dots">'+c.sc.map(function(s){var r=RES[c.id+":"+s[0]];return '<i class="'+(r?r.s:"")+'"></i>'}).join("")+'</span></button>'+
+    (op?'<div class="bd"><div class="small">Method: '+hl(c.method)+'</div>'+c.sc.map(function(s){var k=c.id+":"+s[0],r=RES[k];return '<div class="sc '+(r?r.s:"")+'"><div class="nm">'+hl(s[0])+(r?(r.s==="pass"?' <span class="tag ok">pass · '+r.ms+' ms</span>':' <span class="tag bad">fail</span>'):'')+'<button class="btn" type="button" data-rerun="'+esc(k)+'" style="margin-left:auto;font-size:11.5px;padding:3px 9px">▶ run</button></div><div class="ln"><b>GIVEN</b>'+hl(s[1])+'</div><div class="ln"><b>WHEN</b>'+hl(s[2])+'</div><div class="ln"><b>THEN</b>'+hl(s[3])+'</div><div class="dt">data: '+hl(s[4])+'</div>'+(r&&r.s==="fail"?'<div class="dt" style="color:var(--deny)">'+esc(r.why)+'</div>':'')+'</div>'}).join("")+'</div>':'')+'</div>'}).join(""):'<div class="empty">No case matches.</div>';
+}
+/* ---------- events ---------- */
+document.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
+  if(b.dataset.fault){ON[b.dataset.fault]=!ON[b.dataset.fault];renderFaults();var f=FAULTS.filter(function(x){return x.id===b.dataset.fault})[0];span(ON[f.id]?"f":"p","\n# "+(ON[f.id]?"⚠ fault injected: ":"✓ fault fixed: ")+f.n+(ON[f.id]?"  — run the suite to see what catches it":"  — re-run failing tests to confirm")+"\n")}
+  else if(b.dataset.spd!==undefined){speed=+b.dataset.spd;[].forEach.call(document.querySelectorAll("[data-spd]"),function(x){x.setAttribute("aria-pressed",String(x===b))})}
+  else if(b.dataset.f){st.f=b.dataset.f;renderList()}
+  else if(b.dataset.open){st.open[b.dataset.open]=!st.open[b.dataset.open];renderList()}
+  else if(b.dataset.fixrun){var id=b.dataset.fixrun;ON[id]=false;renderFaults();var ks=ALL.filter(function(a){return RES[a.k]&&RES[a.k].fault===id}).map(function(a){return a.k});span("p","\n# ✓ fault fixed: "+FAULTS.filter(function(x){return x.id===id})[0].n+"\n");runKeys(ks,"--rerun")}
+  else if(b.dataset.rerun){runKeys([b.dataset.rerun],"--only "+b.dataset.rerun)}
+});
+$("#runAll").addEventListener("click",function(){RES={};updateAll();out.innerHTML="";runKeys(ALL.map(function(a){return a.k}),"--all")});
+$("#runHi").addEventListener("click",function(){runKeys(ALL.filter(function(a){return a.c.hi}).map(function(a){return a.k}),"--high-risk")});
+$("#runFail").addEventListener("click",function(){runKeys(ALL.filter(function(a){return RES[a.k]&&RES[a.k].s==="fail"}).map(function(a){return a.k}),"--failing")});
+$("#stop").addEventListener("click",function(){stopFlag=true});
+$("#fixAll").addEventListener("click",function(){FAULTS.forEach(function(f){ON[f.id]=false});renderFaults();span("p","\n# ✓ all injected faults fixed\n")});
+$("#waive").addEventListener("change",updateAll);
+$("#q").addEventListener("input",function(){st.q=this.value.trim();renderList()});
+/* sanity: every fault key must exist */
+FAULTS.forEach(function(f){Object.keys(f.b).forEach(function(k){if(!ALL.some(function(a){return a.k===k}))console.error("missing scenario "+k)})});
+$("#nCases").textContent=CASES.length;$("#nSc").textContent=ALL.length;
+renderFaults();renderBoard();updateAll();
+})();
+</script>
+</body>
+</html>

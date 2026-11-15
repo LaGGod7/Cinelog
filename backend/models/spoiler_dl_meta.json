@@ -1,0 +1,14 @@
+{
+ "thr_low": 0.4827377200126648,
+ "thr_high": 0.6945099234580994,
+ "max_len": 256,
+ "base": "distilbert-base-uncased",
+ "test_roc_auc": 0.75256001978473,
+ "test_pr_auc": 0.5451394724553222,
+ "test_recall_at_10pct_false_blur": 0.38712745719720987,
+ "test_caught_at_thr_high": 0.3922003804692454,
+ "test_wrongly_blurred_at_thr_high": 0.1036123729180186,
+ "val_roc_auc": 0.7496471255421568,
+ "n_train": 95686,
+ "n_test": 12400
+}

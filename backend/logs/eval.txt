@@ -1,0 +1,9 @@
+shield: ML bundle loaded
+variant                           caught  wrongly blurred  to moderators  sentences blurred in clean
+ml only                            0.802            0.095          0.256                       0.009
+rag only (no ml)                   0.932            0.110          0.725                       0.021
+rag+cue (no ml)                    0.941            0.265          0.580                       0.051
+ml + rag                           0.988            0.342          0.547                       0.082
+ml + rag + cue, ungated            0.988            0.420          0.473                       0.104
+FULL: ml + rag + cue, gated        0.940            0.290          0.328                       0.076
+n_spoiler=769 n_clean=2231  (95% CIs are in the returned dict)

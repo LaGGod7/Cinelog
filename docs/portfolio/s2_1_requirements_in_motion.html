@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CineLog Requirements in Motion</title>
+<style>
+:root{--bg:#eff3f6;--surface:#fff;--surface2:#f0f4f7;--ink:#11202b;--muted:#526471;--line:#d3dce3;
+--allow:#16794a;--allow-bg:#e2f4ea;--deny:#b42335;--deny-bg:#fbe5e8;--warn:#a86400;--warn-bg:#fff3dc;
+--brand:#cf4210;--brand-bg:#fff0e5;--teal:#0a7479;--teal-bg:#def2f2;--violet:#5646b0;--violet-bg:#eae7f8;--focus:#1b6fd1;
+--sans:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;--mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace}
+*{box-sizing:border-box}
+html,body{overflow-x:hidden}
+body{margin:0;background:radial-gradient(1100px 500px at 90% -10%,#fff1e8 0,transparent 60%),radial-gradient(900px 500px at -10% 10%,#e4f4f4 0,transparent 55%),var(--bg);color:var(--ink);font:14px/1.45 var(--sans)}
+.page{max-width:1180px;margin:0 auto;padding:22px 16px 34px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+[hidden]{display:none!important}
+.page>.sub{font-size:14.5px}
+.head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
+.logo{font-weight:800;font-size:32px;letter-spacing:-.02em;color:var(--brand);line-height:1}
+h1{font-size:23px;margin:0;font-weight:700}
+h3{margin:0 0 4px;font-size:16px;font-weight:700}
+.sub{color:var(--muted);margin:8px 0 12px;max-width:82ch}
+.mono{font-family:var(--mono)}
+.eyebrow{font:700 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.card{background:var(--surface);border:1px solid #e1e8ee;border-radius:18px;padding:18px;min-width:0;box-shadow:0 1px 2px rgba(17,32,43,.04),0 10px 30px rgba(17,32,43,.06)}
+.btn{border:1.5px solid #c9d4dc;background:var(--surface);border-radius:10px;transition:transform .15s,box-shadow .15s;padding:6px 12px;font-weight:600;font-size:13px}
+.btn.primary{background:var(--ink);color:#fff}
+.btn.brand{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(17,32,43,.08)}.btn.primary{border-color:var(--ink)}
+.btn.sm{padding:4px 9px;font-size:12px}
+.tag{display:inline-block;font:600 10.5px var(--mono);letter-spacing:.04em;padding:2px 8px;border-radius:99px;border:1.5px solid var(--line);background:var(--surface2);white-space:nowrap}
+.tag.ok{border-color:var(--allow);color:var(--allow);background:var(--allow-bg)}
+.tag.bad{border-color:var(--deny);color:var(--deny);background:var(--deny-bg)}
+.tag.br{border-color:var(--brand);color:var(--brand);background:var(--brand-bg)}
+.tag.tl{border-color:var(--teal);color:var(--teal);background:var(--teal-bg)}
+input[type=text],input[type=search],input[type=email],input[type=password],select,textarea{border:1.5px solid var(--line);border-radius:9px;padding:7px 10px;background:var(--surface);min-width:0;max-width:100%}
+textarea{width:100%;resize:vertical;min-height:96px}
+input[type=range]{width:100%;accent-color:var(--brand)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+.ach{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 10px}
+.ach span{font:600 10.5px var(--mono);padding:3px 7px;border-radius:7px;border:1.5px dashed var(--line);color:var(--muted);background:var(--surface);transition:all .3s}
+.ach span.on{border-style:solid;border-color:var(--allow);background:var(--allow-bg);color:var(--allow)}
+.ach span.on::after{content:" ✓"}
+.ach span.pop{animation:pop .6s}
+@keyframes pop{40%{transform:scale(1.3)}}
+.meter{height:8px;border-radius:99px;background:#e3e9ee;overflow:hidden;flex:1;min-width:100px}
+.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--allow));width:0;transition:width .5s}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px}
+.tabs button{flex:none;border:1px solid #e1e8ee;background:var(--surface);box-shadow:0 2px 8px rgba(17,32,43,.05);border-radius:12px;padding:7px 12px;font-size:13px;font-weight:600;display:flex;gap:6px;align-items:center}
+.tabs button b{font:700 11px var(--mono);color:var(--brand)}
+.tabs button[aria-selected=true]{background:var(--brand);color:#fff;border-color:var(--brand);box-shadow:0 6px 16px rgba(207,66,16,.25)}
+.tabs button[aria-selected=true] b{color:#ffe1cf}
+.tabs .dn{width:17px;height:17px;border-radius:50%;display:inline-grid;place-items:center;font-size:10px;background:var(--surface2);color:var(--muted)}
+.tabs .dn.full{background:var(--allow);color:#fff}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;align-items:start}
+.scene{min-height:420px}
+.drawer h4,.scene h4{font:700 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+.fr{border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;margin-bottom:6px;font-size:12.5px;transition:all .3s}
+.fr b{font-family:var(--mono);font-size:11.5px;margin-right:6px}
+.fr.on{border-color:var(--allow);background:var(--allow-bg)}
+.fr.on b::after{content:" ✓";color:var(--allow)}
+.log{font:11.5px/1.55 var(--mono);background:#f7fafc;color:var(--ink);border:1.5px solid var(--line);border-radius:12px;padding:8px 10px;height:190px;overflow:auto}
+.log div{white-space:pre-wrap;word-break:break-word}
+.log .ok{color:var(--allow)}.log .bad{color:var(--deny)}.log .wr{color:var(--warn)}.log .in{color:var(--teal)}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.box{border:1px solid #e3eaef;border-radius:14px;padding:12px;background:#f8fafc;min-width:0}
+.res{border-radius:10px;padding:8px 10px;font-weight:700;margin-top:8px;font-size:13px}
+.res.ok{background:var(--allow-bg);color:var(--allow)}.res.bad{background:var(--deny-bg);color:var(--deny)}.res.wr{background:var(--warn-bg);color:var(--warn)}
+.shake{animation:shake .35s}@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:8px;padding:4px 9px;font-size:12.5px}
+.chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.wire{position:relative;height:60px;border-radius:10px;background:repeating-linear-gradient(90deg,#c9d4dc 0 8px,transparent 8px 14px) center/100% 2px no-repeat}
+.wire .node{position:absolute;top:50%;transform:translate(-50%,-50%);font:600 10.5px var(--mono);background:var(--surface);border:1.5px solid var(--line);border-radius:8px;padding:3px 7px;white-space:nowrap}
+.wire .node.l{transform:translate(0,-50%)}.wire .node.r{transform:translate(-100%,-50%)}
+.wire .pkt{position:absolute;top:50%;left:0;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 5px rgba(207,66,16,.18);opacity:0;z-index:2}
+.matrix{width:100%;border-collapse:collapse;font-size:11.5px}
+.matrix th,.matrix td{border:1px solid var(--line);padding:3px 5px;text-align:center}
+.matrix th:first-child,.matrix td:first-child{text-align:left}
+.matrix td.y{background:var(--allow-bg);color:var(--allow);font-weight:700}
+.matrix td.n{color:var(--muted)}
+.matrix .hl{outline:2.5px solid var(--brand);outline-offset:-2px}
+.matwrap{overflow-x:auto}
+.trie{display:flex;flex-wrap:wrap;gap:4px 4px;align-items:center;min-height:38px;margin:6px 0 14px}
+.tn{min-width:30px;height:30px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--teal);background:var(--teal-bg);font:700 13px var(--mono);color:var(--teal);position:relative;animation:pop .4s}
+.tn.root{border-color:var(--ink);background:var(--ink);color:#fff;font-size:10px;min-width:40px}
+.tn small{position:absolute;bottom:-15px;font:500 9.5px var(--mono);color:var(--muted)}
+.tarr{color:var(--muted);font-size:12px}
+.tn.dead{border-color:var(--deny);background:var(--deny-bg);color:var(--deny)}
+.results{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:4px}
+.results li{display:flex;gap:8px;align-items:center;border:1.5px solid var(--line);border-radius:9px;padding:5px 8px;background:var(--surface);font-size:13px;animation:slide .35s both;min-width:0}
+.results li .rk{font:700 11px var(--mono);color:var(--brand);width:18px;flex:none}
+.results li .mt{margin-left:auto;font-size:11px;color:var(--muted);white-space:nowrap}
+.results li mark{background:#ffe2a6;border-radius:3px;padding:0 1px}
+@keyframes slide{from{opacity:0;transform:translateX(-8px)}}
+.timer{font:700 20px var(--mono)}
+.stars{display:inline-flex;gap:2px;font-size:26px;cursor:pointer;user-select:none}
+.stars span{position:relative;color:#d3dce3;width:26px;text-align:center}
+.stars span .f{position:absolute;left:0;top:0;overflow:hidden;color:#f2a20b;width:0}
+.asp{display:grid;grid-template-columns:62px 1fr 30px;gap:6px;align-items:center;font-size:12.5px}
+.diary{list-style:none;margin:0;padding:0;display:grid;gap:4px;max-height:150px;overflow:auto}
+.diary li{border:1.5px solid var(--line);border-radius:8px;padding:5px 8px;font-size:12.5px;background:var(--surface);animation:slide .35s both}
+.sent{padding:1px 2px;border-radius:4px;transition:all .3s;line-height:1.9}
+.sent.r0{background:var(--allow-bg)}.sent.r1{background:var(--warn-bg)}.sent.r2{background:var(--deny-bg)}
+.sent.blur{filter:blur(5px);cursor:pointer;user-select:none}
+.smx{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:8px 0}
+.smx span{font:600 11px var(--mono);border:1.5px solid var(--line);border-radius:8px;padding:4px 8px;background:var(--surface);transition:all .3s}
+.smx span.cur{background:var(--ink);color:#fff;border-color:var(--ink);transform:scale(1.08)}
+.smx i{color:var(--muted);font-style:normal}
+.bars{display:grid;gap:4px;margin-top:6px}
+.bars div{display:grid;grid-template-columns:28px 1fr 38px;gap:6px;align-items:center;font:11px var(--mono)}
+.bars .b{height:10px;border-radius:99px;background:#e3e9ee;overflow:hidden}
+.bars .b i{display:block;height:100%;width:0;transition:width .6s}
+.readers{display:flex;flex-wrap:wrap;gap:6px}
+.av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff}
+.rbtn{display:flex;flex-direction:column;align-items:center;gap:3px;border:1.5px solid var(--line);border-radius:10px;padding:6px;background:var(--surface);font-size:11px;min-width:74px}
+.rbtn.done{border-color:var(--deny);background:var(--deny-bg)}
+.rcard{border:1.5px solid var(--line);border-radius:12px;padding:10px;background:var(--surface);transition:all .4s}
+.rcard.hid{opacity:.5;border-color:var(--deny);background:var(--deny-bg)}
+.queue{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.queue li{display:grid;grid-template-columns:42px minmax(0,1fr);gap:4px 8px;align-items:center;border:1.5px solid var(--line);border-radius:9px;padding:5px 8px;background:var(--surface);font-size:12.5px}
+.queue li .acts{grid-column:1/-1;display:flex;gap:4px;flex-wrap:wrap}
+.queue li .risk{font:700 12px var(--mono);border-radius:7px;text-align:center;padding:3px 0;color:#fff}
+.queue li.new{animation:slide .5s both;border-color:var(--brand)}
+.cal{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px;margin-top:8px;max-width:440px}
+.cal div{aspect-ratio:1;border-radius:5px;background:var(--surface);border:1px solid var(--line);font:9.5px var(--mono);display:grid;place-items:center;color:var(--muted)}
+.cal div.win{background:var(--teal-bg);border-color:#9fd2d4}
+.cal div.st{background:var(--deny);color:#fff;border-color:var(--deny);font-weight:700}
+.cal div.mu{background:repeating-linear-gradient(45deg,var(--warn-bg) 0 4px,#ffd98a 4px 8px);border-color:var(--warn);color:var(--warn)}
+.cal div.today{outline:2.5px solid var(--ink);outline-offset:-1px;color:var(--ink);font-weight:700}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:11.5px;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;vertical-align:-1px;margin-right:4px;border:1px solid var(--line)}
+.pollbars{display:grid;gap:7px;margin-top:10px}
+.pb{display:grid;grid-template-columns:110px 1fr 44px;gap:8px;align-items:center;font-size:12.5px}
+.pb .b{height:16px;border-radius:6px;background:#e3e9ee;overflow:hidden;position:relative}
+.pb .b i{position:absolute;inset:0 auto 0 0;width:0;border-radius:6px;transition:width .25s}
+.pb .n{font:700 12px var(--mono);text-align:right}
+.arena{position:relative;height:120px;border-radius:14px;background:linear-gradient(90deg,#fff 0%,#eef7f7 100%);border:1.5px solid var(--line);overflow:hidden;margin-top:8px}
+.arena .db{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:70px;height:84px;border-radius:12px;background:#fff;border:2px solid var(--teal);color:var(--teal);box-shadow:0 6px 18px rgba(10,116,121,.15);font:600 10px var(--mono);display:grid;place-items:center;text-align:center;line-height:1.25}
+.arena .lbl{position:absolute;left:10px;top:8px;font:600 10px var(--mono);color:var(--muted)}
+.arena .v{position:absolute;width:7px;height:7px;border-radius:50%;left:0}
+.counters{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.counters div{border:1.5px solid var(--line);border-radius:10px;padding:5px 10px;text-align:center;min-width:80px;background:var(--surface);flex:1}
+.counters b{display:block;font:700 18px var(--mono)}
+.counters span{font-size:11px;color:var(--muted)}
+.lifecycle{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.lifecycle span{font:600 11px var(--mono);padding:4px 9px;border-radius:8px;border:1.5px solid var(--line);background:var(--surface)}
+.lifecycle span.cur{background:var(--ink);color:#fff;border-color:var(--ink)}
+.toast{position:fixed;right:16px;bottom:16px;max-width:min(300px,calc(100vw - 32px));background:var(--ink);color:#fff;border-radius:12px;padding:10px 12px;font-size:13px;box-shadow:0 8px 30px rgba(0,0,0,.25);transform:translateY(160%);transition:transform .35s;z-index:20}
+.toast.show{transform:none}
+.members{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.members span{font-size:12px;border:1.5px solid var(--line);border-radius:99px;padding:2px 4px 2px 9px;background:var(--surface);display:inline-flex;gap:2px;align-items:center}
+.members span button{border:0;background:none;color:var(--deny);font-weight:700;padding:0 4px}
+svg text{font-family:var(--sans)}
+@media (max-width:900px){.layout{grid-template-columns:1fr}.split{grid-template-columns:1fr}}
+@media (max-width:520px){.pb{grid-template-columns:84px 1fr 38px}.logo{font-size:28px}h1{font-size:20px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="head"><span class="logo">CineLog</span><h1>Requirements in motion</h1></div>
+  <p class="sub">Six playable scenes, one per group of functional requirements. Type, click, report, vote and try to break things: every requirement you exercise lights up in the strip below. <b>Everything here is an in-page simulation</b> of how CineLog is specified to behave, not a live call to the real server.</p>
+  <div class="row"><span class="eyebrow">Requirements demonstrated</span><span class="meter"><i id="achbar"></i></span><span class="mono small" id="achn">0 / 20</span></div>
+  <div class="ach" id="ach"></div>
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <div class="layout">
+    <section class="card scene" id="scene" aria-live="polite"></section>
+    <aside class="card drawer">
+      <div class="eyebrow">Requirements in this scene</div>
+      <div id="frs" style="margin-top:6px"></div>
+      <h4>Event log</h4>
+      <div class="log" id="log" aria-label="Event log"></div>
+    </aside>
+  </div>
+</main>
+<div class="toast" id="toast" role="status"></div>
+<script>
+(function(){
+"use strict";
+var FR=[["FR-01","The system shall sign in a user via Google (OAuth 2.0) or email + password when valid credentials are given, producing a secure session."],["FR-02","The system shall check every request against the role–permission matrix (site roles + club roles), allowing it or refusing with HTTP 403."],["FR-03","The system shall let an Admin grant or revoke roles for a selected user, producing the new role and an audit entry (who, what, when)."],["FR-04","The system shall show up to 10 title suggestions when 2+ letters are typed, and filter results by genre, cast and year."],["FR-05","The system shall keep a local film catalogue synced from TMDB, fetching missing films on demand and showing TMDB attribution."],["FR-06","The system shall save a diary entry (date, 0.5–5 stars, format, rewatch, notes) or a watchlist item in one click."],["FR-07","The system shall record ratings on 5 aspects (Story, Acting, Visuals, Music, Pacing), producing film averages and a personal taste profile."],["FR-08","The system shall scan every new review for spoilers before it is visible (word list, plot matching and trained models), blurring risky sentences behind a Reveal button."],["FR-09","The system shall move each review through a fixed lifecycle (Pending Scan → Published / Held → Published / Removed), rejecting any invalid transition with HTTP 409."],["FR-10","The system shall hide a review automatically when 3 different users report it and place it in the moderator queue."],["FR-11","The system shall show Moderators flagged reviews ordered by risk, allowing approve, re-blur, remove and adding terms to the film's spoiler word list."],["FR-12","The system shall let a Club Convener create a club, invite or remove members, assign club roles and manage a shared watchlist."],["FR-13","The system shall move each club poll through Draft → Open → Closed (or Cancelled), accepting votes only while Open and keeping closed results in club history."],["FR-14","The system shall accept exactly one vote per member per poll, even when members vote at the same moment."],["FR-15","The system shall notify users when a poll opens, a screening is fixed or their review is actioned, unless they switch notifications off."],["FR-16","The system shall offer every function through one responsive web app, validating every input in the browser and again on the server."],["FR-17","The system shall update poll results on members' screens live, without a page reload."],["FR-18","The system shall let users follow others and show a merged feed of their recent activity."],["FR-19","The system shall suggest films and users with similar taste based on ratings."],["FR-20","The system shall apply strikes and temporary mutes to repeat offenders (3 strikes in 30 days → 3-day mute)."]];
+var FRT={};FR.forEach(function(f){FRT[f[0]]=f[1]});
+var SCENES=[
+ {id:"auth",t:"Sign in & roles",frs:["FR-01","FR-02","FR-03","FR-16"]},
+ {id:"search",t:"Search & catalogue",frs:["FR-04","FR-05"]},
+ {id:"diary",t:"Diary & taste",frs:["FR-06","FR-07","FR-18","FR-19"]},
+ {id:"review",t:"Review & Spoiler Shield",frs:["FR-08","FR-09","FR-16"]},
+ {id:"mod",t:"Reports & moderation",frs:["FR-10","FR-11","FR-15","FR-20"]},
+ {id:"club",t:"Clubs & live polls",frs:["FR-12","FR-13","FR-14","FR-15","FR-17"]}
+];
+var done={},cur=0,timers=[];
+var reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var $=function(s,r){return (r||document).querySelector(s)};
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function later(fn,ms){var id=setTimeout(fn,reduce?0:ms);timers.push(id);return id}
+function clearTimers(){timers.forEach(function(t){clearTimeout(t);clearInterval(t)});timers=[]}
+function log(msg,cls){var l=$("#log"),d=document.createElement("div");d.className=cls||"";var t=new Date();d.textContent=("0"+t.getHours()).slice(-2)+":"+("0"+t.getMinutes()).slice(-2)+":"+("0"+t.getSeconds()).slice(-2)+"  "+msg;l.appendChild(d);l.scrollTop=l.scrollHeight}
+var tt;function toast(m){var t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(function(){t.classList.remove("show")},2800)}
+function hit(id){if(done[id])return;done[id]=1;var s=$('#ach [data-f="'+id+'"]');if(s)s.classList.add("on","pop");var n=Object.keys(done).length;$("#achn").textContent=n+" / 20";$("#achbar").style.width=(n/20*100)+"%";drawer();tabs();log("✓ "+id+" demonstrated","ok");if(n===20)toast("All 20 functional requirements demonstrated 🎬")}
+function buildAch(){$("#ach").innerHTML=FR.map(function(f){return '<span data-f="'+f[0]+'" title="'+esc(f[1])+'">'+f[0]+'</span>'}).join("")}
+function tabs(){$("#tabs").innerHTML=SCENES.map(function(s,i){var k=s.frs.filter(function(f){return done[f]}).length;return '<button role="tab" aria-selected="'+(i===cur)+'" data-i="'+i+'"><b>0'+(i+1)+'</b>'+s.t+'<span class="dn'+(k===s.frs.length?' full':'')+'">'+(k===s.frs.length?'✓':k)+'</span></button>'}).join("")}
+function drawer(){$("#frs").innerHTML=SCENES[cur].frs.map(function(f){return '<div class="fr'+(done[f]?' on':'')+'"><b>'+f+'</b>'+esc(FRT[f])+'</div>'}).join("")}
+function go(i){clearTimers();cur=i;tabs();drawer();var old=$("#scene"),n=old.cloneNode(false);old.parentNode.replaceChild(n,old);R[SCENES[i].id](n)}
+$("#tabs").addEventListener("click",function(e){var b=e.target.closest("button");if(b)go(+b.dataset.i)});
+
+var R={};
+/* ---------- 1. sign in & roles ---------- */
+R.auth=function(el){
+  var ROLES=["Viewer","Critic","Club Convener","Moderator","Admin"];
+  var ACTS=[["Write a review",["Viewer","Critic","Club Convener","Moderator","Admin"]],["Add a critic pick",["Critic"]],["Create a club poll",["Club Convener"]],["Open moderation queue",["Moderator","Admin"]],["Grant a role",["Admin"]],["Edit audit log",[]]];
+  var st={signed:false,role:"Viewer",tried:{},users:{"asha@kle.edu":"Viewer","ben@kle.edu":"Viewer","chen@kle.edu":"Critic"}};
+  el.innerHTML='<h3>Sign in, then try actions as different roles</h3><p class="muted small">Every request is checked against the role–permission matrix. Anything not granted is refused with HTTP 403; with no session it is 401.</p>'+
+  '<div class="split"><div class="box"><div class="eyebrow">1 · Sign in</div><div class="row" style="margin-top:6px"><button class="btn sm" id="g">Continue with Google</button><span class="muted small">or e-mail + password</span></div>'+
+  '<div class="row" style="margin-top:6px"><input type="email" id="em" placeholder="you@kle.edu" style="flex:1 1 140px"><input type="password" id="pw" placeholder="password (8+ chars)" style="flex:1 1 140px"></div><div class="row" style="margin-top:6px"><button class="btn primary sm" id="si">Sign in</button><button class="btn sm" id="so">Sign out</button></div>'+
+  '<div class="wire" style="margin-top:12px"><span class="node l" style="left:0">browser</span><span class="node" style="left:50%">E4 auth</span><span class="node r" style="left:100%">session</span><span class="pkt" id="pk"></span></div><div id="sres"></div></div>'+
+  '<div class="box"><div class="eyebrow">2 · Act as a role</div><div class="chips" id="roles" style="margin-top:6px"></div><div class="chips" id="acts" style="margin-top:8px"></div><div id="ares"></div></div></div>'+
+  '<h4>Role–permission matrix (deny by default)</h4><div class="matwrap"><table class="matrix" id="mx"></table></div>'+
+  '<div class="box" style="margin-top:10px"><div class="eyebrow">3 · Admin console · grant a role</div><div class="row" style="margin-top:6px"><select id="gu"></select><select id="gr">'+ROLES.map(function(r){return "<option>"+r+"</option>"}).join("")+'</select><button class="btn sm" id="gb">Grant</button></div><div class="log" id="audit" style="height:80px;margin-top:8px"><div class="in">audit log (append-only)</div></div></div>';
+  function pkt(cb){var p=$("#pk",el);p.style.transition="none";p.style.left="6%";p.style.opacity=1;p.style.background="#cf4210";void p.offsetWidth;p.style.transition=reduce?"none":"left .7s ease";p.style.left="50%";later(function(){p.style.background="#16794a";p.style.left="94%";later(function(){p.style.opacity=0;cb&&cb()},700)},700)}
+  function sres(h){$("#sres",el).innerHTML=h}
+  function mx(hl){$("#mx",el).innerHTML='<tr><th>Action</th>'+ROLES.map(function(r){return '<th'+(r===st.role?' class="hl"':'')+'>'+r+'</th>'}).join("")+'</tr>'+ACTS.map(function(a){return '<tr><td'+(hl===a[0]?' class="hl"':'')+'>'+a[0]+'</td>'+ROLES.map(function(r){var y=a[1].indexOf(r)>-1;return '<td class="'+(y?'y':'n')+(hl===a[0]&&r===st.role?' hl':'')+'">'+(y?'✓':'·')+'</td>'}).join("")+'</tr>'}).join("")}
+  function chips(){$("#roles",el).innerHTML=ROLES.map(function(r){return '<button class="chip" aria-pressed="'+(r===st.role)+'" data-r="'+r+'">'+r+'</button>'}).join("");$("#acts",el).innerHTML=ACTS.map(function(a){return '<button class="btn sm" data-a="'+a[0]+'">'+a[0]+'</button>'}).join("");$("#gu",el).innerHTML=Object.keys(st.users).map(function(u){return "<option>"+u+"</option>"}).join("")}
+  chips();mx();
+  var EM=/^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+  $("#g",el).onclick=function(){sres('<div class="res wr">Redirecting to Google… one-time state token stored</div>');log("OAuth redirect with state token (login-CSRF guard)","in");pkt(function(){st.signed=true;sres('<div class="res ok">200 · signed in with Google · HttpOnly, Secure session cookie set</div>');log("OAuth callback: state matches → session issued","ok");hit("FR-01")})};
+  $("#si",el).onclick=function(){var e=$("#em",el).value.trim(),p=$("#pw",el).value;if(!EM.test(e)||p.length<8){sres('<div class="res bad">422 · rejected in the browser and again by the server: '+(!EM.test(e)?"invalid e-mail":"password must be 8+ characters")+'</div>');$("#em",el).classList.add("shake");later(function(){$("#em",el).classList.remove("shake")},400);log("POST /auth/login → 422 validation error","bad");hit("FR-16");return}
+    pkt(function(){st.signed=true;sres('<div class="res ok">200 · signed in as '+esc(e)+' · password hash checked</div>');log("POST /auth/login → 200 session cookie","ok");hit("FR-01")})};
+  $("#so",el).onclick=function(){st.signed=false;sres('<div class="res wr">Signed out. Protected actions now return 401.</div>');log("POST /auth/logout → cookie cleared","wr")};
+  el.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
+    if(b.dataset.r){st.role=b.dataset.r;chips();mx();log("role switched → "+st.role,"in")}
+    if(b.dataset.a){var a=ACTS.filter(function(x){return x[0]===b.dataset.a})[0];mx(a[0]);
+      if(!st.signed){$("#ares",el).innerHTML='<div class="res bad">401 · no session. Sign in first.</div>';log(a[0]+" → 401 Unauthorized","bad");return}
+      var ok=a[1].indexOf(st.role)>-1;$("#ares",el).innerHTML='<div class="res '+(ok?'ok':'bad')+'">'+(ok?'200 · allowed for '+st.role:'403 Forbidden · '+st.role+' does not hold this permission')+'</div>';log(st.role+": "+a[0]+" → "+(ok?"200":"403"),ok?"ok":"bad");
+      st.tried[ok?"y":"n"]=1;if(st.tried.y&&st.tried.n)hit("FR-02")}
+  });
+  $("#gb",el).onclick=function(){if(!st.signed||st.role!=="Admin"){$("#ares",el).innerHTML='<div class="res bad">403 · only an Admin can grant roles. Sign in and switch to Admin.</div>';log("grant role → 403 (not admin)","bad");return}
+    var u=$("#gu",el).value,r=$("#gr",el).value,old=st.users[u];st.users[u]=r;var t=new Date().toISOString().slice(0,19).replace("T"," ");var a=$("#audit",el),d=document.createElement("div");d.className="ok";d.textContent=t+"  admin  GRANT "+r+" → "+u+" (was "+old+")";a.appendChild(d);log("role change applied on the next request + audit entry","ok");hit("FR-03")};
+};
+/* ---------- 2. search ---------- */
+var CAT=[["The Shawshank Redemption",1994,"Drama"],["The Godfather",1972,"Crime"],["The Dark Knight",2008,"Action"],["The Departed",2006,"Crime"],["The Prestige",2006,"Mystery"],["The Matrix",1999,"Sci-Fi"],["The Social Network",2010,"Drama"],["The Grand Budapest Hotel",2014,"Comedy"],["The Silence of the Lambs",1991,"Thriller"],["The Lion King",1994,"Animation"],["The Truman Show",1998,"Drama"],["The Usual Suspects",1995,"Mystery"],["There Will Be Blood",2007,"Drama"],["Thelma & Louise",1991,"Drama"],["Inception",2010,"Sci-Fi"],["Interstellar",2014,"Sci-Fi"],["Inside Out",2015,"Animation"],["Into the Wild",2007,"Drama"],["Parasite",2019,"Thriller"],["Past Lives",2023,"Drama"],["Pather Panchali",1955,"Drama"],["Pulp Fiction",1994,"Crime"],["Psycho",1960,"Horror"],["Spirited Away",2001,"Animation"],["Se7en",1995,"Thriller"],["Sholay",1975,"Action"],["Shutter Island",2010,"Mystery"],["Gone Girl",2014,"Thriller"],["Goodfellas",1990,"Crime"],["Get Out",2017,"Horror"],["Gravity",2013,"Sci-Fi"],["Whiplash",2014,"Drama"],["WALL·E",2008,"Animation"],["Arrival",2016,"Sci-Fi"],["Amélie",2001,"Comedy"],["Andhadhun",2018,"Thriller"],["Alien",1979,"Horror"],["Memento",2000,"Mystery"],["Mad Max: Fury Road",2015,"Action"],["Moonlight",2016,"Drama"],["Dangal",2016,"Drama"],["Drive",2011,"Crime"],["Dune",2021,"Sci-Fi"],["Lagaan",2001,"Drama"],["La La Land",2016,"Musical"],["Oldboy",2003,"Thriller"],["Oppenheimer",2023,"Drama"],["Coco",2017,"Animation"],["Casablanca",1942,"Romance"],["Chinatown",1974,"Mystery"]];
+var EXTRA={"kantara":["Kantara",2022,"Thriller"],"rrr":["RRR",2022,"Action"],"jawan":["Jawan",2023,"Action"],"perfect days":["Perfect Days",2023,"Drama"],"anatomy of a fall":["Anatomy of a Fall",2023,"Mystery"],"aftersun":["Aftersun",2022,"Drama"]};
+R.search=function(el){
+  var genre="All";
+  el.innerHTML='<h3>Type a title: the trie walks one letter at a time</h3><p class="muted small">Suggestions start at 2 letters and stop at 10. Each trie node keeps a pre-ranked top-10, so the lookup cost depends on the prefix length, not the catalogue size. Try <b>the</b>, <b>in</b>, <b>pa</b>, or a film missing locally like <b>Kantara</b> or <b>RRR</b>.</p>'+
+  '<div class="row"><input type="search" id="q" placeholder="Search films…" autocomplete="off" style="flex:1 1 200px;max-width:360px"><span class="tag tl" id="lat">— µs</span><span class="tag" id="cnt">'+CAT.length+' local titles</span></div>'+
+  '<div class="chips" id="gf" style="margin-top:8px"></div><div class="trie" id="trie"></div><ul class="results" id="res"></ul><div id="miss"></div>';
+  var G=["All"];CAT.forEach(function(c){if(G.indexOf(c[2])<0)G.push(c[2])});
+  function gf(){$("#gf",el).innerHTML=G.map(function(g){return '<button class="chip" aria-pressed="'+(g===genre)+'" data-g="'+g+'">'+g+'</button>'}).join("")}gf();
+  $("#gf",el).onclick=function(e){var b=e.target.closest("button");if(!b)return;genre=b.dataset.g;gf();run();if(genre!=="All")log("filter genre="+genre,"in")};
+  function norm(s){return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")}
+  function match(c,p){var n=norm(c[0]);return n.indexOf(p)===0||n.split(/\s+/).some(function(w){return w.indexOf(p)===0})}
+  function run(){var q=norm($("#q",el).value.trim()),tr=$("#trie",el),res=$("#res",el);$("#miss",el).innerHTML="";
+    if(!q){tr.innerHTML="";res.innerHTML="";$("#lat",el).textContent="— µs";return}
+    var h='<span class="tn root">root</span>',n=CAT;
+    for(var i=0;i<q.length&&i<14;i++){var p=q.slice(0,i+1);var m=CAT.filter(function(c){return match(c,p)});h+='<span class="tarr">→</span><span class="tn'+(m.length?'':' dead')+'">'+esc(q[i]===" "?"␣":q[i])+'<small>'+m.length+'</small></span>';n=m}
+    tr.innerHTML=h;
+    if(q.length<2){res.innerHTML='<li class="muted">Type at least 2 letters (FR-04).</li>';return}
+    var t0=performance.now();var out=n.filter(function(c){return genre==="All"||c[2]===genre}).slice(0,10);var us=Math.max(3,Math.round((performance.now()-t0)*1000));$("#lat",el).textContent="≈"+us+" µs in this page";
+    res.innerHTML=out.map(function(c,i){var nm=esc(c[0]),ix=norm(c[0]).indexOf(q);if(ix>-1)nm=esc(c[0].slice(0,ix))+"<mark>"+esc(c[0].slice(ix,ix+q.length))+"</mark>"+esc(c[0].slice(ix+q.length));return '<li style="animation-delay:'+(i*35)+'ms"><span class="rk">'+(i+1)+'</span><span>'+nm+(c.cached?' <span class="tag br">TMDB</span>':'')+'</span><span class="mt">'+c[1]+' · '+c[2]+'</span></li>'}).join("");
+    if(out.length){log("GET /films/autocomplete?q="+q+" → "+out.length+" results","in");hit("FR-04")}
+    else{var k=Object.keys(EXTRA).filter(function(x){return x.indexOf(q)===0})[0];
+      $("#miss",el).innerHTML='<div class="box" style="margin-top:8px">Not in the local catalogue. '+(k?'<button class="btn brand sm" id="fetch">Fetch “'+esc(EXTRA[k][0])+'” from TMDB</button>':'<span class="muted">No match on TMDB either (simulated).</span>')+'<div id="fx"></div></div>';
+      if(k)$("#fetch",el).onclick=function(){var fx=$("#fx",el);fx.innerHTML='<div class="res wr">GET /3/search/movie on TMDB · rate limiter: token taken, 29 left</div>';log("TMDB fetch (rate-limited client, timeout + retry)","wr");
+        later(function(){var f=EXTRA[k].slice();f.cached=true;CAT.push(f);delete EXTRA[k];fx.innerHTML='<div class="res ok">200 · stored locally and added to the trie · “Data from TMDB” attribution shown</div>';$("#cnt",el).textContent=CAT.length+" local titles";log("film cached + search index updated","ok");hit("FR-05");later(run,700)},900)}}
+  }
+  $("#q",el).addEventListener("input",run);
+};
+/* ---------- 3. diary & taste ---------- */
+R.diary=function(el){
+  var ASP=["Story","Acting","Visuals","Music","Pacing"],st={stars:0,asp:[3.5,3,4,2.5,3],diary:[],touched:0};
+  var FRIENDS={"Asha":[4.5,4,3,3.5,4],"Ben":[2.5,3,5,4.5,2.5],"Chen":[4,3.5,4,2.5,3]},PICK={"Asha":"Past Lives","Ben":"Mad Max: Fury Road","Chen":"Arrival"},FEED={"Asha":["rated Past Lives ★★★★½","logged Aftersun (rewatch)","reviewed Arrival"],"Ben":["logged Dune · IMAX","rated Mad Max: Fury Road ★★★★★"],"Chen":["added Perfect Days to watchlist","rated Memento ★★★★"]},fol={};
+  el.innerHTML='<h3>Log a film in one go, then watch your taste emerge</h3><div class="split"><div class="box"><div class="eyebrow">Log a viewing</div>'+
+   '<div class="row" style="margin-top:6px"><select id="fm">'+CAT.slice(0,24).map(function(c){return "<option>"+esc(c[0])+"</option>"}).join("")+'</select><input type="text" id="dt" value="2026-11-12" style="width:116px" aria-label="date"><select id="fmt" aria-label="format"><option>Theatre</option><option>OTT</option><option>IMAX</option></select><label class="small"><input type="checkbox" id="rw"> rewatch</label></div>'+
+   '<div class="row" style="margin-top:8px"><span class="stars" id="stars" role="slider" aria-label="rating, click left half for half a star" aria-valuemin="0" aria-valuemax="5" tabindex="0"></span><span class="mono" id="sv">0.0</span></div>'+
+   '<div class="row" style="margin-top:8px"><button class="btn primary sm" id="save">Save to diary</button><button class="btn sm" id="wl">+ Watchlist</button><span class="timer" id="tm">0.0s</span></div><ul class="diary" id="dl" style="margin-top:8px"></ul></div>'+
+   '<div class="box"><div class="eyebrow">Aspect ratings → taste profile</div><div id="asp" style="display:grid;gap:4px;margin-top:6px"></div><svg id="radar" viewBox="0 0 240 205" style="width:100%;max-width:290px;display:block;margin:4px auto 0" role="img" aria-label="taste radar"></svg></div></div>'+
+   '<h4>Follow people · merged feed · taste match</h4><div class="split"><div class="box"><div class="chips" id="fol"></div><ul class="diary" id="feed" style="margin-top:8px"></ul></div><div class="box"><div id="match"></div></div></div>';
+  var t0=null,tmI=null;function startT(){if(t0)return;t0=performance.now();tmI=setInterval(function(){var e=$("#tm",el);if(e)e.textContent=((performance.now()-t0)/1000).toFixed(1)+"s"},100);timers.push(tmI)}
+  function stars(){$("#stars",el).innerHTML=[1,2,3,4,5].map(function(i){var w=Math.max(0,Math.min(1,st.stars-(i-1)))*100;return '<span data-i="'+i+'">★<span class="f" style="width:'+w+'%">★</span></span>'}).join("");$("#sv",el).textContent=st.stars.toFixed(1);$("#stars",el).setAttribute("aria-valuenow",st.stars)}
+  stars();
+  $("#stars",el).addEventListener("click",function(e){var s=e.target.closest("[data-i]");if(!s)return;startT();var r=s.getBoundingClientRect();st.stars=+s.dataset.i-((e.clientX-r.left)<r.width/2?.5:0);stars()});
+  $("#stars",el).addEventListener("keydown",function(e){if(e.key==="ArrowRight"||e.key==="ArrowUp"){st.stars=Math.min(5,st.stars+.5);stars();e.preventDefault()}if(e.key==="ArrowLeft"||e.key==="ArrowDown"){st.stars=Math.max(0,st.stars-.5);stars();e.preventDefault()}});
+  $("#fm",el).onchange=startT;
+  $("#save",el).onclick=function(){if(st.stars<0.5){log("POST /diary → 422 rating must be 0.5–5 in half-star steps","bad");toast("Pick a rating first: 0.5–5 stars");hit("FR-16");return}var f=$("#fm",el).value,again=st.diary.some(function(d){return d===f});var li=document.createElement("li");var secs=t0?((performance.now()-t0)/1000).toFixed(1):"–";clearInterval(tmI);t0=null;
+    li.innerHTML="<b>"+esc(f)+"</b> · "+esc($("#dt",el).value)+" · "+$("#fmt",el).value+" · "+"★".repeat(Math.floor(st.stars))+(st.stars%1?"½":"")+(($("#rw",el).checked||again)?' <span class="tag br">rewatch</span>':'')+' <span class="muted small">'+secs+' s</span>';$("#dl",el).prepend(li);st.diary.push(f);log("POST /diary → 201 created ("+secs+" s)","ok");hit("FR-06")};
+  $("#wl",el).onclick=function(){var f=$("#fm",el).value,li=document.createElement("li");li.innerHTML="🔖 <b>"+esc(f)+"</b> added to watchlist";$("#dl",el).prepend(li);log("POST /watchlist → 201","ok");hit("FR-06")};
+  $("#asp",el).innerHTML=ASP.map(function(a,i){return '<div class="asp"><span>'+a+'</span><input type="range" min="0.5" max="5" step="0.5" value="'+st.asp[i]+'" data-i="'+i+'" aria-label="'+a+'"><span class="mono">'+st.asp[i].toFixed(1)+'</span></div>'}).join("");
+  $("#asp",el).addEventListener("input",function(e){var i=+e.target.dataset.i;st.asp[i]=+e.target.value;e.target.nextElementSibling.textContent=st.asp[i].toFixed(1);st.touched++;radar();match();if(st.touched>2)hit("FR-07")});
+  var AVG=[3.8,3.9,3.6,3.4,3.5];
+  function poly(v,cx,cy,r){return v.map(function(x,i){var a=-Math.PI/2+i*2*Math.PI/5;return (cx+Math.cos(a)*r*x/5).toFixed(1)+","+(cy+Math.sin(a)*r*x/5).toFixed(1)}).join(" ")}
+  function radar(){var s='',cx=120,cy=100,r=72;[1,2,3,4,5].forEach(function(k){s+='<polygon points="'+poly([k,k,k,k,k],cx,cy,r)+'" fill="none" stroke="#e3e9ee"/>'});ASP.forEach(function(a,i){var an=-Math.PI/2+i*2*Math.PI/5;s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+Math.cos(an)*r)+'" y2="'+(cy+Math.sin(an)*r)+'" stroke="#e3e9ee"/><text x="'+(cx+Math.cos(an)*(r+15))+'" y="'+(cy+Math.sin(an)*(r+15)+4)+'" text-anchor="middle" font-size="10" fill="#526471">'+a+'</text>'});
+    s+='<polygon points="'+poly(AVG,cx,cy,r)+'" fill="rgba(10,116,121,.12)" stroke="#0a7479" stroke-dasharray="4 3"/><polygon points="'+poly(st.asp,cx,cy,r)+'" fill="rgba(207,66,16,.22)" stroke="#cf4210" stroke-width="2"/><text x="60" y="200" font-size="10" fill="#cf4210">■ you</text><text x="110" y="200" font-size="10" fill="#0a7479">■ film average</text>';$("#radar",el).innerHTML=s}
+  radar();
+  function cos(a,b){var d=0,x=0,y=0;for(var i=0;i<a.length;i++){d+=a[i]*b[i];x+=a[i]*a[i];y+=b[i]*b[i]}return (x&&y)?d/Math.sqrt(x*y):0}
+  function match(){var me=st.asp.map(function(v){return v-3});var m=Object.keys(FRIENDS).map(function(k){var o=FRIENDS[k].map(function(v){return v-3});return[k,Math.round((cos(me,o)+1)*50)]}).sort(function(a,b){return b[1]-a[1]});
+    $("#match",el).innerHTML='<div class="eyebrow">Taste match · similarity of aspect ratings</div>'+m.map(function(x){return '<div class="pb" style="grid-template-columns:52px 1fr 40px;margin-top:6px"><span>'+x[0]+'</span><span class="b"><i style="width:'+x[1]+'%;background:linear-gradient(90deg,#0a7479,#16794a)"></i></span><span class="n">'+x[1]+'%</span></div>'}).join("")+'<p class="small" style="margin:8px 0 0">Suggested for you: <b>'+PICK[m[0][0]]+'</b>, rated highly by '+m[0][0]+', your closest match.</p>';
+    if(st.touched>3)hit("FR-19")}
+  match();
+  function fol2(){$("#fol",el).innerHTML=Object.keys(FEED).map(function(k){return '<button class="chip" aria-pressed="'+(!!fol[k])+'" data-k="'+k+'">'+(fol[k]?"✓ Following ":"+ Follow ")+k+'</button>'}).join("");var items=[];Object.keys(fol).forEach(function(k){FEED[k].forEach(function(x,i){items.push([i,k,x])})});items.sort(function(a,b){return a[0]-b[0]});$("#feed",el).innerHTML=items.length?items.map(function(i){return "<li><b>"+i[1]+"</b> "+esc(i[2])+'<span class="muted small"> · '+(i[0]*2+1)+'h ago</span></li>'}).join(""):'<li class="muted">Follow someone to build your feed.</li>'}
+  fol2();$("#fol",el).onclick=function(e){var b=e.target.closest("button");if(!b)return;var k=b.dataset.k;if(fol[k])delete fol[k];else fol[k]=1;fol2();log((fol[k]?"follow ":"unfollow ")+k+" → feed re-merged","in");if(Object.keys(fol).length)hit("FR-18")};
+};
+/* ---------- 4. review & spoiler shield ---------- */
+var PLOT={film:"Midnight Harbor (a made-up film)",terms:["lighthouse keeper","keeper","brother","twin","drowned","storm","letter","ferry","mara","elias"],cues:["dies","died","death","killer","twist","ending","turns out","reveals","revealed","was actually","is actually","secretly","in the end","final scene","dead","kills","killed","betray","ghost","all along"]};
+var PRESETS={clean:"The cinematography is gorgeous and the score is haunting. I loved how patient the pacing felt. Worth seeing on a big screen.",subtle:"The first hour is slow but rewarding. Pay close attention to the letter Mara finds on the ferry. Let's just say the brothers are not who they seem.",obvious:"Great acting all round. In the final scene it turns out Elias was actually the drowned twin all along. The lighthouse keeper dies in the storm."};
+R.review=function(el){
+  var state="Draft";
+  el.innerHTML='<h3>Write a review and watch the Shield scan it</h3><p class="muted small">Film: <b>'+PLOT.film+'</b>. This scene scores sentences with a <b>simple demo heuristic</b> (spoiler cue words + plot names) to show the flow. The real Shield combines a word list, plot matching and trained models.</p>'+
+  '<div class="row"><button class="chip" data-p="clean">Clean example</button><button class="chip" data-p="subtle">Subtle spoiler</button><button class="chip" data-p="obvious">Obvious spoiler</button></div>'+
+  '<textarea id="txt" style="margin-top:8px" placeholder="Write your review… (10–5,000 characters)"></textarea>'+
+  '<div class="row" style="margin-top:6px"><button class="btn brand" id="sub">Submit review</button><span class="muted small" id="len">0 chars</span></div>'+
+  '<div class="smx" id="sm"></div><div id="out"></div>'+
+  '<h4>Try to break the lifecycle</h4><div class="row"><button class="btn sm" data-t="Published">→ Publish</button><button class="btn sm" data-t="Removed">→ Remove</button><button class="btn sm" data-t="Hidden">→ Hide</button><button class="btn sm" data-t="Pending Scan">→ back to Pending</button></div><div id="tr"></div>';
+  var ALLOWED={"Draft":["Pending Scan"],"Pending Scan":["Published","Held"],"Held":["Published","Removed"],"Published":["Hidden","Removed"],"Hidden":["Published","Removed"],"Removed":[]};
+  function sm(){$("#sm",el).innerHTML=["Draft","Pending Scan","Published","Held","Hidden","Removed"].map(function(s){return '<span class="'+(s===state?'cur':'')+'">'+s+'</span>'}).join('<i>→</i>')}
+  sm();
+  function len(){$("#len",el).textContent=$("#txt",el).value.length+" chars"}
+  $("#txt",el).addEventListener("input",len);
+  el.querySelectorAll("[data-p]").forEach(function(b){b.onclick=function(){$("#txt",el).value=PRESETS[b.dataset.p];len()}});
+  function score(s){var l=s.toLowerCase(),c=0,p=0;PLOT.cues.forEach(function(w){if(l.indexOf(w)>-1)c++});PLOT.terms.forEach(function(w){if(l.indexOf(w)>-1)p++});return Math.min(.98,c*.32+p*.14+(c&&p?.2:0))}
+  $("#sub",el).onclick=function(){var t=$("#txt",el).value.trim();
+    if(t.length<10||t.length>5000){$("#out",el).innerHTML='<div class="res bad">422 · a review must be 10–5,000 characters (checked in the browser and again on the server)</div>';log("POST /films/77/reviews → 422","bad");hit("FR-16");return}
+    state="Pending Scan";sm();var out=$("#out",el);out.innerHTML='<div class="res wr">202 Accepted · saved as Pending Scan, invisible to readers · scan job queued</div>';log("POST /films/77/reviews → 202, scan job queued","wr");
+    var sents=t.match(/[^.!?]+[.!?]*/g)||[t];var sc=sents.map(score);
+    later(function(){var box=document.createElement("div");box.className="box";box.style.marginTop="8px";box.innerHTML='<div class="eyebrow">Sentence risk (demo heuristic)</div><div class="bars">'+sc.map(function(r,i){var col=r>=.7?"#b42335":r>=.3?"#a86400":"#16794a";return '<div><span>S'+(i+1)+'</span><span class="b"><i data-w="'+Math.round(r*100)+'" style="background:'+col+'"></i></span><span>'+r.toFixed(2)+'</span></div>'}).join("")+'</div>';out.appendChild(box);
+      later(function(){box.querySelectorAll(".bars i").forEach(function(i){i.style.width=i.dataset.w+"%"})},30);log("worker scored "+sents.length+" sentences","in");
+      later(function(){var mx=Math.max.apply(null,sc);var v=mx>=.7?"blur":mx>=.3?"held":"pub";state=v==="held"?"Held":"Published";sm();
+        var msg=document.createElement("div");msg.className="res "+(v==="blur"?"bad":v==="held"?"wr":"ok");msg.innerHTML=v==="blur"?'Highest risk '+mx.toFixed(2)+' ≥ 0.70 → Published with risky sentences blurred. Their text is only sent after a reader clicks Reveal.':v==="held"?'Highest risk '+mx.toFixed(2)+' is between 0.30 and 0.70 → Held for a moderator. Not visible yet.':'Highest risk '+mx.toFixed(2)+' &lt; 0.30 → Published as written.';out.appendChild(msg);
+        if(v!=="held"){var rd=document.createElement("div");rd.className="box";rd.style.marginTop="8px";rd.innerHTML='<div class="eyebrow">What readers see'+(v==="blur"?' · click a blurred line to reveal':'')+'</div><p style="margin:6px 0 0">'+sents.map(function(s,i){var r=sc[i];return '<span class="sent '+(r>=.7?"r2 blur":r>=.3?"r1":"r0")+'">'+esc(s.trim())+'</span> '}).join("")+'</p>';out.appendChild(rd);
+          rd.querySelectorAll(".sent.blur").forEach(function(s){s.onclick=function(){s.classList.remove("blur");log("reveal → sentence sent to this reader only","in")}})}
+        log("review → "+state+" (risk "+mx.toFixed(2)+")",v==="pub"?"ok":"wr");hit("FR-08")},900)},800)};
+  el.addEventListener("click",function(e){var b=e.target.closest("[data-t]");if(!b)return;var to=b.dataset.t;var ok=(ALLOWED[state]||[]).indexOf(to)>-1;
+    if(ok){log(state+" → "+to+" (checked update ok)","ok");state=to;sm();$("#tr",el).innerHTML='<div class="res ok">200 · now '+to+'</div>'}
+    else{$("#tr",el).innerHTML='<div class="res bad">409 Conflict · '+state+' → '+to+' is not an allowed transition. State unchanged.</div>';log(state+" → "+to+" → 409","bad");$("#sm",el).classList.add("shake");later(function(){$("#sm",el).classList.remove("shake")},400);hit("FR-09")}});
+};
+/* ---------- 5. reports & moderation ---------- */
+R.mod=function(el){
+  var READERS=[["Asha","#cf4210"],["Ben","#0a7479"],["Chen","#5646b0"],["Dev","#a86400"]],reps={},hidden=false,today=30,strikes=[],mutedAt=null;
+  var Q=[["Oldboy · by kim_s",.91],["Memento · by noor",.64],["Coco · by r_iyer",.38],["Se7en · by vik",.55]];
+  el.innerHTML='<h3>Report a spoiler as different readers, then moderate it</h3><div class="split"><div class="box"><div class="eyebrow">Published review · by night_owl</div><div class="rcard" id="rc" style="margin-top:6px">Loved the soundtrack. Honestly the twist with the brother at the end floored me.</div><h4>Readers · click “Report”</h4><div class="readers" id="rd"></div><div class="row" style="margin-top:6px"><button class="btn sm" id="self">Report own review (as night_owl)</button></div><div id="rr"></div></div>'+
+  '<div class="box"><div class="eyebrow">Moderator queue · highest risk first</div><ul class="queue" id="q" style="margin-top:6px"></ul><div id="mr"></div></div></div>'+
+  '<h4>Strikes for night_owl · rolling 30-day window</h4><div class="row"><button class="btn sm" id="strike">Issue strike on “today”</button><label class="small" style="flex:1;min-width:180px">Move “today” (day <b id="dn">31</b>) <input type="range" id="day" min="0" max="49" value="30"></label><span class="tag" id="ms">0 strikes in window</span></div><div class="cal" id="cal"></div>'+
+  '<div class="legend"><span><i style="background:var(--teal-bg)"></i>30-day window</span><span><i style="background:var(--deny)"></i>strike</span><span><i style="background:#ffd98a"></i>muted (3 days)</span><span><i style="outline:2px solid var(--ink)"></i>today</span></div>';
+  function rd(){$("#rd",el).innerHTML=READERS.map(function(r){var n=reps[r[0]];return '<button class="rbtn'+(n?' done':'')+'" data-r="'+r[0]+'"><span class="av" style="background:'+r[1]+'">'+r[0][0]+'</span>'+(n?'reported ✓':'Report as '+r[0])+'</button>'}).join("")}
+  rd();
+  function q(fresh){var items=Q.slice().sort(function(a,b){return b[1]-a[1]});$("#q",el).innerHTML=items.map(function(x){var c=x[1]>=.7?"#b42335":x[1]>=.3?"#a86400":"#16794a";var me=x[0].indexOf("night_owl")>-1;return '<li class="'+(me&&fresh?'new':'')+'"><span class="risk" style="background:'+c+'">'+x[1].toFixed(2)+'</span><span>'+esc(x[0])+'</span>'+(me?'<span class="acts"><button class="btn sm" data-m="approve">Approve</button><button class="btn sm" data-m="reblur">Re-blur</button><button class="btn sm" data-m="remove">Remove</button><button class="btn sm" data-m="term">+ “brother” to word list</button></span>':'')+'</li>'}).join("")}
+  q();
+  el.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
+    if(b.dataset.r){var r=b.dataset.r;if(reps[r]){$("#rr",el).innerHTML='<div class="res wr">'+r+' already reported this review: duplicate ignored.</div>';log("report from "+r+" ignored (duplicate)","wr");return}if(hidden){$("#rr",el).innerHTML='<div class="res wr">Already hidden and queued.</div>';return}reps[r]=1;rd();var n=Object.keys(reps).length;log("report "+n+"/3 from "+r,"in");
+      if(n<3)$("#rr",el).innerHTML='<div class="res wr">'+n+' distinct report'+(n>1?'s':'')+'. Still visible (needs 3 different readers).</div>';
+      else{hidden=true;$("#rc",el).classList.add("hid");$("#rr",el).innerHTML='<div class="res bad">3rd distinct report → review hidden automatically and placed in the moderator queue.</div>';Q.push(["Midnight Harbor · by night_owl",.82]);q(true);log("review → Hidden, queued with risk 0.82","bad");hit("FR-10")}}
+    if(b.id==="self"){$("#rr",el).innerHTML='<div class="res wr">You cannot report your own review: ignored.</div>';log("self-report ignored","wr")}
+    if(b.dataset.m){var m=b.dataset.m;
+      if(m==="term"){$("#mr",el).innerHTML='<div class="res ok">“brother” added to Midnight Harbor’s spoiler word list. Future reviews mentioning it score higher.</div>';log("moderator: word list += brother","ok");hit("FR-11");return}
+      Q=Q.filter(function(x){return x[0].indexOf("night_owl")<0});q();
+      var txt={approve:"Approved → Published again.",reblur:"Re-blurred → the sentence is saved as a confirmed spoiler for this film.",remove:"Removed (final)."}[m];
+      $("#mr",el).innerHTML='<div class="res ok">'+txt+' Writer notified · audit entry written.</div>';log("moderator: "+m+" · audit log append","ok");toast("🔔 to night_owl: a moderator "+(m==="approve"?"approved":m==="reblur"?"re-blurred":"removed")+" your review");hit("FR-11");hit("FR-15");
+      if(m!=="remove"){$("#rc",el).classList.remove("hid");if(m==="reblur")$("#rc",el).innerHTML='Loved the soundtrack. <span class="sent r2 blur">Honestly the twist with the brother at the end floored me.</span>'}}
+    if(b.id==="strike"){if(strikes.indexOf(today)<0)strikes.push(today);log("strike issued on day "+(today+1),"wr");cal()}
+  });
+  $("#day",el).oninput=function(){today=+this.value;$("#dn",el).textContent=today+1;cal()};
+  function cal(){var win=strikes.filter(function(s){return s<=today&&s>today-30});
+    var sorted=strikes.slice().sort(function(a,b){return a-b}),ms=null;for(var i=2;i<sorted.length;i++){if(sorted[i]-sorted[i-2]<30){ms=sorted[i];break}}
+    var mutedNow=ms!==null&&today>=ms&&today<ms+3;
+    if(ms!==null&&mutedAt!==ms){mutedAt=ms;log("3 strikes within 30 days → 3-day mute","bad");toast("🔇 night_owl muted for 3 days: can read, cannot post");hit("FR-20")}
+    $("#ms",el).className="tag "+(mutedNow?"bad":win.length?"br":"ok");$("#ms",el).textContent=mutedNow?"MUTED: can read, cannot post":(win.length+" strike"+(win.length===1?"":"s")+" in window");
+    var h="";for(var d=0;d<50;d++){var c=[];if(d<=today&&d>today-30)c.push("win");if(strikes.indexOf(d)>-1)c.push("st");if(ms!==null&&d>=ms&&d<ms+3&&strikes.indexOf(d)<0)c.push("mu");if(d===today)c.push("today");h+='<div class="'+c.join(" ")+'">'+(strikes.indexOf(d)>-1?"S":d+1)+'</div>'}$("#cal",el).innerHTML=h}
+  cal();
+};
+/* ---------- 6. clubs & polls ---------- */
+R.club=function(el){
+  var OPT=[["Past Lives","#cf4210"],["Perfect Days","#0a7479"],["Aftersun","#5646b0"],["Oldboy","#a86400"]],state="Draft",votes=[0,0,0,0],acc=0,rej=0,members=["asha","ben","chen","dev"],running=false,uniq=true;
+  el.innerHTML='<h3>Run a club poll, then hit it with a vote storm</h3><div class="split"><div class="box"><div class="eyebrow">Club · Campus Cinephiles · you are Convener</div><div class="members" id="mem"></div><div class="row" style="margin-top:6px"><input type="text" id="inv" placeholder="invite username" style="flex:1 1 120px"><button class="btn sm" id="ib">Invite</button></div></div>'+
+  '<div class="box"><div class="eyebrow">Poll lifecycle</div><div class="lifecycle" id="lc" style="margin-top:6px"></div><div class="row" style="margin-top:8px"><button class="btn sm" data-s="Open">Open poll</button><button class="btn sm" data-s="Closed">Close</button><button class="btn sm" data-s="Cancelled">Cancel</button><button class="btn sm" id="late">Vote after close</button></div><div id="lr"></div></div></div>'+
+  '<h4>Vote storm</h4><div class="row"><label style="flex:1 1 200px">Members voting at the same moment: <b class="mono" id="nv">100</b><input type="range" id="sl" min="10" max="500" value="100"></label><label class="small"><input type="checkbox" id="dbl" checked> everyone double-clicks</label><button class="btn brand" id="storm">⚡ Start storm</button><button class="btn sm" id="rs">Reset</button></div>'+
+  '<div class="arena" id="ar"><span class="lbl">vote requests → database</span><div class="db">UNIQUE<br>(poll_id,<br>member_id)</div></div><div class="counters"><div><b id="ca">0</b><span>votes stored</span></div><div><b id="cr" style="color:var(--deny)">0</b><span>refused (409)</span></div><div><b id="ct">0</b><span>requests sent</span></div><div><b id="cl" style="color:var(--allow)">● live</b><span>pushed to screens</span></div></div>'+
+  '<div class="pollbars" id="pb"></div>';
+  function mem(){$("#mem",el).innerHTML=members.map(function(m){return '<span>'+esc(m)+'<button data-x="'+esc(m)+'" aria-label="remove '+esc(m)+'">×</button></span>'}).join("")}
+  mem();
+  function lc(){$("#lc",el).innerHTML=["Draft","Open","Closed","Cancelled"].map(function(s){return '<span class="'+(s===state?'cur':'')+'">'+s+'</span>'}).join("")}
+  lc();
+  var sentN=0;
+  function pb(){var tot=votes.reduce(function(a,b){return a+b},0)||1;$("#pb",el).innerHTML=OPT.map(function(o,i){return '<div class="pb"><span>'+o[0]+'</span><span class="b"><i style="width:'+(votes[i]/tot*100)+'%;background:'+o[1]+'"></i></span><span class="n">'+votes[i]+'</span></div>'}).join("");$("#ca",el).textContent=acc;$("#cr",el).textContent=rej;$("#ct",el).textContent=sentN}
+  pb();
+  $("#sl",el).oninput=function(){$("#nv",el).textContent=this.value};
+  $("#ib",el).onclick=function(){var v=$("#inv",el).value.trim().toLowerCase();if(!/^[a-z0-9_]{3,20}$/.test(v)){log("invite → 422 username must be 3–20 letters, digits or _","bad");toast("Username must be 3–20 letters, digits or _");hit("FR-16");return}if(members.indexOf(v)<0)members.push(v);mem();$("#inv",el).value="";log("convener invited "+v+" (club role: Member)","ok");hit("FR-12")};
+  $("#mem",el).onclick=function(e){var b=e.target.closest("button");if(!b)return;members=members.filter(function(m){return m!==b.dataset.x});mem();log("convener removed "+b.dataset.x,"wr");hit("FR-12")};
+  var LEG={"Draft":["Open","Cancelled"],"Open":["Closed"],"Closed":[],"Cancelled":[]};
+  el.addEventListener("click",function(e){var b=e.target.closest("[data-s]");if(!b)return;var to=b.dataset.s;if(LEG[state].indexOf(to)<0){$("#lr",el).innerHTML='<div class="res bad">409 · '+state+' → '+to+' is not allowed</div>';log("poll "+state+" → "+to+" → 409","bad");return}state=to;lc();
+    if(to==="Open"){$("#lr",el).innerHTML='<div class="res ok">Poll open. '+members.length+' members notified.</div>';toast("🔔 Campus Cinephiles: a new poll is open, vote now");log("poll opened · "+members.length+" notifications queued","ok");hit("FR-15")}
+    else if(to==="Closed"){var w=votes.indexOf(Math.max.apply(null,votes));$("#lr",el).innerHTML='<div class="res ok">Closed. Tally frozen and saved to club history'+(acc?': <b>'+OPT[w][0]+'</b> wins.':'.')+'</div>';log("poll closed · tally frozen","ok");hit("FR-13")}
+    else{$("#lr",el).innerHTML='<div class="res wr">Draft cancelled.</div>';hit("FR-13")}});
+  $("#late",el).onclick=function(){if(state!=="Closed"){$("#lr",el).innerHTML='<div class="res wr">Close the poll first, then try voting.</div>';return}$("#lr",el).innerHTML='<div class="res bad">409 · poll is Closed, vote refused. Result unchanged.</div>';log("vote after close → 409","bad");hit("FR-13")};
+  $("#rs",el).onclick=function(){if(running)return;votes=[0,0,0,0];acc=0;rej=0;sentN=0;state="Draft";lc();pb();$("#lr",el).innerHTML=""};
+  $("#storm",el).onclick=function(){if(running)return;if(state!=="Open"){$("#lr",el).innerHTML='<div class="res bad">409 · votes are only accepted while the poll is Open. Press “Open poll” first.</div>';log("storm blocked: poll not open","bad");return}
+    running=true;votes=[0,0,0,0];acc=0;rej=0;sentN=0;pb();var n=+$("#sl",el).value,dbl=$("#dbl",el).checked,total=n*(dbl?2:1),ar=$("#ar",el),W=Math.max(60,ar.clientWidth-90),seen={};
+    var wts=[.34,.28,.22,.16];function pick(){var r=Math.random(),a=0;for(var i=0;i<4;i++){a+=wts[i];if(r<a)return i}return 3}
+    var choice=[];for(var m=0;m<n;m++)choice.push(pick());
+    var order=[];for(var s=0;s<total;s++)order.push(dbl?Math.floor(s/2):s);
+    for(var j=order.length-1;j>0;j--){var k=Math.floor(Math.random()*Math.min(j+1,8)),x=order[j];order[j]=order[j-k];order[j-k]=x}
+    var batch=Math.max(1,Math.ceil(total/50));
+    function tick(){for(var k=0;k<batch&&sentN<total;k++){var mbr=order[sentN++];var dup=!!seen[mbr];if(!dup){seen[mbr]=1;acc++;votes[choice[mbr]]++}else rej++;
+        if(!reduce&&k<5&&ar.animate){var d=document.createElement("span");d.className="v";d.style.top=(16+Math.random()*92)+"px";d.style.background=dup?"#b42335":OPT[choice[mbr]][1];ar.appendChild(d);(function(d,dup){var a=d.animate([{transform:"translateX(0)",opacity:1},{transform:"translateX("+W+"px)",opacity:1,offset:.75},{transform:"translateX("+(dup?W-36:W+40)+"px)",opacity:0}],{duration:750,easing:"ease-in"});a.onfinish=function(){d.remove()}})(d,dup)}}
+      pb();if(sentN<total){later(tick,40)}else{running=false;log("storm: "+total+" requests → "+acc+" stored, "+rej+" refused by UNIQUE(poll, member)","ok");if(acc===n)hit("FR-14");hit("FR-17");$("#lr",el).innerHTML='<div class="res ok">'+n+' members sent '+total+' requests → exactly '+acc+' votes stored'+(rej?', '+rej+' duplicates refused':'')+'. Bars updated live on every open page.</div>'}}
+    log("storm: "+n+" members × "+(dbl?2:1)+" clicks at once","in");tick()};
+};
+buildAch();go(0);
+})();
+</script>
+</body>
+</html>

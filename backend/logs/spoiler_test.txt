@@ -1,0 +1,60 @@
+demo films missing - running seed_demo first
+seeded 11 films, 5 demo users (password cinelog123), 1 club, 4 reviews
+shield: ml=True rnn=True (active)
+
+ok   clean   shown    The Godfather      'A masterclass in patient storytelling. The cinematography '   
+ok   clean   shown    The Sixth Sense    'Wonderful acting from the young lead. The mood is creepy w'   
+ok   clean   shown    Fight Club         'Sharp, angry and very funny in places. Edward Norton and B'   
+ok   clean   shown    Titanic            'Huge scale and gorgeous costumes. The first half is a char'   
+ok   clean   shown    The Dark Knight    'The pacing is relentless and the villain is terrifying. Ha'   
+ok   clean   shown    Inception          'Dazzling visuals and a score that rattles your chest. The '   
+ok   clean   shown    Parasite           'Funny, tense and beautifully shot. The house itself is a c'   
+ok   clean   shown    Interstellar       'An emotional space epic with a thundering organ score. The'   
+ok   clean   shown    Dangal             'Inspiring and warm. Aamir Khan disappears into the role an'   
+ok   clean   shown    3 Idiots           'Hilarious and heartfelt, with songs that stay in your head'   
+ok   clean   shown    Mad Max: Fury Road 'Two hours of pure kinetic cinema. The practical stunts are'   
+ok   clean   shown    Inception          'Without giving anything away, the idea of stealing secrets'   
+ok   clean   shown    Titanic            'It is about a rich girl and a poor artist who meet on a sh'   
+ok   clean   shown    Parasite           'A poor family befriends a wealthy one and things get compl'   
+ok   clean   shown    The Godfather      'Al Pacino, Marlon Brando and James Caan are all fantastic.'   
+ok   clean   shown    Interstellar       'I liked the practical effects and the sound design. The sc'   
+     spoiler WARN     The Sixth Sense    'Great film. The twist is that Malcolm was dead the whole t'   giveaways hidden 0/3
+ok   spoiler BLURRED  Fight Club         "Tyler Durden is the narrator's split personality. He shoot"   giveaways hidden 1/2
+ok   spoiler BLURRED  Titanic            'Jack dies of hypothermia in the freezing water because the'   giveaways hidden 1/2
+ok   spoiler BLURRED  The Dark Knight    'The Joker kills Rachel in the explosion and Harvey Dent be'   giveaways hidden 3/3
+ok   spoiler BLURRED  Inception          'In the last shot Cobb spins the top and walks away before '   giveaways hidden 1/2
+ok   spoiler BLURRED  Parasite           "The housekeeper's husband has been hiding in the secret ba"   giveaways hidden 2/3
+---- spoiler shown    Interstellar       'Cooper falls into the black hole and sends data to Murph t'   giveaways hidden 0/3
+ok   spoiler BLURRED  The Godfather      'Michael has the heads of the rival families killed during '   giveaways hidden 1/2
+ok   spoiler BLURRED  3 Idiots           "Rancho turns out to be the servant's son who studied under"   giveaways hidden 1/2
+ok   spoiler BLURRED  Mad Max: Fury Road 'Nux sacrifices himself to block the rig and Furiosa tears '   giveaways hidden 2/3
+     spoiler WARN     Dangal             'In the final Geeta wins the gold medal after her father is'   giveaways hidden 0/2
+---- spoiler shown    The Sixth Sense    'Honestly the final reveal that the doctor had actually pas'   giveaways hidden 0/1
+---- spoiler shown    Fight Club         'The charismatic soap guy only exists inside the main chara'   giveaways hidden 0/1
+---- spoiler shown    Titanic            'She survives on a piece of wood while he freezes to death '   giveaways hidden 0/1
+---- spoiler shown    Parasite           'There is somebody living under the house all along, and th'   giveaways hidden 0/2
+---- spoiler shown    Inception          'The ending leaves it open whether the spinning toy ever st'   giveaways hidden 0/1
+---- spoiler shown    Interstellar       'The father ends up inside a five dimensional structure and'   giveaways hidden 0/2
+---- mixed   shown    The Dark Knight    'Heath Ledger is magnetic. Rachel dies in the explosion and'   giveaways hidden 0/1
+ok   mixed   BLURRED  Titanic            'The production design is incredible. Jack dies in the cold'   giveaways hidden 1/1
+---- mixed   shown    Mad Max: Fury Road 'A wild ride from the first minute. Furiosa kills Immortan '   giveaways hidden 0/1
+---- mixed   shown    Fight Club         'Brilliant dialogue and a killer soundtrack. Tyler is just '   giveaways hidden 0/1
+---- mixed   shown    Dangal             "Aamir Khan's transformation is impressive. Geeta wins the "   giveaways hidden 0/1
+ok   tagged  BLURRED  Inception          'Loved it. ||Cobb never learns if the top fell.|| The sound'   giveaways hidden 1/1
+ok   tagged  BLURRED  Parasite           'Spectacular. ||The husband lives in the basement.|| Very f'   giveaways hidden 1/1
+     vague   shown    The Sixth Sense    'That twist at the end is incredible, you will not see it c'   
+     vague   shown    Fight Club         'The ending is something else. I will not say more but it r'   
+     vague   shown    Parasite           'The second half goes somewhere shocking. Watch it blind an'   
+     vague   shown    Titanic            'The ending destroyed me, I was in tears for an hour afterw'   
+
+SUMMARY (hand-labelled, small sample)   flagged = blurred, sent to moderators, or labelled 'possible spoilers'
+  clean reviews left alone      16/16   (blurred 0, to moderators 0, labelled 0)
+  spoiler reviews               flagged 10/17   (blurred 8, to moderators 0, labelled 2, missed 7)
+  mixed reviews                 flagged 1/5   (blurred 1, to moderators 0, labelled 0, missed 4)
+  writer-tagged reviews         flagged 2/2   (blurred 2, to moderators 0, labelled 0, missed 0)
+  ALL spoiler-containing reviews: flagged 13/24 = 54%   (blurred 11/24 = 46%)
+  vague 'there is a twist' ones flagged 0/4   (a judgement call, not scored)
+  giveaway sentences hidden     15/42;  other sentences hidden in those reviews: 0
+  blurred text visible to a stranger: 0   (must be 0)
+
+The made-up reviews are now on the film pages. Remove them with:  python -m scripts.seed_spoiler_test --clean

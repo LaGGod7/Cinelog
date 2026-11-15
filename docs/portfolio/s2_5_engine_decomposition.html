@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CineLog Engine Studio</title>
+<style>
+:root{
+  --bg:#f7f4ef;--bg2:#fbfaf7;--panel:#ffffff;--panel2:#f5f1eb;--ink:#1f2a33;--muted:#5f6f7a;--dim:#8a98a2;--line:#ebe4da;
+  --brand:#cf4210;--ok:#1f9d6b;--warn:#d99a00;--bad:#d6334a;--focus:#2f6fd0;
+  --sans:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;--mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:radial-gradient(1200px 600px at 20% -10%,#fff0e3 0%,var(--bg) 55%) fixed,var(--bg);color:var(--ink);font:14px/1.45 var(--sans);overflow-x:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+[hidden]{display:none!important}
+.page{max-width:1240px;margin:0 auto;padding:22px 16px 40px}
+.top{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:flex-end;justify-content:space-between}
+.eyebrow{font:600 11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--brand)}
+h1{margin:4px 0 4px;font-size:26px;letter-spacing:-.01em}
+.sub{margin:0;color:var(--muted);max-width:70ch}
+.sim{display:inline-flex;align-items:center;gap:6px;font:600 10.5px var(--mono);letter-spacing:.08em;color:var(--warn);border:1px solid #f1d8a8;background:#fff6e2;border-radius:99px;padding:3px 10px}
+.tabs{display:flex;gap:6px;margin:16px 0 14px;flex-wrap:wrap}
+.tabs button{border:1px solid var(--line);background:var(--panel);border-radius:99px;transition:transform .15s;padding:8px 14px;font-weight:600;font-size:13px;color:var(--muted)}
+.tabs button[aria-selected=true]{background:var(--brand);color:#fff;border-color:var(--brand);box-shadow:0 6px 16px rgba(207,66,16,.25)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;min-width:0;box-shadow:0 1px 2px rgba(60,40,20,.04),0 10px 30px rgba(60,40,20,.07)}
+.mono{font-family:var(--mono)}
+.live{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:14px;align-items:start}
+.stagewrap{padding:10px;position:relative;overflow:hidden}
+#stage{width:100%;height:auto;display:block}
+.toolbar{display:flex;flex-wrap:wrap;gap:6px;padding:10px 10px 0}
+.scn{border:1px solid var(--line);background:var(--panel2);border-radius:99px;padding:6px 10px;font-size:12.5px;font-weight:600;display:inline-flex;gap:6px;align-items:center}
+.scn:hover{border-color:var(--brand);transform:translateY(-1px);box-shadow:0 4px 12px rgba(207,66,16,.12)}.scn{transition:transform .15s,box-shadow .15s}
+.scn[aria-pressed=true]{background:var(--brand);border-color:var(--brand);color:#fff}
+.scn i{font-style:normal}
+.faults{display:flex;flex-wrap:wrap;gap:8px;padding:8px 10px 10px;align-items:center;border-top:1px solid var(--line);margin-top:8px}
+.faults .lbl{font:600 10.5px var(--mono);letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+.tog{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:99px;padding:4px 10px 4px 4px;background:var(--bg2);font-size:12.5px}
+.tog .sw{width:30px;height:18px;border-radius:99px;background:#e6dfd5;position:relative;transition:background .2s}
+.tog .sw::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#ffffff;transition:left .2s}
+.tog[aria-pressed=true]{border-color:var(--bad)}
+.tog[aria-pressed=true] .sw{background:var(--bad)}
+.tog[aria-pressed=true] .sw::after{left:14px}
+.speed{margin-left:auto;display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.speed button{border:0;background:var(--bg2);padding:5px 9px;font-size:12px;color:var(--muted)}
+.speed button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.side{display:grid;gap:14px;min-width:0}
+.logcard{padding:12px 14px}
+.logcard h3,.insp h3{margin:0 0 8px;font:600 10.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+#log{list-style:none;margin:0;padding:0;display:grid;gap:6px;max-height:260px;overflow:auto}
+#log li{display:grid;grid-template-columns:34px minmax(0,1fr);gap:8px;font-size:12.5px;line-height:1.35;animation:in .3s ease}
+#log li .e{font:700 11px var(--mono);border-radius:6px;text-align:center;padding:2px 0;color:#fff;align-self:start}
+#log li.bad span:last-child{color:#b0283c}#log li.warn span:last-child{color:#8a5d00}#log li.ok span:last-child{color:#1f6b4c}
+#log .empty{display:block;color:var(--dim);font-size:12.5px}
+@keyframes in{from{opacity:0;transform:translateY(-4px)}}
+.insp{padding:12px 14px}
+.who{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font:800 13px var(--sans);color:#fff;flex:none}
+.who b{display:block;font-size:15px;line-height:1.2}.who span{font-size:12px;color:var(--muted)}
+.itabs{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0}
+.itabs button{border:1px solid var(--line);background:var(--bg2);border-radius:7px;padding:3px 8px;font-size:11.5px;color:var(--muted)}
+.itabs button[aria-selected=true]{color:var(--bg);background:var(--ink);border-color:var(--ink)}
+.ibody{font-size:13px;color:#33424c;min-height:150px}
+.ibody p{margin:0 0 8px}
+.ibody ul{margin:0;padding-left:16px}.ibody li{margin:4px 0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ibody h5{margin:0 0 4px;font:600 10px var(--mono);letter-spacing:.1em;text-transform:uppercase}
+.mech{border:1px solid var(--line);border-radius:9px;padding:7px 9px;margin-bottom:6px;background:var(--bg2)}
+.mech b{display:block;font-size:12.5px}.mech span{font-size:12px;color:var(--muted)}
+.rq{display:inline-block;font:600 10.5px var(--mono);border:1px solid var(--line);border-radius:5px;padding:0 4px;margin:2px 2px 0 0;color:var(--muted)}
+.kpi{display:grid;gap:8px}
+.kpi div{border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:var(--bg2)}
+.kpi b{display:block;font-size:15px}.kpi span{font-size:11.5px;color:var(--muted)}
+.fail{border-left:3px solid var(--bad);padding:4px 8px;margin-bottom:6px;background:#fdf0f1;border-radius:0 8px 8px 0}
+.fail b{display:block;font-size:12.5px;color:#b0283c}.fail span{font-size:12px;color:#33424c}
+.mod rect.body{fill:#ffffff;stroke-width:1.5;filter:drop-shadow(0 6px 12px rgba(60,40,20,.08))}.mod:hover rect.body{stroke-width:2.5}
+.mod{cursor:pointer}
+.mod:focus{outline:none}
+.mod.sel rect.body{stroke-width:3}
+.pipe{fill:none;stroke:#e6ded3;stroke-width:6;stroke-linecap:round;transition:stroke .2s}
+.pipeIn{fill:none;stroke:#fbfaf7;stroke-width:3;stroke-linecap:round}
+.pipe.hot{stroke:#cf421055}
+.ext rect{fill:#fbfaf7;stroke:#d8cfc3;stroke-dasharray:4 4}
+.ext.down rect{stroke:#d6334a}
+.game{padding:14px}
+.gtop{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:10px}
+.score{font:700 13px var(--mono);display:flex;gap:12px}
+.score span{color:var(--muted);font-weight:500}
+.gbtn{border:1px solid var(--line);background:var(--panel2);border-radius:9px;padding:6px 12px;font-weight:600;font-size:12.5px}
+.gbtn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.tray{display:flex;flex-wrap:wrap;gap:6px;min-height:58px;padding:10px;border:1px dashed var(--line);border-radius:12px;background:var(--bg2);margin-bottom:12px}
+.chip{touch-action:none;user-select:none;display:inline-flex;gap:6px;align-items:center;border:1px solid #d8cfc3;background:var(--panel2);border-radius:8px;padding:5px 9px;font-size:12px;cursor:grab;transition:box-shadow .2s,border-color .2s,background .2s;max-width:100%}
+.chip b{font:700 11px var(--mono);color:var(--ink)}
+.chip span{color:var(--muted);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip.picked{border-color:var(--brand);box-shadow:0 0 0 3px #cf421033}
+.chip.right{background:#eef9f3;cursor:default}
+.chip.wrong{border-color:var(--bad);background:#fdecee;animation:shake .35s}
+.chip.drag{position:fixed;z-index:50;pointer-events:none;box-shadow:0 12px 30px rgba(60,40,20,.18);cursor:grabbing}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.bins{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.bin{border:1.5px solid var(--line);border-radius:16px;box-shadow:0 4px 14px rgba(60,40,20,.05);padding:10px;min-height:120px;background:var(--bg2);transition:border-color .15s,background .15s;cursor:pointer;min-width:0}
+.bin.over{background:#fff3ea}
+.bin h4{margin:0;font-size:13px;display:flex;gap:8px;align-items:center}
+.bin h4 i{font-style:normal;font:700 11px var(--mono);border-radius:6px;padding:1px 6px;color:#fff}
+.bin p{margin:3px 0 8px;color:var(--muted);font-size:11.5px}
+.bin .slot{display:flex;flex-wrap:wrap;gap:5px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:var(--bg);font-weight:600;border-radius:10px;padding:8px 14px;font-size:13px;z-index:60;box-shadow:0 8px 24px rgba(31,42,51,.25)}
+.mx{padding:14px}
+.mxtop{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.mxtop button{border:1px solid var(--line);background:var(--panel2);border-radius:99px;padding:4px 11px;font-size:12px;color:var(--muted)}
+.mxtop button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.mxwrap{overflow:auto;border:1px solid var(--line);border-radius:12px;max-height:560px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:12.5px}
+th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:center}
+thead th{position:sticky;top:0;background:var(--panel2);z-index:2;font:700 11px var(--mono)}
+tbody th{text-align:left;font-weight:500;position:sticky;left:0;background:var(--panel);z-index:1;min-width:210px}
+tbody th b{font:700 11px var(--mono);margin-right:6px}
+td.c{cursor:pointer}
+td.hl,th.hl{background:#fff3ea}
+td.cross{background:#ffd6bf!important}
+.dotP{display:inline-block;width:16px;height:16px;border-radius:50%;box-shadow:0 0 10px currentColor}
+.dotS{display:inline-block;width:10px;height:10px;border-radius:50%;border:2px solid currentColor}
+.mxinfo{margin-top:10px;font-size:13px;color:#33424c;min-height:40px}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);align-items:center;margin-left:auto}
+.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}
+.flow div{border:1px solid var(--line);border-radius:16px;box-shadow:0 4px 14px rgba(60,40,20,.05);padding:10px;background:var(--panel)}
+.flow b{display:block;font-size:12.5px}.flow span{font-size:11.5px;color:var(--muted)}
+.flow i{font-style:normal;font:700 10px var(--mono);color:var(--brand);letter-spacing:.1em}
+@media (max-width:980px){.live{grid-template-columns:minmax(0,1fr)}.bins{grid-template-columns:repeat(2,minmax(0,1fr))}.flow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){h1{font-size:21px}.bins{grid-template-columns:minmax(0,1fr)}.two{grid-template-columns:1fr}.speed{margin-left:0}.chip span{max-width:130px}.legend{margin-left:0}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="top">
+    <div>
+      <div class="eyebrow">S2.5 · Engine decomposition and requirement mapping</div>
+      <h1>How CineLog’s six engines work together</h1>
+      <p class="sub">Six engines, each owning one technical responsibility. Watch them run, fire a scenario through them, break something on purpose, or test yourself by sorting requirements into the engine that owns them.</p>
+    </div>
+    <span class="sim">● SIMULATION · illustrative, not measured</span>
+  </div>
+  <div class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-v="live">Live system</button>
+    <button role="tab" aria-selected="false" data-v="game">Sort the requirements</button>
+    <button role="tab" aria-selected="false" data-v="mx">Traceability matrix</button>
+  </div>
+  <section id="v-live">
+    <div class="live">
+      <div class="card">
+        <div class="toolbar" id="scns"></div>
+        <div class="stagewrap"><svg id="stage" viewBox="-20 0 940 560" role="img" aria-label="Six CineLog engines connected by pipes, with packets flowing between them"></svg></div>
+        <div class="faults">
+          <span class="lbl">Break something</span>
+          <button class="tog" id="f-worker" aria-pressed="false"><span class="sw"></span>Kill an E3 worker</button>
+          <button class="tog" id="f-tmdb" aria-pressed="false"><span class="sw"></span>TMDB down</button>
+          <button class="tog" id="f-db" aria-pressed="false"><span class="sw"></span>Write lock held</button>
+          <span class="speed" id="speed"><button data-s="1.7">Slow</button><button data-s="1" aria-pressed="true">Normal</button><button data-s=".55">Fast</button></span>
+        </div>
+      </div>
+      <div class="side">
+        <div class="card logcard"><h3><span>Scenario log</span><span id="scnName" class="mono" style="color:var(--brand)"></span></h3><ol id="log"><li class="empty">Pick a scenario above. Each step lights the engine doing the work and says what it does and why. Click any engine to inspect it.</li></ol></div>
+        <div class="card insp" id="insp"></div>
+      </div>
+    </div>
+    <div class="flow">
+      <div><i>STEP 1</i><b>Requirement</b><span>29 FR / NFR from S2.1–S2.2</span></div>
+      <div><i>STEP 2</i><b>Cluster</b><span>C1–C6, grouped by shared mechanism, not by screen</span></div>
+      <div><i>STEP 3</i><b>Responsibility</b><span>“This engine is responsible for…”</span></div>
+      <div><i>STEP 4</i><b>Engine + owner</b><span>One primary engine and one student per requirement</span></div>
+    </div>
+  </section>
+  <section id="v-game" hidden>
+    <div class="card game">
+      <div class="gtop">
+        <div><b style="font-size:15px">Which engine owns it?</b><div class="sub" style="font-size:12.5px">Drag a requirement onto an engine, or tap a chip then tap an engine. Right answers stick; wrong ones shake.</div></div>
+        <div class="score"><div><span>placed</span> <b id="sPlaced">0</b>/<b id="sTotal">0</b></div><div><span>first try</span> <b id="sFirst">0</b></div><div><span>misses</span> <b id="sMiss">0</b></div></div>
+        <div style="display:flex;gap:6px"><button class="gbtn" id="gReset">Shuffle &amp; restart</button><button class="gbtn primary" id="gAnswer">Show answer</button></div>
+      </div>
+      <div class="tray" id="tray"></div>
+      <div class="bins" id="bins"></div>
+    </div>
+  </section>
+  <section id="v-mx" hidden>
+    <div class="card mx">
+      <div class="mxtop" id="mxf"></div>
+      <div class="mxwrap"><table id="mxt"></table></div>
+      <div class="mxinfo" id="mxinfo">Hover a cell to cross-hair its row and column; click it for the reason.</div>
+    </div>
+  </section>
+</main>
+<script>
+(function(){
+"use strict";
+var reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var $=function(s,r){return (r||document).querySelector(s)},NS="http://www.w3.org/2000/svg";
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function mk(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var E={
+ E1:{n:"Search & Spoiler Matching",s:"Search & Spoilers",c:"#e0601f",course:"DSA",cl:"C1",clN:"Fast lookup & text matching",owner:"Manish Singri",ini:"MS",
+  resp:"This engine is responsible for fast in-memory lookup and pattern matching over film and review text.",
+  desc:"Keeps the catalogue in memory as a trie and an inverted index, scans every review against the film's spoiler words, its plot and a trained classifier, and orders the moderator queue by risk.",
+  owns:["Trie and inverted index","Top-K ranking","Per-film Aho–Corasick automata","TF-IDF plot matching and the spoiler classifier (encoder only, no generative AI)","Risk ordering of the moderator queue","Feed merge and taste similarity"],
+  not:["Permanent storage (E2)","Running scans in the background (E3)","Deciding who may see or change content (E5)","Showing the blur on screen (E6)"],
+  inp:["Typed prefix and filters","Review text + film ID (scan job from E3)","Word-list updates"],out:["Up to 10 ranked suggestions","Risky sentences with a risk score","Risk-ordered queue"],state:["In-memory trie and index, rebuilt from E2 after each sync","Per-film automata, rebuilt when a word list changes","Cached plot vectors (LRU)"],
+  mech:[["Trie","Autocomplete in O(L), independent of catalogue size","FR-04 NFR-01"],["Inverted index + min-heap top-K","Filter by genre / cast and return only the best 10","FR-04"],["Aho–Corasick automaton","All spoiler words found in one pass over the review","FR-08 NFR-02"],["TF-IDF plot matching + classifier","Flags sentences that retell the plot even without listed words","FR-08 NFR-02"],["Priority queue on risk","Moderators always see the riskiest review first","FR-11"]],
+  fail:[["Index stale after a TMDB sync","Affected entries rebuilt after the sync job"],["New film with an empty word list","Seeded from cast and character names; plot matching and reports still apply"],["Common word causes a wrong blur","Stop-word list, reader can Reveal, moderators edit the list"]],
+  kpi:[["p95 ≤ 100 ms","autocomplete over 10,000+ titles"],["≥ 85% caught · ≤ 10% wrongly blurred","target on the labelled set (not yet met)"]],
+  reqs:["FR-04","FR-08","FR-11","FR-18","FR-19","NFR-01","NFR-02"]},
+ E2:{n:"Storage & Transaction",s:"Storage & Transactions",c:"#1a9b7a",course:"DBMS",cl:"C2",clN:"Permanent data & concurrent correctness",owner:"Goureesh N Doddamani",ini:"GD",
+  resp:"This engine is responsible for consistent, permanent storage and correct concurrent updates.",
+  desc:"The single source of truth: accounts, roles, films, diary, ratings, reviews, word lists, clubs, votes and the audit log, normalised to 3NF and kept correct when many users write at once.",
+  owns:["Normalised data model and constraints","Indexes","Transactions and locking","Rating-average upkeep","Audit-log storage"],
+  not:["Search ranking (E1)","Deciding whether a change is allowed (E5)","Network transport (E4)","Scheduling jobs (E3)"],
+  inp:["Writes: log, rate, review, vote, role change","Read queries from every engine"],out:["Committed record or a clear constraint error","Records, averages, club history"],state:["All permanent records (3NF)","Indexes on frequently searched data"],
+  mech:[["3NF with primary / foreign keys","Each fact stored once, so data never contradicts itself","FR-06 FR-07"],["ACID transactions","Two users updating one record cannot overwrite each other","FR-07 NFR-04"],["UNIQUE (poll, member)","The database itself refuses a second vote, even in a race","FR-14 NFR-04"],["WAL + composite indexes","Reads never wait behind a long write; common queries stay fast","NFR-03"]],
+  fail:[["Same member votes twice at the same instant","Unique rule rejects the second vote; user told “already voted”"],["Two transactions wait on each other","Fixed lock order; failed transaction retried"],["Database briefly unavailable","API returns 503; jobs retry later; no partial writes"]],
+  kpi:[["0 duplicate votes","100-member concurrent vote test"],["p95 ≤ 300 ms","API with 100 concurrent users"]],
+  reqs:["FR-06","FR-07","FR-14","NFR-03","NFR-04"]},
+ E3:{n:"Background Job Scheduler",s:"Job Scheduler",c:"#2f6fd0",course:"OS",cl:"C3",clN:"Background & scheduled work",owner:"Ashutosh Kulkarni",ini:"AK",
+  resp:"This engine is responsible for running queued background jobs safely on a pool of worker threads.",
+  desc:"Spoiler scans, TMDB sync and e-mail are too slow to do while a user waits. They go into a bounded priority queue and run on a fixed pool of worker threads.",
+  owns:["Worker thread pool","Bounded priority job queue","Retry with back-off","LRU cache","Container resource limits"],
+  not:["What a job computes (E1, E2)","E-mail and TMDB protocols (E4)","What users may trigger (E5)"],
+  inp:["Job submitted: review saved, sync schedule, notification event"],out:["Job done / failed status","Result handed to E1 or E2"],state:["Priority queue with retry counts","LRU cache (hash map + linked list)"],
+  mech:[["Bounded producer–consumer (mutex + semaphores)","Many requests add jobs safely; workers never read an empty queue","NFR-05"],["Fixed-size thread pool","Uses a small machine well instead of a thread per job","NFR-05 NFR-09"],["Priority scheduling","A new review is scanned quickly even during a big sync","FR-08 FR-05"],["LRU cache","Popular films served from memory; fewer TMDB calls","FR-05 NFR-09"]],
+  fail:[["Queue is full","User job waits briefly; batch job postponed and retried"],["TMDB 429 / mail server down","Exponential back-off, up to 3 retries, then logged as failed"],["Worker fails mid-job","Job returned to the queue and retried; pending reviews re-queued at start-up"]],
+  kpi:[["≥ 50 jobs/min","sustained load"],["0 lost jobs · 0 deadlocks","1-hour soak test"]],
+  reqs:["FR-05","FR-15","NFR-05","NFR-09"]},
+ E4:{n:"Secure Access & Communication",s:"Secure Access & Comms",c:"#6a55d8",course:"CN & Security",cl:"C4",clN:"Identity & secure communication",owner:"Goureesh N Doddamani",ini:"GD",
+  resp:"This engine is responsible for authentication, secure transport and traffic control.",
+  desc:"Controls who gets in and protects every message: Google sign-in, bcrypt passwords, a signed session cookie, CSRF tokens and token-bucket rate limits. It is the only engine that talks to TMDB and the mail server.",
+  owns:["OAuth 2.0 and password sign-in","JWT issue and verification","CSRF double-submit check","Rate limiting","TMDB and SMTP clients"],
+  not:["What a signed-in role may do (E5)","Storing user records (E2)","Screen behaviour (E6)"],
+  inp:["Credentials or Google code","Every incoming HTTP request"],out:["Signed session cookie","Request passed on with identity, or 401 / 429"],state:["Session expiry","Token buckets per IP"],
+  mech:[["OAuth 2.0 (authorisation code)","Google sign-in without CineLog ever seeing the Google password","FR-01"],["HttpOnly JWT + bcrypt","Scripts cannot read the session; stored passwords cannot be reversed","FR-01 NFR-06"],["Token bucket","Stops brute-force logins and keeps TMDB calls under its limit","NFR-06 NFR-09"],["CSRF token + input rules","Blocks forged cross-site requests and injection","NFR-06"]],
+  fail:[["Expired or tampered token","Rejected with 401; user signs in again"],["Google sign-in unavailable","Email + password still works"],["Repeated wrong passwords","5 attempts a minute per IP, then 429"]],
+  kpi:[["100% bad tokens rejected","forged / expired token tests"],["0 high/critical findings","OWASP ZAP scan"]],
+  reqs:["FR-01","NFR-06"]},
+ E5:{n:"Role, Permission & Workflow",s:"Roles & Workflow",c:"#c23d78",course:"SE",cl:"C5",clN:"Authorisation, workflow & governance",owner:"Ashutosh Kulkarni",ini:"AK",
+  resp:"This engine is responsible for role-based authorisation, workflow state rules and the audit trail.",
+  desc:"Implements the project theme. Every action is checked against a deny-by-default permission matrix; reviews and polls move only through allowed states; strikes and mutes are applied; sensitive actions are audit-logged.",
+  owns:["Role model and permission matrix","Club-scoped roles","Review and poll state machines","Report threshold, strikes and mutes","Audit trail"],
+  not:["Verifying identity (E4)","Storing records (E2)","Ranking the moderator queue (E1)"],
+  inp:["Verified user + roles","Requested action + resource","Requested state change"],out:["Allow, or 403","Valid transition, or 409","Audit entry"],state:["Roles, permission matrix, memberships","Current review and poll states"],
+  mech:[["Deny-by-default RBAC matrix","A missing rule never grants access","FR-02 FR-03"],["Permission sets (union / intersection)","Rights = union of roles; club actions scoped to that club","FR-02 FR-12"],["State machine T ⊆ S × S","Only listed transitions allowed; others 409","FR-09 FR-13"],["Compare-and-swap transition","Two moderators at once: first wins, second gets 409","FR-09"],["3 reports · 3 strikes in 30 days","Hide harmful reviews fast; mute repeat offenders","FR-10 FR-20"]],
+  fail:[["User holds several roles","Permissions combined as a set union"],["Two moderators change one review","First transition wins; second sees new state and gets 409"],["Admin removes the last admin","Blocked with a clear message"]],
+  kpi:[["100% access tests pass","normal + negative matrix"],["100% invalid transitions blocked","all state pairs"]],
+  reqs:["FR-02","FR-03","FR-09","FR-10","FR-12","FR-13","FR-20","NFR-07"]},
+ E6:{n:"Client–Server Interaction",s:"Client–Server",c:"#0f8f99",course:"Web Tech",cl:"C6",clN:"Client–server interaction",owner:"Omkar A",ini:"OA",
+  resp:"This engine is responsible for the REST API contract, input validation and live updates to the browser.",
+  desc:"Defines how browser and server talk: resources, JSON, status codes, validation on both sides, and live poll results pushed over WebSocket. Delivers role-based views including the spoiler blur and Reveal.",
+  owns:["REST API design","Client and server validation","WebSocket live channel","Responsive role-based views"],
+  not:["Business rules and permissions (E5)","Data storage (E2)","Search and spoiler algorithms (E1)","Authentication (E4)"],
+  inp:["User actions: search, log, vote, review","Server events"],out:["Validated API request","Updated screen, live poll counts"],state:["Client view state","Live subscriptions per poll"],
+  mech:[["Stateless REST (200/202/401/403/409/429)","Every engine reached through one predictable contract","FR-16"],["Validation on client and server","Fast feedback; the server never trusts the browser","FR-16 NFR-06"],["WebSocket publish–subscribe","Poll results update without reloading","FR-17"],["Debounced search + responsive layout","Fewer calls while typing; works on phones","NFR-01 NFR-08"]],
+  fail:[["Live connection drops","Automatic reconnect after 2 s"],["Server returns an error","Clear message; typed input kept"],["Slow network","Loading state; stale request cancelled while typing"]],
+  kpi:[["≤ 30 s · ≤ 3 clicks","log a film (timed test)"],["≤ 2 s","vote appears on other screens"]],
+  reqs:["FR-16","FR-17","NFR-08"]}
+};
+var IDS=["E1","E2","E3","E4","E5","E6"];
+var REQ={"FR-01":"Google / email sign-in","FR-02":"Every request checked against the matrix","FR-03":"Admin grants / revokes roles, audited","FR-04":"Autocomplete ≤ 10 suggestions + filters","FR-05":"Catalogue synced from TMDB","FR-06":"Diary entry / watchlist in one click","FR-07":"Aspect ratings + film averages","FR-08":"Spoiler scan before a review is visible","FR-09":"Review lifecycle, invalid moves → 409","FR-10":"3 reports hide a review","FR-11":"Moderator queue ordered by risk","FR-12":"Convener manages club and members","FR-13":"Poll Draft → Open → Closed","FR-14":"Exactly one vote per member","FR-15":"Notifications for key events","FR-16":"One responsive web app, validated inputs","FR-17":"Live poll results","FR-18":"Follow users, merged feed","FR-19":"Taste-based suggestions","FR-20":"Strikes and temporary mutes","NFR-01":"Autocomplete p95 ≤ 100 ms","NFR-02":"Spoiler catch / wrong-blur targets","NFR-03":"API p95 ≤ 300 ms at 100 users","NFR-04":"0 duplicate votes / lost updates","NFR-05":"≥ 50 jobs/min, 0 lost jobs","NFR-06":"No high/critical security findings","NFR-07":"Each engine independently tested","NFR-08":"Log a film ≤ 30 s, ≤ 3 clicks","NFR-09":"Runs on a laptop within TMDB limits"};
+var SUP={"FR-01":"E5 E2","FR-02":"E4 E2","FR-03":"E2","FR-04":"E2 E6","FR-05":"E4 E2 E1","FR-06":"E6","FR-07":"E6","FR-08":"E3 E2 E6","FR-09":"E2","FR-10":"E2","FR-11":"E5 E2","FR-12":"E2","FR-13":"E2 E3","FR-14":"E5","FR-15":"E4","FR-16":"E1 E2 E3 E4 E5","FR-17":"E2","FR-18":"E2","FR-19":"E2","FR-20":"E2","NFR-01":"E6","NFR-02":"E3","NFR-03":"E6","NFR-04":"E5","NFR-05":"E1","NFR-06":"E6","NFR-07":"E1 E2 E3 E4 E6","NFR-08":"E1","NFR-09":"E4"};
+var PRI={};IDS.forEach(function(id){E[id].reqs.forEach(function(r){PRI[r]=id})});
+var RQ=Object.keys(REQ);
+
+document.querySelectorAll(".tabs button").forEach(function(b){b.addEventListener("click",function(){
+  document.querySelectorAll(".tabs button").forEach(function(x){x.setAttribute("aria-selected",x===b)});
+  ["live","game","mx"].forEach(function(v){$("#v-"+v).hidden=v!==b.dataset.v});});});
+
+/* ===== LIVE STAGE ===== */
+var svg=$("#stage");
+var POS={E6:[40,40],E4:[350,40],E5:[660,40],E3:[40,340],E2:[350,340],E1:[660,340]};var MW=200,MH=170;
+function ctr(id){var p=POS[id];return[p[0]+MW/2,p[1]+MH/2]}
+var defs=mk("defs",{},svg);
+var gl=mk("filter",{id:"glow",x:"-50%",y:"-50%",width:"200%",height:"200%"},defs);mk("feGaussianBlur",{stdDeviation:3.5,result:"b"},gl);var fm=mk("feMerge",{},gl);mk("feMergeNode",{in:"b"},fm);mk("feMergeNode",{in:"SourceGraphic"},fm);
+var bg=mk("g",{opacity:.6},svg);for(var gx=-20;gx<=920;gx+=30)mk("line",{x1:gx,y1:0,x2:gx,y2:560,stroke:"#f1ebe2"},bg);for(var gy=0;gy<=560;gy+=30)mk("line",{x1:-20,y1:gy,x2:920,y2:gy,stroke:"#f1ebe2"},bg);
+var PIPES=[["E6","E4"],["E4","E5"],["E5","E2"],["E6","E2"],["E2","E3"],["E3","E1"],["E1","E2"],["E4","E2"],["E3","E4"],["E6","E1"],["E5","E1"]];
+var pipeG=mk("g",{},svg),pipes={};
+function pipePath(a,b){var A=ctr(a),B=ctr(b);var my=(A[1]+B[1])/2;
+  if(A[1]===B[1]||A[0]===B[0])return"M"+A[0]+" "+A[1]+" L"+B[0]+" "+B[1];
+  return"M"+A[0]+" "+A[1]+" C"+A[0]+" "+my+" "+B[0]+" "+my+" "+B[0]+" "+B[1];}
+PIPES.forEach(function(p){var d=pipePath(p[0],p[1]);var o=mk("path",{d:d,"class":"pipe"},pipeG);mk("path",{d:d,"class":"pipeIn"},pipeG);pipes[p[0]+p[1]]={el:o,a:p[0],b:p[1]};});
+var extG=mk("g",{},svg);
+var USERP="M-4 280 C 40 280 40 160 140 125",TMDBP="M904 280 C 860 280 860 160 760 125";
+mk("path",{d:USERP,fill:"none",stroke:"#e6ded3","stroke-width":4,"stroke-dasharray":"2 7"},extG);
+var tmdbLine=mk("path",{d:TMDBP,fill:"none",stroke:"#e6ded3","stroke-width":4,"stroke-dasharray":"2 7"},extG);
+var userG=mk("g",{"class":"ext",transform:"translate(-16,260)"},extG);mk("rect",{x:0,y:0,width:24,height:40,rx:5},userG);
+var tmdbG=mk("g",{"class":"ext",transform:"translate(892,260)"},extG);mk("rect",{x:0,y:0,width:24,height:40,rx:5},tmdbG);
+var tU=mk("text",{x:-16,y:318,"font-size":10,fill:"#8a98a2","font-family":"ui-monospace,monospace"},extG);tU.textContent="BROWSER";
+var tT=mk("text",{x:916,y:318,"font-size":10,fill:"#8a98a2","text-anchor":"end","font-family":"ui-monospace,monospace"},extG);tT.textContent="TMDB · SMTP";
+var tdown=mk("text",{x:916,y:332,"font-size":10,fill:"#d6334a","text-anchor":"end","font-family":"ui-monospace,monospace","font-weight":700},extG);
+var modG=mk("g",{},svg),mods={};
+IDS.forEach(function(id){
+  var e=E[id],p=POS[id],g=mk("g",{"class":"mod",transform:"translate("+p[0]+","+p[1]+")",tabindex:0,role:"button","aria-label":id+" "+e.n},modG);
+  var halo=mk("rect",{x:-6,y:-6,width:MW+12,height:MH+12,rx:20,fill:e.c,opacity:0,filter:"url(#glow)"},g);
+  var body=mk("rect",{"class":"body",x:0,y:0,width:MW,height:MH,rx:14,stroke:e.c},g);
+  mk("rect",{x:1,y:1,width:MW-2,height:28,rx:13,fill:e.c,opacity:.14},g);
+  var t=mk("text",{x:12,y:20,"font-size":12,"font-weight":800,fill:e.c},g);t.textContent=id;
+  var t2=mk("text",{x:36,y:20,"font-size":11.5,"font-weight":600,fill:"#1f2a33"},g);t2.textContent=e.s;
+  var led=mk("circle",{cx:MW-14,cy:15,r:5,fill:"#1f9d6b"},g);
+  var cap=mk("text",{x:12,y:MH-9,"font-size":9.5,fill:"#8a98a2","font-family":"ui-monospace,monospace"},g);cap.textContent=e.course.toUpperCase()+" · OWNER "+e.ini;
+  var inner=mk("g",{transform:"translate(0,36)"},g);
+  mods[id]={g:g,halo:halo,body:body,led:led,inner:inner,state:"ok"};
+  g.addEventListener("click",function(){select(id)});
+  g.addEventListener("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();select(id)}});
+});
+var A={};
+function lab(g,x,y,t,c,sz){var e=mk("text",{x:x,y:y,"font-size":sz||9.5,fill:c||"#8a98a2","font-family":"ui-monospace,monospace"},g);e.textContent=t;return e}
+(function(){var g=mods.E1.inner;var word="TITANIC";A.e1={nodes:[]};
+  for(var i=0;i<word.length;i++){var x=18+i*26,y=16+(i%2)*12;if(i)mk("line",{x1:x-26,y1:16+((i-1)%2)*12,x2:x,y2:y,stroke:"#f3d3bf","stroke-width":2},g);
+    var c=mk("circle",{cx:x,cy:y,r:9,fill:"#fff4ec",stroke:"#e0601f","stroke-width":1.2},g);var tx=mk("text",{x:x,y:y+3.5,"text-anchor":"middle","font-size":10,"font-weight":700,fill:"#e0601f","font-family":"ui-monospace,monospace"},g);tx.textContent=word[i];A.e1.nodes.push([c,tx]);}
+  lab(g,12,62,"risk","#5f6f7a",10);mk("rect",{x:40,y:54,width:146,height:9,rx:4,fill:"#f1ece4"},g);A.e1.bar=mk("rect",{x:40,y:54,width:40,height:9,rx:4,fill:"#e0601f"},g);
+  A.e1.sent=[];for(var s=0;s<5;s++)A.e1.sent.push(mk("rect",{x:12+s*36,y:74,width:30,height:8,rx:3,fill:"#e6dfd5"},g));
+  lab(g,12,100,"trie · automaton · tf-idf");})();
+(function(){var g=mods.E2.inner;A.e2={cyl:[]};
+  for(var i=0;i<3;i++){var x=14+i*50;var cg=mk("g",{transform:"translate("+x+",4)"},g);mk("rect",{x:0,y:6,width:38,height:46,fill:"#eaf7f2"},cg);mk("ellipse",{cx:19,cy:6,rx:19,ry:5,fill:"#d6f0e6",stroke:"#1a9b7a"},cg);mk("line",{x1:0,y1:6,x2:0,y2:52,stroke:"#1a9b7a"},cg);mk("line",{x1:38,y1:6,x2:38,y2:52,stroke:"#1a9b7a"},cg);mk("path",{d:"M0 52 A19 5 0 0 0 38 52",fill:"none",stroke:"#1a9b7a"},cg);
+    A.e2.cyl.push(mk("rect",{x:3,y:30,width:32,height:20,fill:"#1a9b7a",opacity:.4},cg));}
+  var lk=mk("g",{transform:"translate(166,20)"},g);mk("rect",{x:0,y:10,width:22,height:18,rx:4,fill:"#1a9b7a"},lk);A.e2.sh=mk("path",{d:"M5 10 V5 a6 6 0 0 1 12 0 V10",fill:"none",stroke:"#1a9b7a","stroke-width":2.5},lk);
+  A.e2.txt=lab(g,12,80,"tx: commit","#5f6f7a",10);lab(g,12,100,"3NF · ACID · UNIQUE(poll,user)");})();
+(function(){var g=mods.E3.inner;A.e3={jobs:[],lanes:[]};
+  mk("rect",{x:10,y:6,width:90,height:22,rx:5,fill:"#f7f3ee",stroke:"#e2dacf"},g);lab(g,12,42,"priority queue",null,9);
+  for(var j=0;j<4;j++)A.e3.jobs.push(mk("rect",{x:14+j*20,y:10,width:14,height:14,rx:3,fill:j%2?"#2f6fd0":"#d99a00"},g));
+  for(var w=0;w<4;w++){var y=2+w*17;mk("rect",{x:110,y:y,width:80,height:13,rx:4,fill:"#f7f3ee",stroke:"#e2dacf"},g);var t=lab(g,113,y+10,"T"+(w+1),null,8);
+    A.e3.lanes.push({bar:mk("rect",{x:126,y:y+2.5,width:0,height:8,rx:3,fill:"#2f6fd0"},g),p:Math.random(),t:t});}
+  A.e3.txt=lab(g,12,80,"done 0","#5f6f7a",10);lab(g,12,100,"mutex · semaphores · LRU");})();
+(function(){var g=mods.E4.inner;A.e4={tok:[],level:8};
+  mk("path",{d:"M36 2 L62 11 V34 C62 52 50 62 36 68 C22 62 10 52 10 34 V11 Z",fill:"#f0edff",stroke:"#6a55d8","stroke-width":1.5},g);
+  A.e4.lock=mk("text",{x:36,y:44,"text-anchor":"middle","font-size":20,fill:"#6a55d8","font-weight":700},g);A.e4.lock.textContent="✓";
+  mk("rect",{x:88,y:4,width:98,height:56,rx:8,fill:"#f7f3ee",stroke:"#e2dacf"},g);
+  for(var i=0;i<10;i++)A.e4.tok.push(mk("circle",{cx:100+(i%5)*18,cy:20+Math.floor(i/5)*22,r:6,fill:"#6a55d8"},g));
+  A.e4.txt=lab(g,12,80,"jwt ok · csrf ok","#5f6f7a",10);lab(g,12,100,"oauth · bcrypt · token bucket");})();
+(function(){var g=mods.E5.inner;var S=[["Pending",16,8],["Published",112,8],["Held",16,48],["Removed",112,48]];A.e5={st:[],cur:0};
+  [[0,1],[0,2],[2,1],[2,3],[1,3]].forEach(function(t){var a=S[t[0]],b=S[t[1]];mk("line",{x1:a[1]+36,y1:a[2]+9,x2:b[1]+36,y2:b[2]+9,stroke:"#efcadb","stroke-width":1.5},g);});
+  S.forEach(function(s){var r=mk("rect",{x:s[1],y:s[2],width:72,height:18,rx:9,fill:"#fdeef4",stroke:"#c23d78"},g);var t=mk("text",{x:s[1]+36,y:s[2]+12.5,"text-anchor":"middle","font-size":9.5,fill:"#c23d78","font-weight":700},g);t.textContent=s[0];A.e5.st.push([r,t]);});
+  A.e5.txt=lab(g,12,84,"deny by default","#5f6f7a",10);lab(g,12,100,"rbac · cas · audit log");})();
+(function(){var g=mods.E6.inner;A.e6={rings:[]};
+  mk("rect",{x:10,y:2,width:120,height:68,rx:7,fill:"#e9f8f9",stroke:"#0f8f99"},g);mk("rect",{x:10,y:2,width:120,height:12,rx:7,fill:"#0f8f99",opacity:.25},g);
+  [0,1,2].forEach(function(i){mk("circle",{cx:18+i*8,cy:8,r:2,fill:"#0f8f99"},g)});
+  A.e6.bars=[];for(var i=0;i<4;i++){mk("rect",{x:18,y:20+i*12,width:70,height:7,rx:3,fill:"#d5eff1"},g);A.e6.bars.push(mk("rect",{x:18,y:20+i*12,width:20,height:7,rx:3,fill:"#0f8f99"},g));}
+  mk("circle",{cx:162,cy:36,r:7,fill:"#0f8f99"},g);for(var r=0;r<3;r++)A.e6.rings.push(mk("circle",{cx:162,cy:36,r:7,fill:"none",stroke:"#0f8f99","stroke-width":1.5},g));
+  A.e6.txt=lab(g,12,84,"ws: live tally","#5f6f7a",10);lab(g,12,100,"rest · validation · websocket");})();
+
+var F={worker:false,tmdb:false,db:false},speed=1,stats={done:0,retry:0};
+var ambientG=mk("g",{},svg),packG=mk("g",{},svg),amb=[];
+PIPES.forEach(function(p,i){var o=pipes[p[0]+p[1]];var c=mk("circle",{r:3,fill:E[i%2?p[1]:p[0]].c,opacity:.6},ambientG);amb.push({el:c,path:o.el,len:o.el.getTotalLength(),t:Math.random(),v:.0015+Math.random()*.002,dir:i%2?-1:1});});
+var last=0;
+function tick(ts){
+  var dt=Math.min(50,ts-last||16);last=ts;var k=dt/16;
+  amb.forEach(function(a){a.t=(a.t+a.v*k*a.dir+1)%1;var pt=a.path.getPointAtLength(a.t*a.len);a.el.setAttribute("cx",pt.x);a.el.setAttribute("cy",pt.y);});
+  var idx=Math.floor(ts/260)%10;A.e1.nodes.forEach(function(n,i){var on=i<idx&&idx<8;n[0].setAttribute("fill",on?"#e0601f":"#fff4ec");n[1].setAttribute("fill",on?"#fff4ec":"#e0601f");});
+  var rk=.25+.15*Math.sin(ts/900)+(A.e1.boost||0);rk=Math.max(.04,Math.min(1,rk));A.e1.bar.setAttribute("width",146*rk);A.e1.bar.setAttribute("fill",rk>=.7?"#d6334a":rk>.3?"#d99a00":"#1f9d6b");
+  A.e1.sent.forEach(function(s,i){s.setAttribute("fill",(A.e1.hot||[]).indexOf(i)>-1?"#d6334a":"#e6dfd5");});
+  A.e2.cyl.forEach(function(c,i){var h=14+8*Math.sin(ts/700+i*1.7);c.setAttribute("y",50-h);c.setAttribute("height",h);});
+  var locked=F.db||A.e2.lock;A.e2.sh.setAttribute("d",locked?"M5 10 V5 a6 6 0 0 1 12 0 V10":"M5 10 V1 a6 6 0 0 1 12 0 V3");A.e2.txt.textContent=locked?"tx: waiting for lock":"tx: commit";A.e2.txt.setAttribute("fill",locked?"#d99a00":"#5f6f7a");
+  A.e3.lanes.forEach(function(l,i){var dead=F.worker&&i===1;if(dead){l.bar.setAttribute("fill","#d6334a");l.bar.setAttribute("width",60);l.t.setAttribute("fill","#d6334a");return;}
+    l.t.setAttribute("fill","#8a98a2");l.p+=dt/(1400+i*300);if(l.p>=1){l.p=0;stats.done++;}l.bar.setAttribute("fill","#2f6fd0");l.bar.setAttribute("width",60*l.p);});
+  A.e3.jobs.forEach(function(j,i){j.setAttribute("x",14+((i*20+ts/40)%72));});
+  A.e3.txt.textContent="done "+stats.done+" · retried "+stats.retry+(F.worker?" · T2 down":"");A.e3.txt.setAttribute("fill",F.worker?"#d99a00":"#5f6f7a");
+  A.e4.level=Math.min(10,A.e4.level+dt/400);var lv=Math.floor(A.e4.level);A.e4.tok.forEach(function(t,i){t.setAttribute("opacity",i<lv?1:.12)});
+  if(!A.e5.hold)A.e5.cur=Math.floor(ts/1400)%4;A.e5.st.forEach(function(s,i){var on=i===A.e5.cur;s[0].setAttribute("fill",on?"#c23d78":"#fdeef4");s[1].setAttribute("fill",on?"#fdeef4":"#c23d78");});
+  A.e6.bars.forEach(function(b,i){b.setAttribute("width",20+40*(.5+.5*Math.sin(ts/600+i)));});
+  A.e6.rings.forEach(function(r,i){var p=((ts/1500)+i/3)%1;r.setAttribute("r",7+p*22);r.setAttribute("opacity",1-p);});
+  tmdbG.setAttribute("class","ext"+(F.tmdb?" down":""));tdown.textContent=F.tmdb?"DOWN":"";tmdbLine.setAttribute("stroke",F.tmdb?"#f3c4cb":"#e6ded3");
+  if(!reduce)requestAnimationFrame(tick);
+}
+function setLed(id,s){mods[id].state=s;mods[id].led.setAttribute("fill",s==="bad"?"#d6334a":s==="warn"?"#d99a00":s==="busy"?"#cf4210":"#1f9d6b");}
+function flash(id,on){mods[id].halo.setAttribute("opacity",on?.35:0);}
+var sel="E1",itab="resp",TABS=[["resp","Responsibility"],["own","Owns / not"],["io","I/O & state"],["mech","Mechanisms"],["fail","Failures"],["kpi","KPI"]];
+function select(id){sel=id;IDS.forEach(function(i){mods[i].g.setAttribute("class","mod"+(i===id?" sel":""))});insp(id,itab);}
+function ul(a){return"<ul>"+a.map(function(x){return"<li>"+esc(x)+"</li>"}).join("")+"</ul>"}
+function insp(id,tab){itab=tab;var e=E[id],h='<h3><span>Engine inspector</span><span style="color:'+e.c+'">'+id+' · '+e.cl+'</span></h3>';
+  h+='<div class="who"><span class="av" style="background:'+e.c+'">'+e.ini+'</span><div><b>'+esc(e.n)+'</b><span>'+esc(e.course)+' · owner '+esc(e.owner)+'</span></div></div>';
+  h+='<div class="itabs" role="tablist">'+TABS.map(function(t){return'<button role="tab" data-it="'+t[0]+'" aria-selected="'+(t[0]===tab)+'">'+t[1]+'</button>'}).join("")+'</div><div class="ibody">';
+  if(tab==="resp")h+='<p style="color:'+e.c+';font-weight:600">“'+esc(e.resp)+'”</p><p>'+esc(e.desc)+'</p><h5 style="color:var(--muted)">Cluster '+e.cl+' · '+esc(e.clN)+'</h5><div>'+e.reqs.map(function(r){return'<span class="rq" title="'+esc(REQ[r])+'">'+r+'</span>'}).join("")+'</div>';
+  if(tab==="own")h+='<div class="two"><div><h5 style="color:var(--ok)">Owns</h5>'+ul(e.owns)+'</div><div><h5 style="color:var(--bad)">Does not own</h5>'+ul(e.not)+'</div></div>';
+  if(tab==="io")h+='<h5 style="color:var(--muted)">Inputs</h5>'+ul(e.inp)+'<h5 style="color:var(--muted);margin-top:8px">Outputs</h5>'+ul(e.out)+'<h5 style="color:var(--muted);margin-top:8px">State owned</h5>'+ul(e.state);
+  if(tab==="mech")h+=e.mech.map(function(m){return'<div class="mech"><b>'+esc(m[0])+'</b><span>'+esc(m[1])+'</span><div>'+m[2].split(" ").map(function(r){return'<span class="rq">'+r+'</span>'}).join("")+'</div></div>'}).join("");
+  if(tab==="fail")h+=e.fail.map(function(f){return'<div class="fail"><b>'+esc(f[0])+'</b><span>→ '+esc(f[1])+'</span></div>'}).join("");
+  if(tab==="kpi")h+='<div class="kpi">'+e.kpi.map(function(k){return'<div><b style="color:'+e.c+'">'+esc(k[0])+'</b><span>'+esc(k[1])+'</span></div>'}).join("")+'</div><p style="margin-top:8px;color:var(--muted);font-size:12px">Targets from the S1 workbook. Everything moving on this page is a simulation.</p>';
+  $("#insp").innerHTML=h+'</div>';}
+$("#insp").addEventListener("click",function(ev){var b=ev.target.closest("[data-it]");if(b)insp(sel,b.dataset.it);});
+
+var SC=[
+ {id:"review",ico:"✍",n:"Post a review",steps:function(){var s=[
+  ["USER","E6","E6","Browser sends POST /films/12/reviews. Client and server validation pass.","ok"],
+  ["E6","E4","E4","Session JWT verified, CSRF token matches, rate bucket has tokens.","ok",function(){A.e4.level-=1}],
+  ["E4","E5","E5","May this Viewer write reviews, and are they muted? Allowed. State → Pending Scan.","ok",function(){A.e5.hold=1;A.e5.cur=0}],
+  ["E5","E2","E2","Review stored as pending inside one transaction.","ok"],
+  ["E2","E6","E6","HTTP 202 Accepted: the writer sees “checking for spoilers”. Nobody else can read it yet.","ok"],
+  ["E6","E2","E3","Scan job queued with USER priority, ahead of batch work.","ok"]];
+  if(F.worker)s.push(["E3","E3","E3","Worker T2 is down mid-scan. The job goes back on the queue and another worker retries it after back-off.","warn",function(){stats.retry++}]);
+  s.push(["E3","E1","E1","Aho–Corasick finds listed words, TF-IDF compares each sentence with the plot, the classifier scores it. Sentence 3: risk 0.82.","ok",function(){A.e1.boost=.6;A.e1.hot=[2]}],
+  ["E1","E5","E5","Risk ≥ 0.7, so Pending → Published with sentence 3 blurred (compare-and-swap).","ok",function(){A.e5.cur=1}]);
+  if(F.db)s.push(["E5","E2","E2","A long write holds the lock: this commit waits its turn (BEGIN IMMEDIATE). Readers are not blocked.","warn",function(){A.e2.lock=1}]);
+  s.push(["E5","E2","E2","State and blur spans committed; audit entry written.","ok",function(){A.e2.lock=0}],
+  ["E2","E6","E6","Review appears for readers. The blurred sentence is only sent when a reader presses Reveal.","ok",function(){A.e1.boost=0;A.e1.hot=[];A.e5.hold=0}]);return s;}},
+ {id:"vote",ico:"🗳",n:"100 members vote at once",steps:function(){var s=[
+  ["USER","E6","E6","100 members press Vote at the same moment, each double-clicking: 200 requests.","ok"],
+  ["E6","E4","E4","All carry valid sessions; the token buckets absorb the burst.","ok",function(){A.e4.level=1}],
+  ["E4","E5","E5","Poll is Open and the voters are members: allowed.","ok"]];
+  if(F.db)s.push(["E5","E2","E2","Another writer holds the lock. Votes queue behind it; the poll page keeps reading from the WAL snapshot.","warn",function(){A.e2.lock=1}]);
+  s.push(["E5","E2","E2","UNIQUE(poll, member) keeps each member's first vote and refuses the second: 100 stored, 100 × 409 “already voted”.","ok",function(){A.e2.lock=1}],
+  ["E2","E6","E6","New tally pushed over WebSocket to every open poll page.","ok",function(){A.e2.lock=0}]);return s;}},
+ {id:"role",ico:"👑",n:"Admin grants a role",steps:function(){return[
+  ["USER","E6","E6","Admin picks a user and grants Critic.","ok"],
+  ["E6","E4","E4","Identity verified from the session cookie.","ok"],
+  ["E4","E5","E5","role.manage is in the Admin set: allowed. Removing the last admin would be blocked.","ok"],
+  ["E5","E2","E2","Role added and an append-only audit entry (who, what, when) written in one transaction.","ok"],
+  ["E2","E6","E6","Applies on the user's next request; the critic badge appears.","ok"]];}},
+ {id:"tmdb",ico:"🎞",n:"Search a missing film",steps:function(){var s=[
+  ["USER","E6","E6","User types “past li…” (debounced).","ok"],
+  ["E6","E1","E1","Trie returns local matches; the film isn't in the catalogue yet.","ok"]];
+  if(F.tmdb)s.push(["E1","E4","E4","TMDB is down. The circuit breaker opens: online lookup skipped for 45 s.","bad"],["E4","E6","E6","Page answers at once with local results and a quiet “online search unavailable”. The admin page shows the error.","warn"]);
+  else s.push(["E1","E4","E4","TMDB client asks for the film. TMDB replies 429 Too Many Requests.","warn",function(){A.e4.level=0}],
+   ["E4","E4","E4","Waits for Retry-After while the token bucket refills; the retry succeeds.","ok"],
+   ["E4","E2","E2","Film stored and cached (LRU), so the next search does not call TMDB.","ok"],
+   ["E2","E1","E1","Trie and index gain the new title.","ok"],
+   ["E1","E6","E6","Suggestion list now includes the film.","ok"]);return s;}},
+ {id:"crash",ico:"💥",n:"Worker crashes",steps:function(){return[
+  ["E2","E3","E3","Catalogue sync (BATCH) and two scans (USER) are queued. USER jobs go first.","ok"],
+  ["E3","E3","E3","Worker T2 dies mid-scan.","bad",function(){F.worker=true;$("#f-worker").setAttribute("aria-pressed","true")}],
+  ["E3","E3","E3","Job returned with attempt 2; delay 0.5 s × 2^(n−1) on a timer, so no thread sleeps.","warn",function(){stats.retry++}],
+  ["E3","E1","E1","Another worker picks it up and the scan completes.","ok"],
+  ["E1","E2","E2","Result committed. After a full restart, every review still pending is re-queued.","ok",function(){F.worker=false;$("#f-worker").setAttribute("aria-pressed","false")}]];}},
+ {id:"forge",ico:"🕵",n:"Forged token",steps:function(){return[
+  ["USER","E6","E6","Attacker edits the cookie to claim Admin and calls DELETE /reviews/9.","ok"],
+  ["E6","E4","E4","JWT signature does not match (HS256, algorithm pinned): 401 Unauthorized.","bad",function(){A.e4.lock.textContent="✕";A.e4.lock.setAttribute("fill","#d6334a")}],
+  ["E4","E4","E4","The request stops here. E5 and E2 are never reached; the review is untouched.","ok",function(){A.e4.lock.textContent="✓";A.e4.lock.setAttribute("fill","#6a55d8")}]];}},
+ {id:"race",ico:"⚔",n:"Two moderators race",steps:function(){return[
+  ["USER","E6","E6","Two moderators press Approve and Remove on the same held review.","ok"],
+  ["E6","E4","E4","Both sessions valid.","ok"],
+  ["E4","E5","E5","Both hold review.moderate. Each tries a compare-and-swap from Held.","ok",function(){A.e5.hold=1;A.e5.cur=2}],
+  ["E5","E2","E2","UPDATE … WHERE state = 'held': the first wins (Held → Published).","ok",function(){A.e5.cur=1}],
+  ["E2","E5","E5","The second update matches 0 rows → 409 Conflict, no change.","warn"],
+  ["E5","E6","E6","The second moderator sees the new state and the audit trail.","ok",function(){A.e5.hold=0}]];}}
+];
+var running=false,sc=$("#scns");
+SC.forEach(function(s){var b=document.createElement("button");b.className="scn";b.setAttribute("aria-pressed","false");b.dataset.s=s.id;b.innerHTML='<i>'+s.ico+'</i>'+s.n;sc.appendChild(b);});
+sc.addEventListener("click",function(ev){var b=ev.target.closest(".scn");if(!b||running)return;run(SC.filter(function(s){return s.id===b.dataset.s})[0],b);});
+function animate(from,to,color,ms){return new Promise(function(res){
+  var key=from+to,rk=to+from,d,rev=false;
+  if(from==="USER")d=USERP;
+  else if(from===to){var C=ctr(from);d="M"+(C[0]-28)+" "+(C[1]-60)+" a28 18 0 1 1 0.1 0";}
+  else if(pipes[key])d=pipes[key].el.getAttribute("d");
+  else if(pipes[rk]){d=pipes[rk].el.getAttribute("d");rev=true;}
+  else{var a=ctr(from),b=ctr(to);d="M"+a[0]+" "+a[1]+" L"+b[0]+" "+b[1];}
+  var path=mk("path",{d:d,fill:"none",stroke:"none"},packG);var len=path.getTotalLength();
+  var trail=[];for(var i=0;i<6;i++)trail.push(mk("circle",{r:7-i,fill:color,opacity:1-i*.15,filter:i?"":"url(#glow)"},packG));
+  [key,rk].forEach(function(k){if(pipes[k])pipes[k].el.classList.add("hot")});
+  var t0=performance.now();
+  function step(t){var p=reduce?1:Math.min(1,(t-t0)/ms);trail.forEach(function(c,i){var q=Math.max(0,p-i*.035);var pt=path.getPointAtLength((rev?1-q:q)*len);c.setAttribute("cx",pt.x);c.setAttribute("cy",pt.y);});
+    if(p<1)requestAnimationFrame(step);else{trail.forEach(function(c){c.remove()});path.remove();[key,rk].forEach(function(k){if(pipes[k])pipes[k].el.classList.remove("hot")});res();}}
+  requestAnimationFrame(step);});}
+function wait(ms){return new Promise(function(r){setTimeout(r,reduce?0:ms)})}
+function logLine(id,txt,cls){var em=$("#log .empty");if(em)em.remove();var li=document.createElement("li");li.className=cls;var c=id==="USER"?"#5f6f7a":E[id].c;li.innerHTML='<span class="e" style="background:'+c+'">'+(id==="USER"?"UI":id)+'</span><span>'+esc(txt)+'</span>';$("#log").appendChild(li);$("#log").scrollTop=1e6;}
+function run(s,btn){running=true;document.querySelectorAll(".scn").forEach(function(x){x.setAttribute("aria-pressed",x===btn)});$("#scnName").textContent=s.n;$("#log").innerHTML="";IDS.forEach(function(i){setLed(i,"ok")});
+  if(F.worker)setLed("E3","warn");if(F.tmdb)setLed("E4","warn");if(F.db)setLed("E2","warn");
+  var steps=s.steps(),i=0;
+  (function next(){if(i>=steps.length){running=false;btn.setAttribute("aria-pressed","false");IDS.forEach(function(x){flash(x,false)});logLine("USER","Scenario complete.","ok");return;}
+    var st=steps[i++],col=st[4]==="bad"?"#d6334a":st[4]==="warn"?"#d99a00":"#cf4210";
+    animate(st[0],st[1],col,650*speed).then(function(){IDS.forEach(function(x){flash(x,false)});var who=st[2];flash(who,true);setLed(who,st[4]==="ok"?"busy":st[4]);select(who);if(st[5])st[5]();logLine(who,st[3],st[4]);
+      return wait(1000*speed);}).then(function(){var who=st[2];if(mods[who].state==="busy")setLed(who,"ok");next();});})();}
+function tog(id,key,eng,on,off){$(id).addEventListener("click",function(){F[key]=!F[key];this.setAttribute("aria-pressed",F[key]);setLed(eng,F[key]?"warn":"ok");logLine(eng,F[key]?on:off,F[key]?"warn":"ok");});}
+tog("#f-worker","worker","E3","Fault injected: worker T2 is down. Three workers keep draining the queue; failed jobs are retried with back-off.","Worker T2 restarted.");
+tog("#f-tmdb","tmdb","E4","Fault injected: TMDB unreachable. Searches fall back to the local catalogue; the circuit breaker opens for 45 s.","TMDB reachable again.");
+tog("#f-db","db","E2","Fault injected: a long write holds the lock. Reads keep answering from the WAL snapshot; writers wait their turn.","Write lock released.");
+$("#speed").addEventListener("click",function(ev){var b=ev.target.closest("button");if(!b)return;speed=+b.dataset.s;[].forEach.call(this.children,function(x){x.setAttribute("aria-pressed",x===b)});});
+select("E1");
+if(reduce)tick(0);else requestAnimationFrame(tick);
+
+/* ===== GAME ===== */
+var g={};
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function buildGame(){g={placed:{},first:0,miss:0,tries:{},pick:null,done:false};
+  $("#bins").innerHTML=IDS.map(function(id){var e=E[id];return'<div class="bin" data-b="'+id+'" style="border-color:'+e.c+'66"><h4><i style="background:'+e.c+'">'+id+'</i>'+esc(e.n)+'</h4><p>'+e.cl+' · '+esc(e.clN)+' · '+esc(e.course)+'</p><div class="slot"></div></div>'}).join("");
+  $("#tray").innerHTML="";shuffle(RQ.slice()).forEach(function(r){var c=document.createElement("button");c.type="button";c.className="chip";c.dataset.r=r;c.innerHTML='<b>'+r+'</b><span>'+esc(REQ[r])+'</span>';c.title=REQ[r];$("#tray").appendChild(c);});score();}
+function score(){var n=Object.keys(g.placed).length;$("#sPlaced").textContent=n;$("#sTotal").textContent=RQ.length;$("#sFirst").textContent=g.first;$("#sMiss").textContent=g.miss;
+  if(n===RQ.length&&!g.done){g.done=true;toast(g.revealed?"Answer shown · "+g.first+" were yours on the first try":"All 29 placed · "+g.first+" on the first try");}}
+function toast(t){var d=document.createElement("div");d.className="toast";d.textContent=t;document.body.appendChild(d);setTimeout(function(){d.remove()},2600);}
+function flyTo(c,dest){var a=c.getBoundingClientRect();dest.appendChild(c);var b=c.getBoundingClientRect();if(reduce)return;
+  c.style.transition="none";c.style.transform="translate("+(a.left-b.left)+"px,"+(a.top-b.top)+"px)";void c.offsetWidth;c.style.transition="transform .5s cubic-bezier(.2,.8,.2,1)";c.style.transform="";}
+function drop(r,bin){if(g.placed[r])return;var c=document.querySelector('.chip[data-r="'+r+'"]');g.tries[r]=(g.tries[r]||0)+1;c.classList.remove("picked");
+  if(PRI[r]===bin){g.placed[r]=bin;if(g.tries[r]===1)g.first++;c.classList.remove("wrong");c.classList.add("right");c.style.borderColor=E[bin].c;flyTo(c,document.querySelector('.bin[data-b="'+bin+'"] .slot'));}
+  else{g.miss++;c.classList.remove("wrong");void c.offsetWidth;c.classList.add("wrong");var b=document.querySelector('.bin[data-b="'+bin+'"]');b.style.background="#fdecee";setTimeout(function(){b.style.background=""},400);
+    if(g.tries[r]>=2)toast("Hint: "+r+" is about “"+E[PRI[r]].clN.toLowerCase()+"”");}
+  g.pick=null;score();}
+var dg=null;
+$("#v-game").addEventListener("pointerdown",function(ev){var c=ev.target.closest(".chip");if(!c||g.placed[c.dataset.r])return;var r=c.getBoundingClientRect();
+  dg={c:c,ox:ev.clientX-r.left,oy:ev.clientY-r.top,sx:ev.clientX,sy:ev.clientY,moved:false,ghost:null};});
+window.addEventListener("pointermove",function(ev){if(!dg)return;if(!dg.moved&&Math.abs(ev.clientX-dg.sx)+Math.abs(ev.clientY-dg.sy)<6)return;
+  if(!dg.moved){dg.moved=true;dg.ghost=dg.c.cloneNode(true);dg.ghost.classList.add("drag");document.body.appendChild(dg.ghost);dg.c.style.opacity=.3;}
+  ev.preventDefault();dg.ghost.style.left=(ev.clientX-dg.ox)+"px";dg.ghost.style.top=(ev.clientY-dg.oy)+"px";
+  document.querySelectorAll(".bin").forEach(function(b){var r=b.getBoundingClientRect();b.classList.toggle("over",ev.clientX>r.left&&ev.clientX<r.right&&ev.clientY>r.top&&ev.clientY<r.bottom);});});
+window.addEventListener("pointerup",function(){if(!dg)return;var d=dg;dg=null;
+  if(!d.moved){document.querySelectorAll(".chip.picked").forEach(function(x){if(x!==d.c)x.classList.remove("picked")});d.c.classList.toggle("picked");g.pick=d.c.classList.contains("picked")?d.c.dataset.r:null;return;}
+  d.ghost.remove();d.c.style.opacity="";var hit=null;document.querySelectorAll(".bin").forEach(function(b){if(b.classList.contains("over"))hit=b.dataset.b;b.classList.remove("over")});
+  if(hit)drop(d.c.dataset.r,hit);});
+$("#bins").addEventListener("click",function(ev){var b=ev.target.closest(".bin");if(!b||!g.pick||ev.target.closest(".chip"))return;drop(g.pick,b.dataset.b);});
+$("#gReset").addEventListener("click",buildGame);
+$("#gAnswer").addEventListener("click",function(){g.revealed=true;[].slice.call(document.querySelectorAll("#tray .chip")).forEach(function(c,i){setTimeout(function(){var r=c.dataset.r;if(g.placed[r])return;g.placed[r]=PRI[r];c.classList.remove("picked");c.classList.add("right");c.style.borderColor=E[PRI[r]].c;flyTo(c,document.querySelector('.bin[data-b="'+PRI[r]+'"] .slot'));score();},reduce?0:i*70)});});
+buildGame();
+
+/* ===== MATRIX ===== */
+var own="all",owners=[["all","Everyone"],["Manish Singri","Manish"],["Goureesh N Doddamani","Goureesh"],["Ashutosh Kulkarni","Ashutosh"],["Omkar A","Omkar"]];
+$("#mxf").innerHTML=owners.map(function(o){return'<button data-o="'+esc(o[0])+'" aria-pressed="'+(o[0]==="all")+'">'+o[1]+'</button>'}).join("")+'<span class="legend"><span><span class="dotP" style="color:#cf4210;background:#cf4210"></span> primary</span><span><span class="dotS" style="color:#5f6f7a"></span> supporting</span></span>';
+function buildMx(){var h='<thead><tr><th style="text-align:left">Requirement</th>'+IDS.map(function(id){return'<th data-col="'+id+'" style="color:'+E[id].c+'">'+id+'<div style="font:500 9.5px var(--sans);color:var(--muted)">'+E[id].course+'</div></th>'}).join("")+'</tr></thead><tbody>';
+  RQ.forEach(function(r){var p=PRI[r];if(own!=="all"&&E[p].owner!==own)return;var sup=(SUP[r]||"").split(" ");
+    h+='<tr data-r="'+r+'"><th><b>'+r+'</b>'+esc(REQ[r])+'</th>'+IDS.map(function(id){var v=id===p?'<span class="dotP" style="color:'+E[id].c+';background:'+E[id].c+'"></span>':sup.indexOf(id)>-1?'<span class="dotS" style="color:'+E[id].c+'"></span>':'';return'<td class="c" data-col="'+id+'">'+v+'</td>'}).join("")+'</tr>';});
+  $("#mxt").innerHTML=h+'</tbody>';}
+buildMx();
+$("#mxf").addEventListener("click",function(ev){var b=ev.target.closest("button");if(!b)return;own=b.dataset.o;[].forEach.call(this.querySelectorAll("button"),function(x){x.setAttribute("aria-pressed",x===b)});buildMx();});
+function clearHl(){document.querySelectorAll("#mxt .hl,#mxt .cross").forEach(function(x){x.classList.remove("hl","cross")})}
+$("#mxt").addEventListener("mouseover",function(ev){var td=ev.target.closest("td");clearHl();if(!td)return;var col=td.dataset.col;
+  td.parentNode.querySelectorAll("td,th").forEach(function(x){x.classList.add("hl")});document.querySelectorAll('#mxt [data-col="'+col+'"]').forEach(function(x){x.classList.add("hl")});td.classList.add("cross");});
+$("#mxt").addEventListener("mouseleave",clearHl);
+$("#mxt").addEventListener("click",function(ev){var td=ev.target.closest("td");if(!td)return;var r=td.parentNode.dataset.r,col=td.dataset.col,p=PRI[r],sup=(SUP[r]||"").split(" ");
+  var role=col===p?"is the <b>primary</b> engine":sup.indexOf(col)>-1?"<b>supports</b> it":"is <b>not involved</b>";
+  $("#mxinfo").innerHTML='<b>'+r+'</b> · '+esc(REQ[r])+' — <span style="color:'+E[col].c+'">'+col+' '+esc(E[col].n)+'</span> '+role+'. Primary owner: '+esc(E[p].owner)+' ('+p+', cluster '+E[p].cl+').';});
+})();
+</script>
+</body>
+</html>

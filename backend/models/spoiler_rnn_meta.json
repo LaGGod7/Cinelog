@@ -1,0 +1,48 @@
+{
+ "max_len": 200,
+ "hidden": 96,
+ "n_train": 81060,
+ "n_reviews": 100000,
+ "glove_coverage": 0.859,
+ "fusion_weight": 0.4,
+ "fused_thr_low": 0.5531387892540506,
+ "fused_thr_high": 0.6465395642961113,
+ "dense_features": true,
+ "trained_on": "IMDB_reviews.json",
+ "test": {
+  "tfidf_ml": {
+   "roc_auc": 0.7633181515248606,
+   "pr_auc": 0.5660495190226915,
+   "recall_at_10pct_false_blur": 0.4092904169714704
+  },
+  "rnn": {
+   "roc_auc": 0.7499361204163169,
+   "pr_auc": 0.5360955290262268,
+   "recall_at_10pct_false_blur": 0.35698610095098754
+  },
+  "blend": {
+   "roc_auc": 0.773125796939675,
+   "pr_auc": 0.5797699003888085,
+   "recall_at_10pct_false_blur": 0.4198975859546452
+  },
+  "blend_weight_rnn": 0.4,
+  "val": {
+   "tfidf_ml": {
+    "roc_auc": 0.7672419866613422,
+    "pr_auc": 0.5470259758968681,
+    "recall_at_10pct_false_blur": 0.409689557855127
+   },
+   "rnn": {
+    "roc_auc": 0.7600565404968642,
+    "pr_auc": 0.5363142454538836,
+    "recall_at_10pct_false_blur": 0.3730009407337723
+   },
+   "blend": {
+    "roc_auc": 0.7801950546286265,
+    "pr_auc": 0.5683308825453902,
+    "recall_at_10pct_false_blur": 0.42897460018814676
+   }
+  }
+ },
+ "minutes": 6.1
+}

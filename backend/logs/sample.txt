@@ -1,0 +1,13 @@
+chunk 1: kept 10455 reviews so far
+chunk 2: kept 20910 reviews so far
+chunk 3: kept 31365 reviews so far
+chunk 4: kept 41820 reviews so far
+chunk 5: kept 52275 reviews so far
+chunk 6: kept 62730 reviews so far
+chunk 7: kept 73185 reviews so far
+chunk 8: kept 83640 reviews so far
+chunk 9: kept 94095 reviews so far
+chunk 10: kept 104550 reviews so far
+chunk 11: kept 115005 reviews so far
+chunk 12: kept 120005 reviews so far
+wrote 120005 reviews to ..\mltraining\sample_reviews.json

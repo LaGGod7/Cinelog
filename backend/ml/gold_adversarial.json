@@ -1,0 +1,611 @@
+{
+ "note": "hand-written, labels not human-verified; see ml/make_adversarial.py",
+ "reviews": [
+  {
+   "film": "Titanic",
+   "kind": "disguised",
+   "cat": "euphemism",
+   "text": "Let's just say the guy on the poster doesn't make it to the end credits, and the cold water has a lot to do with it."
+  },
+  {
+   "film": "The Sixth Sense",
+   "kind": "disguised",
+   "cat": "euphemism",
+   "text": "Let's just say the doctor's own situation turns out to be a lot more permanent than he realises."
+  },
+  {
+   "film": "The Godfather",
+   "kind": "disguised",
+   "cat": "euphemism",
+   "text": "Let's just say the old man doesn't get to enjoy his tomatoes for very long once the youngest takes over."
+  },
+  {
+   "film": "The Dark Knight",
+   "kind": "disguised",
+   "cat": "euphemism",
+   "text": "Let's just say Gotham's golden boy ends the film with a very different face than he started with."
+  },
+  {
+   "film": "Mad Max: Fury Road",
+   "kind": "disguised",
+   "cat": "euphemism",
+   "text": "Let's just say the tyrant's breathing equipment is not the thing he walks away with."
+  },
+  {
+   "film": "Parasite",
+   "kind": "disguised",
+   "cat": "euphemism",
+   "text": "Let's just say the birthday party in the garden is not remembered fondly by anyone who attended."
+  },
+  {
+   "film": "Interstellar",
+   "kind": "disguised",
+   "cat": "euphemism",
+   "text": "Let's just say the famous professor was not entirely honest with everybody about what the equation could do."
+  },
+  {
+   "film": "Fight Club",
+   "kind": "disguised",
+   "cat": "euphemism",
+   "text": "Let's just say the best friend turns out to be a lot closer to home than the narrator assumed, like inside his own skull."
+  },
+  {
+   "film": "3 Idiots",
+   "kind": "disguised",
+   "cat": "hinglish",
+   "text": "Last me pata chalta hai ki Rancho asli me ek servant ka beta tha, aur Ladakh me school chala raha hai. Full emotional ho gaya yaar."
+  },
+  {
+   "film": "Dangal",
+   "kind": "disguised",
+   "cat": "hinglish",
+   "text": "Climax me Geeta ne gold jeet liya aur papa ko ek kamre me band kar diya tha, phir bhi unki sikhayi hui chaal kaam aayi. Rona aa gaya."
+  },
+  {
+   "film": "Titanic",
+   "kind": "disguised",
+   "cat": "hinglish",
+   "text": "Jack to aakhir me mar jata hai, Rose ke paas door pe jagah thi lekin Jack ke liye nahi. Dil toot gaya bhai."
+  },
+  {
+   "film": "Fight Club",
+   "kind": "disguised",
+   "cat": "hinglish",
+   "text": "Tyler Durden koi alag aadmi hai hi nahi, wo to hero ke dimaag ka hi dusra roop hai. Mind blown."
+  },
+  {
+   "film": "The Sixth Sense",
+   "kind": "disguised",
+   "cat": "hinglish",
+   "text": "Doctor sahab khud pehle se hi mar chuke the, isiliye unki biwi unse baat hi nahi karti thi. Kya twist hai."
+  },
+  {
+   "film": "Mad Max: Fury Road",
+   "kind": "disguised",
+   "cat": "hinglish",
+   "text": "Nux ne apni jaan de di truck ko rokne ke liye aur Furiosa ne Joe ka mask nochkar usse maar diya."
+  },
+  {
+   "film": "Titanic",
+   "kind": "disguised",
+   "cat": "slang_typos",
+   "text": "jack ded at the end bruh 😭😭 that door was big enough for 2 smh"
+  },
+  {
+   "film": "The Dark Knight",
+   "kind": "disguised",
+   "cat": "slang_typos",
+   "text": "bro RACHEL DIES lmaooo and then harvey goes full 2face. gordons family almost got it too 💀"
+  },
+  {
+   "film": "Inception",
+   "kind": "disguised",
+   "cat": "slang_typos",
+   "text": "ngl the ending just cuts to black while the totem is still spinnin 🤯 u never find out if hes still dreaming"
+  },
+  {
+   "film": "Parasite",
+   "kind": "disguised",
+   "cat": "slang_typos",
+   "text": "dude the bunker guy under the house stabs the daughter at the party then the dad snaps n kills the rich guy. WILD"
+  },
+  {
+   "film": "The Godfather",
+   "kind": "disguised",
+   "cat": "slang_typos",
+   "text": "so micheal whacks the cop n the gangster in the restaurant then hides in sicily, sonny gets shot at the toll booth lol"
+  },
+  {
+   "film": "Mad Max: Fury Road",
+   "kind": "disguised",
+   "cat": "slang_typos",
+   "text": "NUX BLOWS HIMSELF UP to stop the rig. furiosa takes the citadel at the end. I CRIED 😭"
+  },
+  {
+   "film": "Fight Club",
+   "kind": "disguised",
+   "cat": "slang_typos",
+   "text": "ok so tyler isnt real hes literally the narrators alter ego n he blasts himself thru the cheek 2 get rid of him"
+  },
+  {
+   "film": "Interstellar",
+   "kind": "disguised",
+   "cat": "slang_typos",
+   "text": "the dad falls in2 the black hole n talks 2 his daughter thru the bookcase using a wristwatch lol cant make this up"
+  },
+  {
+   "film": "The Sixth Sense",
+   "kind": "disguised",
+   "cat": "question",
+   "text": "Did anyone else notice that the psychologist never once gets a reply from his wife because he is a ghost?"
+  },
+  {
+   "film": "Fight Club",
+   "kind": "disguised",
+   "cat": "question",
+   "text": "Wasn't it clever that Tyler only ever exists in the narrator's head and the narrator is the one throwing all the punches?"
+  },
+  {
+   "film": "Titanic",
+   "kind": "disguised",
+   "cat": "question",
+   "text": "Why couldn't they both fit on the floating door? Jack really freezes to death while Rose survives."
+  },
+  {
+   "film": "Inception",
+   "kind": "disguised",
+   "cat": "question",
+   "text": "So is Cobb still dreaming at the end? Because the spinning top never falls before the cut."
+  },
+  {
+   "film": "Parasite",
+   "kind": "disguised",
+   "cat": "question",
+   "text": "Anyone else feel sick when the old housekeeper's husband turned out to be hiding in that secret bunker below the kitchen?"
+  },
+  {
+   "film": "3 Idiots",
+   "kind": "disguised",
+   "cat": "question",
+   "text": "How great was it that Rancho was really the servant's son who borrowed a rich boy's name for his degree?"
+  },
+  {
+   "film": "Titanic",
+   "kind": "disguised",
+   "cat": "emotional_reaction",
+   "text": "I completely lost it when Jack slipped under the black water and Rose let go of his hand."
+  },
+  {
+   "film": "The Dark Knight",
+   "kind": "disguised",
+   "cat": "emotional_reaction",
+   "text": "My heart broke when Rachel's building went up, and then watching Harvey turn bitter after the fire was brutal."
+  },
+  {
+   "film": "Dangal",
+   "kind": "disguised",
+   "cat": "emotional_reaction",
+   "text": "I was screaming at the screen when Geeta stood on the podium with the gold medal around her neck while dad watched from a locked room."
+  },
+  {
+   "film": "Mad Max: Fury Road",
+   "kind": "disguised",
+   "cat": "emotional_reaction",
+   "text": "The moment the young War Boy drove into the tanker and blocked the road gave me chills."
+  },
+  {
+   "film": "The Godfather",
+   "kind": "disguised",
+   "cat": "emotional_reaction",
+   "text": "Watching the old man collapse among his tomato plants while his grandson played hit me harder than the shootings."
+  },
+  {
+   "film": "Interstellar",
+   "kind": "disguised",
+   "cat": "emotional_reaction",
+   "text": "I sobbed when the old woman in the hospital bed finally cracked the equation and her dad appeared by Saturn."
+  },
+  {
+   "film": "The Sixth Sense",
+   "kind": "disguised",
+   "cat": "hindsight",
+   "text": "Rewatching it, knowing he has been dead since the opening scene, changes every conversation he has with his wife."
+  },
+  {
+   "film": "Fight Club",
+   "kind": "disguised",
+   "cat": "hindsight",
+   "text": "On a second viewing every scene with Brad Pitt plays differently once you know he is a figment of the lead's mind."
+  },
+  {
+   "film": "Parasite",
+   "kind": "disguised",
+   "cat": "hindsight",
+   "text": "Second time round the basement dweller's presence under the house adds so much dread to the kitchen scenes."
+  },
+  {
+   "film": "Inception",
+   "kind": "disguised",
+   "cat": "hindsight",
+   "text": "A rewatch makes the dead wife's role so much clearer; she keeps sabotaging every dream level."
+  },
+  {
+   "film": "3 Idiots",
+   "kind": "disguised",
+   "cat": "hindsight",
+   "text": "Rewatching with the knowledge that the genius friend borrowed another student's identity made me smile at every classroom scene."
+  },
+  {
+   "film": "The Godfather",
+   "kind": "disguised",
+   "cat": "fates",
+   "text": "Sonny, the old man and the corrupt police captain are all gone by the time the credits roll."
+  },
+  {
+   "film": "Parasite",
+   "kind": "disguised",
+   "cat": "fates",
+   "text": "Neither the housekeeper nor her husband nor the daughter of the poor family survives the garden party."
+  },
+  {
+   "film": "The Dark Knight",
+   "kind": "disguised",
+   "cat": "fates",
+   "text": "By the final scene the DA is dead, the girlfriend is dead, and the hero is a wanted man."
+  },
+  {
+   "film": "Mad Max: Fury Road",
+   "kind": "disguised",
+   "cat": "fates",
+   "text": "The tyrant and his hulking son are both dead and the warlord's former captive sits on the throne."
+  },
+  {
+   "film": "Titanic",
+   "kind": "disguised",
+   "cat": "fates",
+   "text": "Out of the two lovers only one is still breathing by dawn."
+  },
+  {
+   "film": "Fight Club",
+   "kind": "disguised",
+   "cat": "fates",
+   "text": "He is bleeding from the face, the skyscrapers fall and the woman holds his hand; that is where it stops."
+  },
+  {
+   "film": "The Sixth Sense",
+   "kind": "disguised",
+   "cat": "sarcastic_negative",
+   "text": "Predictable. Anyone who has watched a trailer figures out in ten minutes that the guy is a ghost. Shyamalan thinks we are idiots."
+  },
+  {
+   "film": "Fight Club",
+   "kind": "disguised",
+   "cat": "sarcastic_negative",
+   "text": "Oh wow, shocker, the charismatic anarchist is just the lead's hallucination. Never seen that before. Overrated."
+  },
+  {
+   "film": "Inception",
+   "kind": "disguised",
+   "cat": "sarcastic_negative",
+   "text": "Of course Nolan ends it on a spinning top so everyone can argue on the internet for ten years. Lazy ending."
+  },
+  {
+   "film": "Interstellar",
+   "kind": "disguised",
+   "cat": "sarcastic_negative",
+   "text": "So the Professor knew all along that Plan A was impossible and let everybody burn through their lives? Sloppy writing."
+  },
+  {
+   "film": "Titanic",
+   "kind": "disguised",
+   "cat": "sarcastic_negative",
+   "text": "She could have shared the floating door and saved him but no, the script needed him to die in the water."
+  },
+  {
+   "film": "3 Idiots",
+   "kind": "disguised",
+   "cat": "sarcastic_negative",
+   "text": "Reveal that the supposed hero was only a servant's kid who stole someone's degree is cute but the film glorifies fraud."
+  },
+  {
+   "film": "The Sixth Sense",
+   "kind": "disguised",
+   "cat": "roles_only",
+   "text": "The child's therapist is the one who is actually dead, which explains why nobody else in the story can see him."
+  },
+  {
+   "film": "Parasite",
+   "kind": "disguised",
+   "cat": "roles_only",
+   "text": "The rich family's driver and the tutor and the housekeeper are all frauds or hiding something, and the husband in the basement ends up stabbing someone."
+  },
+  {
+   "film": "The Dark Knight",
+   "kind": "disguised",
+   "cat": "roles_only",
+   "text": "The prosecutor loses half his face and goes on a rampage, so the caped guy has to take the fall for it."
+  },
+  {
+   "film": "Interstellar",
+   "kind": "disguised",
+   "cat": "roles_only",
+   "text": "The astronaut father dives into the singularity and ends up inside a library of his daughter's bedroom across time."
+  },
+  {
+   "film": "Mad Max: Fury Road",
+   "kind": "disguised",
+   "cat": "roles_only",
+   "text": "The drifter helps the one-armed driver and her escapees return to the fortress and overthrow the ruler."
+  },
+  {
+   "film": "Dangal",
+   "kind": "disguised",
+   "cat": "roles_only",
+   "text": "The wrestler father is locked away and the older daughter wins the final using his old lessons."
+  },
+  {
+   "film": "Titanic",
+   "kind": "disguised",
+   "cat": "buried_in_long_review",
+   "text": "The direction is confident, the music is moving and the editing keeps the story tight. The supporting cast is excellent and the costume department deserves an award. The cinematography uses warm colours in the early scenes and cooler ones later. Dialogue is sharp and witty. The sound design makes even quiet scenes feel tense. I loved the production design and the way each location feels lived in. Jack dies in the cold water at the end. Overall a fantastic evening at the cinema."
+  },
+  {
+   "film": "The Sixth Sense",
+   "kind": "disguised",
+   "cat": "buried_in_long_review",
+   "text": "The direction is confident, the music is moving and the editing keeps the story tight. The supporting cast is excellent and the costume department deserves an award. The cinematography uses warm colours in the early scenes and cooler ones later. Dialogue is sharp and witty. The sound design makes even quiet scenes feel tense. I loved the production design and the way each location feels lived in. It turns out the doctor was a ghost all along. Overall a fantastic evening at the cinema."
+  },
+  {
+   "film": "Fight Club",
+   "kind": "disguised",
+   "cat": "buried_in_long_review",
+   "text": "The direction is confident, the music is moving and the editing keeps the story tight. The supporting cast is excellent and the costume department deserves an award. The cinematography uses warm colours in the early scenes and cooler ones later. Dialogue is sharp and witty. The sound design makes even quiet scenes feel tense. I loved the production design and the way each location feels lived in. Tyler is the narrator's other personality. Overall a fantastic evening at the cinema."
+  },
+  {
+   "film": "Parasite",
+   "kind": "disguised",
+   "cat": "buried_in_long_review",
+   "text": "The direction is confident, the music is moving and the editing keeps the story tight. The supporting cast is excellent and the costume department deserves an award. The cinematography uses warm colours in the early scenes and cooler ones later. Dialogue is sharp and witty. The sound design makes even quiet scenes feel tense. I loved the production design and the way each location feels lived in. The man hiding in the basement stabs the girl at the party. Overall a fantastic evening at the cinema."
+  },
+  {
+   "film": "The Dark Knight",
+   "kind": "disguised",
+   "cat": "buried_in_long_review",
+   "text": "The direction is confident, the music is moving and the editing keeps the story tight. The supporting cast is excellent and the costume department deserves an award. The cinematography uses warm colours in the early scenes and cooler ones later. Dialogue is sharp and witty. The sound design makes even quiet scenes feel tense. I loved the production design and the way each location feels lived in. Rachel dies when the building explodes. Overall a fantastic evening at the cinema."
+  },
+  {
+   "film": "Inception",
+   "kind": "disguised",
+   "cat": "buried_in_long_review",
+   "text": "The direction is confident, the music is moving and the editing keeps the story tight. The supporting cast is excellent and the costume department deserves an award. The cinematography uses warm colours in the early scenes and cooler ones later. Dialogue is sharp and witty. The sound design makes even quiet scenes feel tense. I loved the production design and the way each location feels lived in. The top is still spinning when the screen goes black, so we never learn if he is dreaming. Overall a fantastic evening at the cinema."
+  },
+  {
+   "film": "The Sixth Sense",
+   "kind": "disguised",
+   "cat": "comparison",
+   "text": "Has the same twist as every 'the hero was dead all along' story, but with Bruce Willis as a ghost it lands better than most."
+  },
+  {
+   "film": "Fight Club",
+   "kind": "disguised",
+   "cat": "comparison",
+   "text": "Same trick as every 'the other guy is in his head' story, but here the narrator literally shoots himself to end it."
+  },
+  {
+   "film": "Mad Max: Fury Road",
+   "kind": "disguised",
+   "cat": "comparison",
+   "text": "Reminds me of every revolution story where the escaped slaves seize the palace; the Citadel finale is the best of them."
+  },
+  {
+   "film": "Interstellar",
+   "kind": "disguised",
+   "cat": "comparison",
+   "text": "It's 2001 meets a family drama, with the dad communicating through time using gravity and a watch."
+  },
+  {
+   "film": "Titanic",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "No spoilers, but the ending is devastating, I cried for an hour. Go in blind."
+  },
+  {
+   "film": "The Sixth Sense",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "The twist is amazing and you will never see it coming. I will say nothing else, just watch it."
+  },
+  {
+   "film": "Fight Club",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "Killer soundtrack, dead serious tone and a twisty script that kept me guessing the whole time."
+  },
+  {
+   "film": "The Dark Knight",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "Heath Ledger's final complete performance is a masterclass. Tragic that he died so young."
+  },
+  {
+   "film": "Inception",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "The ending sparked ten years of arguments online, which is a testament to how good the film is. No spoilers here."
+  },
+  {
+   "film": "Parasite",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "A brilliant, shocking thriller that murders your expectations. Dark humour, killer cast."
+  },
+  {
+   "film": "The Godfather",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "A film about family, power and loyalty. Marlon Brando died in 2004, but his performance is immortal."
+  },
+  {
+   "film": "Mad Max: Fury Road",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "Dead-on casting, a killer chase and a ton of explosions. I could watch the first hour again."
+  },
+  {
+   "film": "Interstellar",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "I won't spoil the ending but bring tissues. The black and white contrast of Earth and space is gorgeous."
+  },
+  {
+   "film": "Dangal",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "A sports drama that actually earns its tears. Aamir Khan's weight transformation is wild."
+  },
+  {
+   "film": "3 Idiots",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "The twist at the end is cute but I will not say what it is. Hilarious from start to finish."
+  },
+  {
+   "film": "Titanic",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "A rich girl and a penniless artist fall in love on a doomed ship. The sets are incredible and the romance works."
+  },
+  {
+   "film": "Parasite",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "A poor family slowly worms its way into a wealthy household by pretending to be qualified. Funny and tense."
+  },
+  {
+   "film": "The Dark Knight",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "The Joker arrives in Gotham and forces the city into chaos while Batman and the DA try to stop the mob."
+  },
+  {
+   "film": "Fight Club",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "An insomniac office worker meets a soap salesman and they start an underground fighting club. Chaotic and smart."
+  },
+  {
+   "film": "Inception",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "A thief who steals secrets from dreams is hired to plant an idea instead. The first hour is pure fun."
+  },
+  {
+   "film": "The Sixth Sense",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "A child psychologist tries to help a scared little boy who says he sees dead people. Creepy in the best way."
+  },
+  {
+   "film": "Interstellar",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "With the Earth dying, a farmer-turned-pilot leaves his children to find a new home through a wormhole."
+  },
+  {
+   "film": "Mad Max: Fury Road",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "A tyrant's escaped wives flee across the desert with a one-armed driver, and a drifter gets pulled into the chase."
+  },
+  {
+   "film": "Dangal",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "A former wrestler trains his two daughters to become champions in a world that says girls cannot wrestle."
+  },
+  {
+   "film": "3 Idiots",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "Two friends go looking for the college buddy who vanished after graduation. The campus scenes are brilliant."
+  },
+  {
+   "film": "The Godfather",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "The ageing head of a crime family is shot early in the film and his youngest son is pulled into the business."
+  },
+  {
+   "film": "Titanic",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "I died laughing at the dinner table scene and I was dead inside after the music faded. Wow."
+  },
+  {
+   "film": "Fight Club",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "The first rule is you do not talk about it, so I will not. A killer film."
+  },
+  {
+   "film": "Interstellar",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "The visuals of the wormhole and the black hole are the best I've seen. The score by Hans Zimmer is huge."
+  },
+  {
+   "film": "Inception",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "Ellen Page and Joseph Gordon-Levitt are great. The folding Paris street scene is iconic."
+  },
+  {
+   "film": "Parasite",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "Bong Joon-ho won the Oscars for this and it was deserved. The house design is a character itself."
+  },
+  {
+   "film": "The Dark Knight",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "I watched it in IMAX, the opening bank heist is unbeatable. Hans Zimmer's two-note theme gives me chills."
+  },
+  {
+   "film": "3 Idiots",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "Kya movie hai yaar, hasi nahi ruki. Songs bhi mast hain aur college ke scenes ekdum real lage."
+  },
+  {
+   "film": "Dangal",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "Bahut hi acchi film hai, Aamir ne kamaal kar diya. Poore parivaar ke saath dekhne layak."
+  },
+  {
+   "film": "The Godfather",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "Slow, patient and gorgeous. Every frame is composed like an oil painting. Highly recommended."
+  },
+  {
+   "film": "Mad Max: Fury Road",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "lol this movie goes HARD. the guitar guy on the truck is the best thing ever 🔥"
+  },
+  {
+   "film": "Titanic",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "ok so the first half is cute and the second half is a disaster movie, in the best way. the costumes!!"
+  },
+  {
+   "film": "Parasite",
+   "kind": "hard_clean",
+   "cat": "hard_clean",
+   "text": "Thrilling start to finish. Don't read anything about it before watching, and don't let anyone spoil it."
+  }
+ ]
+}

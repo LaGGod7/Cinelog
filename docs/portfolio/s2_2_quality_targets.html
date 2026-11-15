@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CineLog Quality Targets</title>
+<style>
+:root{--bg:#eff3f6;--surface:#fff;--ink:#11202b;--muted:#526471;--line:#d3dce3;--soft:#e3eaef;
+--allow:#16794a;--allow-bg:#e2f4ea;--deny:#b42335;--deny-bg:#fbe5e8;--warn:#a86400;--warn-bg:#fff3dc;
+--brand:#cf4210;--brand-bg:#fff0e5;--teal:#0a7479;--teal-bg:#def2f2;--violet:#5646b0;--focus:#1b6fd1;
+--sans:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;--mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+--shadow:0 1px 2px rgba(17,32,43,.04),0 10px 30px rgba(17,32,43,.06)}
+*{box-sizing:border-box}
+html,body{overflow-x:hidden}
+body{margin:0;color:var(--ink);font:14px/1.45 var(--sans);background:radial-gradient(1100px 500px at 90% -10%,#fff1e8 0,transparent 60%),radial-gradient(900px 500px at -10% 10%,#e4f4f4 0,transparent 55%),var(--bg)}
+.page{max-width:1180px;margin:0 auto;padding:22px 16px 40px}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
+.logo{font-weight:800;font-size:32px;letter-spacing:-.02em;color:var(--brand);line-height:1}
+h1{font-size:23px;margin:0;font-weight:700}
+h2{font-size:18px;margin:0 0 4px;font-weight:700}
+h3{font-size:15px;margin:0;font-weight:700}
+.sub{color:var(--muted);margin:8px 0 14px;max-width:84ch;font-size:14.5px}
+.eyebrow{font:700 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.mono{font-family:var(--mono)}
+.muted{color:var(--muted)}.small{font-size:12px}
+.card{background:var(--surface);border:1px solid #e1e8ee;border-radius:18px;padding:18px;min-width:0;box-shadow:var(--shadow)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{border:1.5px solid #c9d4dc;background:var(--surface);border-radius:10px;padding:6px 12px;font-weight:600;font-size:13px;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(17,32,43,.08)}
+.btn.brand{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.teal{background:var(--teal);border-color:var(--teal);color:#fff}
+.btn.sm{padding:4px 9px;font-size:12px}
+.chip{border:1px solid #dbe3e9;background:#fff;border-radius:99px;padding:5px 12px;font-size:12.5px;font-weight:600;box-shadow:0 2px 6px rgba(17,32,43,.04)}
+.chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.tag{display:inline-block;font:700 10.5px var(--mono);letter-spacing:.04em;padding:2px 8px;border-radius:99px;border:1.5px solid var(--line);background:#f4f7f9;white-space:nowrap}
+.tag.ok{border-color:var(--allow);color:var(--allow);background:var(--allow-bg)}
+.tag.bad{border-color:var(--deny);color:var(--deny);background:var(--deny-bg)}
+.tag.warn{border-color:var(--warn);color:var(--warn);background:var(--warn-bg)}
+.tag.br{border-color:var(--brand);color:var(--brand);background:var(--brand-bg)}
+.tag.tl{border-color:var(--teal);color:var(--teal);background:var(--teal-bg)}
+input[type=range]{width:100%;accent-color:var(--brand)}
+.honest{border:1px solid #f3d29a;background:linear-gradient(90deg,#fff8ea,#fffdf8);border-radius:14px;padding:10px 14px;font-size:13px;margin-bottom:16px}
+.top{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;margin-bottom:16px}
+.sl{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:2px 10px;align-items:center;margin-top:10px}
+.sl label{font-size:13px;font-weight:600}
+.sl output{font:700 13px var(--mono);text-align:right;color:var(--brand)}
+.sl input{grid-column:1/-1}
+.sl small{grid-column:1/-1;color:var(--muted);font-size:11.5px;margin-top:-2px}
+.toggles{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.tog{display:inline-flex;gap:6px;align-items:center;border:1px solid #dbe3e9;border-radius:99px;padding:4px 10px 4px 4px;font-size:12.5px;background:#fff;cursor:pointer;user-select:none}
+.tog .sw{width:30px;height:18px;border-radius:99px;background:#cfd8df;position:relative;transition:background .2s;flex:none}
+.tog .sw::after{content:"";position:absolute;left:2px;top:2px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:left .2s}
+.tog input{position:absolute;opacity:0;pointer-events:none}
+.tog input:checked+.sw{background:var(--teal)}
+.tog input:checked+.sw::after{left:14px}
+.tog input:focus-visible+.sw{outline:3px solid var(--focus);outline-offset:2px}
+.score{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.score div{flex:1;min-width:76px;border-radius:14px;padding:8px 10px;text-align:center}
+.score b{display:block;font:800 22px var(--mono)}
+.score span{font-size:11.5px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.nfr{position:relative;display:flex;flex-direction:column;gap:6px;transition:transform .2s,box-shadow .2s;border-top:4px solid var(--line)}
+.nfr:hover{transform:translateY(-2px)}
+.nfr.s-ok{border-top-color:var(--allow)}.nfr.s-near{border-top-color:#e2a227}.nfr.s-bad{border-top-color:var(--deny)}
+.nfr .tx{font-size:12.5px;color:var(--muted);margin:0}
+.nfr .tg{font-size:12px;background:#f6f9fb;border-radius:10px;padding:6px 8px}
+.nfr .tg b{font-family:var(--mono);font-size:11px;color:var(--teal)}
+.gauge{display:block;width:100%;max-width:220px;margin:0 auto}
+.gauge .needle{transition:transform .6s cubic-bezier(.3,1.4,.5,1);transform-origin:110px 100px}
+.val{text-align:center;margin-top:-6px}
+.val b{font:800 22px var(--mono)}
+.val span{font-size:12px;color:var(--muted)}
+.lc{border-top:1px dashed var(--soft);padding-top:8px;margin-top:auto;font-size:12.5px}
+.why{font-size:12px;color:var(--muted);min-height:2.6em}
+.game{position:relative;height:120px;border-radius:12px;background:linear-gradient(135deg,#fff7f1,#eef8f8);border:1px solid var(--soft);overflow:hidden;margin-top:6px}
+.game button{position:absolute;transform:translate(-50%,-50%);animation:pop .35s both}
+.game button:hover{transform:translate(-50%,calc(-50% - 1px))}
+.game .msg{pointer-events:none}
+.game .msg{position:absolute;inset:0;display:grid;place-items:center;font-size:12.5px;color:var(--muted);text-align:center;padding:8px}
+@keyframes pop{from{transform:translate(-50%,-50%) scale(.4);opacity:0}}
+.sec{margin:26px 0 12px}
+.explorer{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px;align-items:start}
+.plot{width:100%;display:block}
+.per{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.per div{border-radius:14px;padding:8px;text-align:center}
+.per b{display:block;font:800 20px var(--mono)}
+.per span{font-size:11.5px}
+.dots{display:grid;grid-template-columns:repeat(25,minmax(0,1fr));gap:2px;margin-top:10px}
+.dots i{aspect-ratio:1;border-radius:50%;background:#dfe6eb;transition:background .4s}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tabs button{border:1px solid #e1e8ee;background:#fff;border-radius:12px;padding:7px 12px;font-size:13px;font-weight:600;box-shadow:0 2px 8px rgba(17,32,43,.05)}
+.tabs button[aria-selected=true]{background:var(--brand);border-color:var(--brand);color:#fff;box-shadow:0 6px 16px rgba(207,66,16,.25)}
+.lab{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;align-items:start}
+.ep{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.ep li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;border:1px solid var(--soft);border-radius:10px;padding:6px 9px;font:12px var(--mono);background:#fff;transition:all .3s;position:relative;overflow:hidden}
+.ep li.scan{border-color:var(--teal);background:var(--teal-bg)}
+.ep li.scan::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(10,116,121,.18),transparent);animation:sweep .6s linear infinite}
+@keyframes sweep{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.ep li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.verdict{border-radius:12px;padding:8px 12px;font-weight:700;margin-top:10px;font-size:13px}
+.verdict.ok{background:var(--allow-bg);color:var(--allow)}.verdict.bad{background:var(--deny-bg);color:var(--deny)}.verdict.wr{background:var(--warn-bg);color:var(--warn)}
+.foot{font-size:12px;color:var(--muted);margin-top:22px}
+@media (max-width:980px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:860px){.top,.explorer,.lab{grid-template-columns:1fr}}
+@media (max-width:560px){.grid{grid-template-columns:1fr}.logo{font-size:28px}h1{font-size:20px}.dots{grid-template-columns:repeat(20,minmax(0,1fr))}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="head"><span class="logo">CineLog</span><h1>Quality targets · what-if lab</h1></div>
+  <p class="sub">Nine non-functional requirements, each a live instrument. Drag the load, catalogue size, worker count and TMDB traffic, flip design safeguards on and off, and watch every gauge turn green, amber or red against its target.</p>
+  <div class="honest">⚠️ <b>Honest labelling.</b> The gauges are driven by <b>simple simulation models</b> written for this page, not by measurements of the running system. The only measured numbers on this page come from the Spoiler Shield work: a 150k-review training run (full model AUC 0.772) and a stress test that caught about <b>98–99.6%</b> of spoiler reviews but wrongly blurred about <b>40–44%</b> of clean ones. <b>NFR-02's ≤ 10% wrong-blur target is not met yet.</b></div>
+
+  <div class="top">
+    <section class="card">
+      <div class="row" style="justify-content:space-between"><h2>What-if controls</h2><span class="tag tl">simulation</span></div>
+      <div class="row" style="margin-top:6px"><span class="small muted">Scenarios:</span><button class="chip" data-sc="quiet">☕ Quiet weekday</button><button class="chip" data-sc="campus">🎓 Campus launch</button><button class="chip" data-sc="release">🍿 Big release night</button></div>
+      <div class="sl"><label for="u">Concurrent users</label><output id="uo"></output><input type="range" id="u" min="10" max="2000" step="10" value="300"><small>drives API latency, search load and vote contention</small></div>
+      <div class="sl"><label for="n">Catalogue size</label><output id="no"></output><input type="range" id="n" min="3" max="6" step="0.05" value="4"><small>films in the local catalogue (log scale: 1k → 1M)</small></div>
+      <div class="sl"><label for="w">Background workers</label><output id="wo"></output><input type="range" id="w" min="1" max="8" step="1" value="4"><small>spoiler scans, notifications and TMDB sync jobs</small></div>
+      <div class="sl"><label for="t">Films missing locally, per second</label><output id="to"></output><input type="range" id="t" min="0" max="120" step="1" value="20"><small>each one wants a TMDB call</small></div>
+      <div class="eyebrow" style="margin-top:14px">Design safeguards</div>
+      <div class="toggles" id="tg"></div>
+    </section>
+    <section class="card">
+      <div class="row" style="justify-content:space-between"><h2>All nine at a glance</h2><span class="tag">radar</span></div>
+      <svg id="radar" class="plot" viewBox="0 0 340 300" role="img" aria-label="Radar chart of the nine NFRs against their targets"></svg>
+      <div class="score" id="score"></div>
+      <p class="small muted" style="margin:8px 0 0">Points outside the dashed ring meet their target; inside it they miss. NFR-02 needs <i>both</i> of its numbers to pass.</p>
+    </section>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <section class="sec card">
+    <div class="row" style="justify-content:space-between"><h2>NFR-02 · Spoiler Shield threshold explorer</h2><span class="tag warn">illustrative curve</span></div>
+    <p class="small muted" style="margin:4px 0 12px">Every spoiler detector has a dial: blur more and you catch more spoilers, but you also blur more clean reviews. This curve is <b>illustrative</b>, shaped to pass through the measured stress-test result (the orange box). It is not a measured ROC curve. The green corner is where NFR-02 wants to be.</p>
+    <div class="explorer">
+      <svg id="roc" class="plot" viewBox="0 0 420 320" role="img" aria-label="Trade-off curve between spoilers caught and clean reviews wrongly blurred"></svg>
+      <div>
+        <div class="sl" style="margin-top:0"><label for="th">Blur threshold</label><output id="tho"></output><input type="range" id="th" min="0.05" max="0.95" step="0.01" value="0.30"><small>lower = more cautious (blur more)</small></div>
+        <div class="per" id="per"></div>
+        <div class="eyebrow" style="margin-top:12px">Per 1,000 reviews (≈26% spoilers, as in the stress-test mix)</div>
+        <div class="dots" id="dots" aria-hidden="true"></div>
+        <div class="row small muted" style="margin-top:6px;gap:12px"><span><b style="color:var(--allow)">●</b> spoiler caught</span><span><b style="color:var(--deny)">●</b> spoiler missed</span><span><b style="color:var(--warn)">●</b> clean but blurred</span><span><b style="color:#c4cdd4">●</b> clean, shown</span></div>
+        <div class="verdict" id="rv"></div>
+        <div class="row" style="margin-top:10px"><button class="btn sm" id="sweep">▶ Sweep the dial</button><button class="btn sm" id="anchor">Jump to measured point</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec card">
+    <div class="row" style="justify-content:space-between"><h2>How we will test it</h2><span class="tag tl">animated rehearsal</span></div>
+    <p class="small muted" style="margin:4px 0 12px">Each target comes with a planned test. These rehearsals run the same simulation models as the gauges above, using your current what-if settings.</p>
+    <div class="tabs" role="tablist" id="ltabs"><button role="tab" aria-selected="true" data-l="load">📈 Load ramp · NFR-01/03</button><button role="tab" aria-selected="false" data-l="soak">⏱ 24 h soak · NFR-05/09</button><button role="tab" aria-selected="false" data-l="zap">🛡 ZAP scan · NFR-06</button></div>
+    <div id="labbox"></div>
+  </section>
+  <p class="foot">NFR wording and targets from the CineLog S2 requirements set. Engines: E1 Search &amp; Spoiler Matching · E2 Storage &amp; Transaction · E3 Background Job Scheduler · E4 Secure Access &amp; Communication · E5 Role, Permission &amp; Workflow · E6 Client–Server Interaction.</p>
+</main>
+<script>
+(function(){
+"use strict";
+var NFR=[["NFR-01", "The search engine shall return autocomplete suggestions quickly over the full catalogue.", "Performance", "p95 ≤ 100 ms (server-side) over 10,000+ titles"], ["NFR-02", "The Spoiler Shield shall catch most spoiler reviews while keeping wrong blurs low.", "Accuracy", "≥ 85% of spoiler reviews caught; ≤ 10% of clean reviews wrongly blurred on a labelled test set"], ["NFR-03", "The API shall respond within target under concurrent load.", "Performance", "p95 ≤ 300 ms with 100 concurrent users"], ["NFR-04", "The storage engine shall keep data correct under concurrent writes.", "Reliability", "0 duplicate votes and 0 lost updates in a 100-user concurrent test"], ["NFR-05", "The background scheduler shall process jobs reliably under sustained load.", "Reliability", "≥ 50 jobs/min; 0 lost jobs and 0 deadlocks in a 1-hour soak test"], ["NFR-06", "The system shall resist common web attacks.", "Security", "bcrypt passwords; CSRF and rate-limit checks; 0 high/critical OWASP ZAP findings"], ["NFR-07", "Every engine shall be independently testable.", "Maintainability", "Automated tests per engine; ≥ 80% line coverage on engine code"], ["NFR-08", "A new user shall log a film quickly without training.", "Usability", "Median ≤ 30 s and ≤ 3 clicks (10-user timed test); usable at 360 px width"], ["NFR-09", "The system shall run on one laptop and stay within TMDB terms.", "Portability / Compliance", "CPU only, no GPU; TMDB calls kept below its rate limit with back-off on HTTP 429"]];
+var reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var $=function(s,r){return (r||document).querySelector(s)};
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+var TXT={};NFR.forEach(function(n){TXT[n[0]]=n});
+var S={u:300,n:4,w:4,t:20,trie:true,uniq:true,bucket:true,csrf:true,hdr:true,cookie:true,valid:true,admin:true,cov:72,game:null,th:0.30};
+var TOG=[["trie","Trie index for search"],["uniq","UNIQUE(poll, member) constraint"],["bucket","TMDB token bucket (≤ 40/s)"],["csrf","CSRF tokens"],["hdr","Security headers"],["cookie","HttpOnly + Secure cookies"],["valid","Server-side input validation"],["admin","Role check on admin routes"]];
+var M={
+ "NFR-01":{max:300,t:100,dir:"low",u:"ms p95",eng:"E1",f:function(){var N=Math.pow(10,S.n);return S.trie?12+4*Math.log10(N)+S.u*0.012:15+N*0.0009+S.u*0.02},why:function(v){return S.trie?"Trie lookup: cost grows with prefix length, barely with catalogue size.":"Linear scan: every keystroke scans "+fmtN(Math.pow(10,S.n))+" titles."}},
+ "NFR-02":{max:100,t:85,dir:"high",u:"% caught",eng:"E1",f:function(){return tpr(S.th)*100},why:function(){return "Wrongly blurred at this threshold: "+Math.round(fpr(S.th)*100)+"% (target ≤ 10%). Tune it in the explorer below."}},
+ "NFR-03":{max:900,t:300,dir:"low",u:"ms p95",eng:"E2",f:function(){var rho=S.u*0.5/900;return rho>=0.92?900:70/(1-rho)},why:function(){var rho=S.u*0.5/900;return "Server utilisation ≈ "+Math.min(100,Math.round(rho*100))+"%. Latency climbs steeply near 100% (queueing)."}},
+ "NFR-04":{max:10,t:0,dir:"low",u:"bad writes",eng:"E2",f:function(){return S.uniq?0:Math.round(S.u*0.03)},why:function(){return S.uniq?"Duplicate votes are refused by the database itself.":"Without the constraint, simultaneous double-clicks slip through."}},
+ "NFR-05":{max:150,t:50,dir:"high",u:"jobs / min",eng:"E3",f:function(){return S.w*14*Math.max(.35,1-S.u/5000)},why:function(){return S.w+" worker"+(S.w>1?"s":"")+" × ~14 jobs/min each, slowed a little by shared database load."}},
+ "NFR-06":{max:10,t:0,dir:"low",u:"high / critical",eng:"E4",f:function(){return ["csrf","hdr","cookie","valid","admin"].filter(function(k){return !S[k]}).length*([0,2,1,1,3,2][0]+1)},why:function(){var off=["csrf","hdr","cookie","valid","admin"].filter(function(k){return !S[k]});return off.length?"Missing: "+off.map(function(k){return TOG.filter(function(x){return x[0]===k})[0][1]}).join(", ")+".":"All five baseline controls on: the scan should find nothing high or critical."}},
+ "NFR-07":{max:100,t:80,dir:"high",u:"% coverage",eng:"E5",f:function(){return S.cov},why:function(){return "Enter your measured E5 test coverage with the slider below (placeholder value until measured)."}},
+ "NFR-08":{max:90,t:30,dir:"low",u:"s median",eng:"E6",f:function(){return S.game===null?null:S.game},why:function(){return S.game===null?"Play the 3-step mini-game below to time yourself.":"Your median time over "+games.length+" attempt"+(games.length>1?"s":"")+"."}},
+ "NFR-09":{max:120,t:40,dir:"low",u:"TMDB req/s",eng:"E3",f:function(){return S.bucket?Math.min(S.t,38):S.t},why:function(){return S.bucket?(S.t>38?(S.t-38)+" req/s wait in the queue instead of hitting TMDB.":"Below the limit; the bucket has spare tokens."):"No limiter: every miss calls TMDB straight away."}}
+};
+M["NFR-06"].f=function(){return ["csrf","hdr","cookie","valid","admin"].filter(function(k){return !S[k]}).length*2};
+var IDS=Object.keys(M);
+function fmtN(x){return x>=1e6?(x/1e6).toFixed(1)+"M":x>=1e3?Math.round(x/1e3)+"k":Math.round(x)}
+function tpr(t){return 1-Math.pow(t,3.82)}
+function fpr(t){return Math.exp(-2.89*t)}
+function status(id,v){var m=M[id];if(v===null)return"none";if(id==="NFR-02"){var f=fpr(S.th);return(v>=85&&f<=.10)?"ok":"bad"}
+  if(m.t===0)return v<=0?"ok":"bad";if(m.dir==="low")return v<=m.t?"ok":v<=m.t*1.25?"near":"bad";return v>=m.t?"ok":v>=m.t*.9?"near":"bad"}
+var COL={ok:"#16794a",near:"#d18f12",bad:"#b42335",none:"#9aa8b3"},LBL={ok:"meets target",near:"close",bad:"misses target",none:"not measured"};
+var games=[];
+
+/* ---- gauge svg ---- */
+function arc(cx,cy,r,a0,a1){var p0=[cx+r*Math.cos(a0),cy-r*Math.sin(a0)],p1=[cx+r*Math.cos(a1),cy-r*Math.sin(a1)];return "M"+p0[0].toFixed(1)+" "+p0[1].toFixed(1)+" A"+r+" "+r+" 0 0 1 "+p1[0].toFixed(1)+" "+p1[1].toFixed(1)}
+function gaugeSVG(id){var m=M[id],cx=110,cy=100,r=78;var frac=function(v){return Math.max(0,Math.min(1,v/m.max))};var ft=frac(m.t);
+  var a=function(f){return Math.PI*(1-f)};var good=m.dir==="low"?[0,Math.max(ft,.015)]:[ft,1];
+  var s='<path d="'+arc(cx,cy,r,Math.PI,0)+'" stroke="#e6ecf0" stroke-width="16" fill="none" stroke-linecap="round"/>';
+  s+='<path d="'+arc(cx,cy,r,a(good[0]),a(good[1]))+'" stroke="#bfe6cf" stroke-width="16" fill="none"/>';
+  var ta=a(ft);s+='<line x1="'+(cx+(r-12)*Math.cos(ta))+'" y1="'+(cy-(r-12)*Math.sin(ta))+'" x2="'+(cx+(r+12)*Math.cos(ta))+'" y2="'+(cy-(r+12)*Math.sin(ta))+'" stroke="#11202b" stroke-width="2.5"/>';
+  s+='<text x="'+(cx+(r+20)*Math.cos(ta))+'" y="'+(cy-(r+20)*Math.sin(ta)+3)+'" font-size="10" text-anchor="middle" fill="#11202b" font-weight="700">'+(m.t===0?"0":m.t)+'</text>';
+  s+='<text x="'+(cx-r)+'" y="'+(cy+16)+'" font-size="9.5" text-anchor="middle" fill="#526471">0</text><text x="'+(cx+r)+'" y="'+(cy+16)+'" font-size="9.5" text-anchor="middle" fill="#526471">'+m.max+'</text>';
+  s+='<path class="vb" d="" stroke-width="16" fill="none" stroke-linecap="round" opacity=".9"/>';
+  s+='<g class="needle"><line x1="'+cx+'" y1="'+cy+'" x2="'+(cx-r+16)+'" y2="'+cy+'" stroke="#11202b" stroke-width="3" stroke-linecap="round"/></g><circle cx="'+cx+'" cy="'+cy+'" r="7" fill="#11202b"/><circle cx="'+cx+'" cy="'+cy+'" r="3" fill="#fff"/>';
+  return '<svg class="gauge" viewBox="-6 0 232 122" aria-hidden="true">'+s+'</svg>'}
+
+/* ---- build cards ---- */
+var EXTRA={
+ "NFR-07":'<div class="sl" style="margin-top:0"><label for="cov">Measured coverage</label><output id="covo">72%</output><input type="range" id="cov" min="0" max="100" value="72"><small>placeholder: enter your real number when the tests run</small></div>',
+ "NFR-08":'<div class="row" style="justify-content:space-between"><span class="small"><b>Log-a-film mini-game</b>: search → rate → save</span><button class="btn sm brand" id="gstart">Start</button></div><div class="game" id="game"><div class="msg">Press Start, then click the three steps as they appear.</div></div>',
+ "NFR-02":'<div class="small muted">Measured stress test: <b>98–99.6%</b> caught · <b>40–44%</b> wrongly blurred.</div>'
+};
+$("#grid").innerHTML=IDS.map(function(id){var n=TXT[id]||[id,"","",""];return '<article class="card nfr" id="c-'+id+'"><div class="row" style="justify-content:space-between"><h3>'+id+' <span class="muted small" style="font-weight:600">· '+esc(n[2])+'</span></h3><span class="tag st">—</span></div><p class="tx">'+esc(n[1])+'</p>'+gaugeSVG(id)+'<div class="val"><b class="v">–</b> <span>'+M[id].u+'</span></div><div class="tg"><b>TARGET</b> '+esc(n[3])+'</div><div class="why"></div>'+(EXTRA[id]?'<div class="lc">'+EXTRA[id]+'</div>':'')+'<div class="row small muted"><span class="tag '+(id==="NFR-02"?'warn':'')+'">'+(id==="NFR-02"?"measured + illustrative":id==="NFR-07"?"you enter it":id==="NFR-08"?"your timing":"simulated")+'</span><span>engine '+M[id].eng+'</span></div></article>'}).join("");
+
+$("#tg").innerHTML=TOG.map(function(t){return '<label class="tog"><input type="checkbox" data-k="'+t[0]+'"'+(S[t[0]]?' checked':'')+'><span class="sw"></span>'+t[1]+'</label>'}).join("");
+
+function update(){
+  $("#uo").textContent=S.u;$("#no").textContent=fmtN(Math.pow(10,S.n));$("#wo").textContent=S.w;$("#to").textContent=S.t+"/s";
+  var cnt={ok:0,near:0,bad:0,none:0};
+  IDS.forEach(function(id){var m=M[id],v=m.f(),st=status(id,v),c=$("#c-"+id);cnt[st]++;
+    c.className="card nfr s-"+st;var tag=$(".st",c);tag.className="tag st "+(st==="ok"?"ok":st==="near"?"warn":st==="bad"?"bad":"");tag.textContent=LBL[st];
+    $(".v",c).textContent=v===null?"–":(m.max<=10||id==="NFR-08"?(Math.round(v*10)/10):Math.round(v));$(".v",c).style.color=COL[st];
+    var f=v===null?0:Math.max(0,Math.min(1,v/m.max));$(".needle",c).style.transform="rotate("+(f*180)+"deg)";
+    $(".vb",c).setAttribute("d",f>0.003?arc(110,100,78,Math.PI,Math.PI*(1-f)):"");$(".vb",c).setAttribute("stroke",COL[st]);$(".vb",c).setAttribute("opacity",".28");
+    $(".why",c).textContent=m.why(v)});
+  $("#score").innerHTML='<div style="background:var(--allow-bg);color:var(--allow)"><b>'+cnt.ok+'</b><span>meet target</span></div><div style="background:var(--warn-bg);color:var(--warn)"><b>'+cnt.near+'</b><span>close</span></div><div style="background:var(--deny-bg);color:var(--deny)"><b>'+cnt.bad+'</b><span>miss</span></div><div style="background:#f1f4f6;color:var(--muted)"><b>'+cnt.none+'</b><span>not measured</span></div>';
+  radar();
+}
+/* ---- radar ---- */
+function ratio(id){var m=M[id],v=m.f();if(v===null)return null;if(id==="NFR-02"){var f=fpr(S.th);return Math.min(v/85,0.1/Math.max(f,.001))}
+  if(m.t===0)return v<=0?1.4:Math.max(.15,.9-v*.12);return m.dir==="low"?m.t/Math.max(v,.001):v/m.t}
+function radar(){var cx=170,cy=150,R=110,n=IDS.length,s="";
+  [.33,.667,1].forEach(function(k,i){var pts=IDS.map(function(_,j){var a=-Math.PI/2+j*2*Math.PI/n;return (cx+Math.cos(a)*R*k).toFixed(1)+","+(cy+Math.sin(a)*R*k).toFixed(1)}).join(" ");s+='<polygon points="'+pts+'" fill="'+(i===2?'#f7fbf9':'none')+'" stroke="'+(i===1?'#16794a':'#e3eaef')+'" '+(i===1?'stroke-dasharray="5 4" stroke-width="1.6"':'')+'/>'});
+  if(s.indexOf("#f7fbf9")>-1)s=s.replace('fill="#f7fbf9"','fill="none"');
+  var pts=[];IDS.forEach(function(id,j){var a=-Math.PI/2+j*2*Math.PI/n;s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+Math.cos(a)*R)+'" y2="'+(cy+Math.sin(a)*R)+'" stroke="#e3eaef"/>';
+    var r=ratio(id);var k=r===null?0.05:Math.max(.05,Math.min(1.5,r))/1.5;pts.push([cx+Math.cos(a)*R*k,cy+Math.sin(a)*R*k,id,status(id,M[id].f())]);
+    var lx=cx+Math.cos(a)*(R+22),ly=cy+Math.sin(a)*(R+22)+4;s+='<text x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" text-anchor="middle" font-size="10.5" font-weight="700" fill="#11202b">'+id.replace("NFR-","")+'</text>'});
+  s+='<polygon points="'+pts.map(function(p){return p[0].toFixed(1)+","+p[1].toFixed(1)}).join(" ")+'" fill="rgba(207,66,16,.14)" stroke="#cf4210" stroke-width="2" stroke-linejoin="round"/>';
+  pts.forEach(function(p){s+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="5.5" fill="'+COL[p[3]]+'" stroke="#fff" stroke-width="2"><title>'+p[2]+': '+LBL[p[3]]+'</title></circle>'});
+  s+='<text x="'+(cx+4)+'" y="'+(cy-R*.667-4)+'" font-size="9" fill="#16794a">target</text>';
+  $("#radar").innerHTML=s}
+
+/* ---- controls ---- */
+["u","n","w","t"].forEach(function(k){$("#"+k).addEventListener("input",function(){S[k]=+this.value;update()})});
+$("#tg").addEventListener("change",function(e){var k=e.target.dataset.k;if(k){S[k]=e.target.checked;update()}});
+var SC={quiet:{u:80,n:4.3,w:2,t:5},campus:{u:450,n:4,w:3,t:30},release:{u:1500,n:5.3,w:4,t:95}};
+document.querySelectorAll("[data-sc]").forEach(function(b){b.onclick=function(){var p=SC[b.dataset.sc];Object.keys(p).forEach(function(k){S[k]=p[k];$("#"+k).value=p[k]});document.querySelectorAll("[data-sc]").forEach(function(x){x.setAttribute("aria-pressed",x===b)});update()}});
+$("#cov").addEventListener("input",function(){S.cov=+this.value;$("#covo").textContent=this.value+"%";update()});
+
+/* ---- NFR-08 mini-game ---- */
+var gStep=0,gT0=0;
+$("#gstart").onclick=function(){gStep=0;gT0=performance.now();next()};
+function next(){var g=$("#game"),steps=["🔎 Past Lives","★★★★½","💾 Save"];if(gStep>=3){var s=(performance.now()-gT0)/1000;games.push(s);var srt=games.slice().sort(function(a,b){return a-b});S.game=srt[Math.floor((srt.length-1)/2)];g.innerHTML='<div class="msg"><span><b style="font-size:18px">'+s.toFixed(1)+' s</b><br>'+(s<=30?"well inside the 30 s target":"over the 30 s target")+' · play again to build a median</span></div>';update();return}
+  var x=15+Math.random()*70,y=25+Math.random()*50;g.innerHTML='<div class="msg" style="place-items:start;padding:6px 8px;font:600 11px var(--mono)">step '+(gStep+1)+' / 3</div><button class="btn '+(gStep===2?'brand':'teal')+'" style="left:'+x+'%;top:'+y+'%">'+steps[gStep]+'</button>';$("button",g).onclick=function(){gStep++;next()}}
+
+/* ---- NFR-02 explorer ---- */
+var PX=function(x){return 52+x*350},PY=function(y){return 282-y*262};
+function roc(){var t=S.th,s="";
+  for(var i=0;i<=5;i++){var v=i/5;s+='<line x1="'+PX(v)+'" y1="20" x2="'+PX(v)+'" y2="282" stroke="#eef2f5"/><line x1="52" y1="'+PY(v)+'" x2="402" y2="'+PY(v)+'" stroke="#eef2f5"/><text x="'+PX(v)+'" y="298" font-size="10" text-anchor="middle" fill="#526471">'+(v*100)+'%</text><text x="46" y="'+(PY(v)+3)+'" font-size="10" text-anchor="end" fill="#526471">'+(v*100)+'%</text>'}
+  s+='<rect x="'+PX(0)+'" y="'+PY(1)+'" width="'+(PX(.1)-PX(0))+'" height="'+(PY(.85)-PY(1))+'" fill="#d7f0e1" stroke="#16794a" stroke-dasharray="4 3"/><line x1="'+PX(.1)+'" y1="'+PY(.85)+'" x2="'+PX(.5)+'" y2="'+PY(.36)+'" stroke="#16794a" stroke-width="1" stroke-dasharray="2 3"/><text x="'+(PX(.5)+4)+'" y="'+(PY(.36)+4)+'" font-size="10.5" fill="#16794a" font-weight="700">NFR-02 target zone</text><text x="'+(PX(.5)+4)+'" y="'+(PY(.36)+17)+'" font-size="9.5" fill="#16794a">≤10% wrongly blurred and ≥85% caught</text>';
+  s+='<rect x="'+PX(.40)+'" y="'+PY(.996)+'" width="'+(PX(.44)-PX(.40))+'" height="'+Math.max(4,PY(.98)-PY(.996))+'" fill="#ffd9c4" stroke="#cf4210" stroke-width="1.5"/><text x="'+PX(.42)+'" y="'+(PY(.996)-6)+'" font-size="9.5" text-anchor="middle" fill="#cf4210" font-weight="700">measured (stress test)</text>';
+  var d="";for(var k=0;k<=100;k++){var tt=0.01+k*0.0098;var x=fpr(tt),y=tpr(tt);d+=(k?"L":"M")+PX(x).toFixed(1)+" "+PY(y).toFixed(1)}
+  s+='<path d="'+d+'" fill="none" stroke="#0a7479" stroke-width="2.5"/>';
+  s+='<line x1="'+PX(0)+'" y1="'+PY(0)+'" x2="'+PX(1)+'" y2="'+PY(1)+'" stroke="#c9d4dc" stroke-dasharray="3 4"/><text x="'+PX(.8)+'" y="'+PY(.74)+'" font-size="9.5" fill="#9aa8b3" transform="rotate(-36 '+PX(.8)+' '+PY(.74)+')">coin flip</text>';
+  var px=PX(fpr(t)),py=PY(tpr(t));s+='<line x1="'+px+'" y1="'+py+'" x2="'+px+'" y2="282" stroke="#cf4210" stroke-dasharray="3 3"/><line x1="52" y1="'+py+'" x2="'+px+'" y2="'+py+'" stroke="#cf4210" stroke-dasharray="3 3"/><circle cx="'+px+'" cy="'+py+'" r="8" fill="#cf4210" stroke="#fff" stroke-width="3"/>';
+  s+='<text x="227" y="316" font-size="11" text-anchor="middle" fill="#11202b" font-weight="700">clean reviews wrongly blurred →</text><text x="12" y="150" font-size="11" text-anchor="middle" fill="#11202b" font-weight="700" transform="rotate(-90 12 150)">spoilers caught →</text>';
+  $("#roc").innerHTML=s;
+  var c=tpr(t),f=fpr(t),SP=256,CL=744,cc=Math.round(c*SP),fb=Math.round(f*CL);
+  $("#tho").textContent=t.toFixed(2);
+  $("#per").innerHTML='<div style="background:var(--allow-bg);color:var(--allow)"><b>'+(c*100).toFixed(1)+'%</b><span>spoilers caught</span></div><div style="background:var(--deny-bg);color:var(--deny)"><b>'+(SP-cc)+'</b><span>spoilers missed</span></div><div style="background:var(--warn-bg);color:var(--warn)"><b>'+(f*100).toFixed(0)+'%</b><span>clean wrongly blurred</span></div>';
+  var dots="";for(var i=0;i<100;i++){var col;if(i<26){col=i<Math.round(c*26)?"#16794a":"#b42335"}else{col=(i-26)<Math.round(f*74)?"#d18f12":"#dfe6eb"}dots+='<i style="background:'+col+'"></i>'}$("#dots").innerHTML=dots;
+  var ok1=c>=.85,ok2=f<=.10;$("#rv").className="verdict "+(ok1&&ok2?"ok":ok1||ok2?"wr":"bad");
+  $("#rv").textContent=ok1&&ok2?"Both targets met.":ok1?"Catches enough spoilers, but blurs "+fb+" of 744 clean reviews: wrong-blur target missed.":ok2?"Wrong blurs are low enough, but it misses "+(SP-cc)+" of 256 spoilers: catch target missed.":"Both targets missed at this setting.";
+  if(!(ok1&&ok2)&&$("#rv").textContent.indexOf("No setting")<0)$("#rv").textContent+=" On this curve no setting reaches the green corner: the model itself must improve.";
+  update()}
+$("#th").addEventListener("input",function(){S.th=+this.value;roc()});
+$("#anchor").onclick=function(){S.th=0.30;$("#th").value=0.30;roc()};
+var swI=null;$("#sweep").onclick=function(){if(swI){clearInterval(swI);swI=null;this.textContent="▶ Sweep the dial";return}var b=this;b.textContent="⏸ Stop";var v=0.05;swI=setInterval(function(){v+=0.01;if(v>0.95){clearInterval(swI);swI=null;b.textContent="▶ Sweep the dial";return}S.th=v;$("#th").value=v;roc()},reduce?1:45)};
+
+/* ---- test labs ---- */
+var labTimer=null;
+function stopLab(){if(labTimer){clearInterval(labTimer);labTimer=null}}
+var LAB={};
+LAB.load=function(box){box.innerHTML='<div class="lab"><svg id="lsvg" class="plot" viewBox="0 0 460 240" role="img" aria-label="Load ramp chart"></svg><div><p class="small" style="margin-top:0">A k6-style ramp from 0 to <b>'+S.u+'</b> virtual users over 60 s, recording API p95 (NFR-03) and search p95 (NFR-01) as load builds.</p><button class="btn brand" id="lrun">▶ Run ramp</button><div id="lres"></div></div></div>';
+  var svg=$("#lsvg"),X=function(s){return 40+s*400/60},Y=function(ms){return 210-Math.min(ms,600)*190/600};
+  function frame(sec){var s='<rect x="40" y="20" width="400" height="190" fill="#fbfcfd" stroke="#e3eaef"/>';[0,150,300,450,600].forEach(function(v){s+='<text x="34" y="'+(Y(v)+3)+'" font-size="9.5" text-anchor="end" fill="#526471">'+v+'</text><line x1="40" x2="440" y1="'+Y(v)+'" y2="'+Y(v)+'" stroke="#eef2f5"/>'});
+    s+='<line x1="40" x2="440" y1="'+Y(300)+'" y2="'+Y(300)+'" stroke="#b42335" stroke-dasharray="5 4"/><text x="436" y="'+(Y(300)-4)+'" font-size="9.5" text-anchor="end" fill="#b42335">API target 300 ms</text><line x1="40" x2="440" y1="'+Y(100)+'" y2="'+Y(100)+'" stroke="#0a7479" stroke-dasharray="5 4"/><text x="436" y="'+(Y(100)-4)+'" font-size="9.5" text-anchor="end" fill="#0a7479">search target 100 ms</text>';
+    var a="",b="",save={u:S.u};for(var t=0;t<=sec;t+=1){S.u=Math.max(10,save.u*t/60);var api=M["NFR-03"].f(),se=M["NFR-01"].f();a+=(t?"L":"M")+X(t).toFixed(1)+" "+Y(api).toFixed(1);b+=(t?"L":"M")+X(t).toFixed(1)+" "+Y(se).toFixed(1)}S.u=save.u;
+    s+='<path d="'+b+'" fill="none" stroke="#0a7479" stroke-width="2.2"/><path d="'+a+'" fill="none" stroke="#cf4210" stroke-width="2.5"/>';
+    s+='<text x="40" y="232" font-size="9.5" fill="#526471">0 s</text><text x="440" y="232" font-size="9.5" text-anchor="end" fill="#526471">60 s · '+S.u+' users</text><text x="48" y="34" font-size="10" fill="#cf4210" font-weight="700">API p95</text><text x="100" y="34" font-size="10" fill="#0a7479" font-weight="700">search p95</text>';svg.innerHTML=s}
+  frame(0);
+  $("#lrun").onclick=function(){stopLab();var sec=0;labTimer=setInterval(function(){sec+=reduce?60:1;frame(Math.min(sec,60));if(sec>=60){stopLab();var api=M["NFR-03"].f(),se=M["NFR-01"].f();var ok=api<=300&&se<=100;$("#lres").innerHTML='<div class="verdict '+(ok?'ok':'bad')+'">At '+S.u+' users: API p95 ≈ '+Math.round(api)+' ms, search p95 ≈ '+Math.round(se)+' ms → '+(ok?"pass":"fail")+' (simulated)</div>'}},50)}};
+LAB.soak=function(box){box.innerHTML='<div class="lab"><svg id="ssvg" class="plot" viewBox="0 0 460 240" role="img" aria-label="Soak test timeline"></svg><div><p class="small" style="margin-top:0">24 hours of steady traffic squeezed into a few seconds. Bars are jobs processed per minute (NFR-05, target ≥ 50); the teal line is TMDB calls per second (NFR-09, limit 40). We look for drift: slowing workers or creeping call rates.</p><button class="btn brand" id="srun">▶ Run 24 h soak</button><div id="sres"></div></div></div>';
+  var svg=$("#ssvg"),X=function(h){return 40+h*400/24};var seed=7;function rnd(){seed=(seed*9301+49297)%233280;return seed/233280}
+  var data=[];for(var h=0;h<24;h++){var load=0.6+0.4*Math.sin((h-6)/24*2*Math.PI);var jobs=M["NFR-05"].f()*(0.92+rnd()*0.12);var tm=S.bucket?Math.min(S.t*load*1.3,38):S.t*load*1.3;data.push([jobs,tm])}
+  function frame(n){var s='<rect x="40" y="20" width="400" height="190" fill="#fbfcfd" stroke="#e3eaef"/>',Yj=function(v){return 210-Math.min(v,150)*190/150};
+    s+='<line x1="40" x2="440" y1="'+Yj(50)+'" y2="'+Yj(50)+'" stroke="#16794a" stroke-dasharray="5 4"/><text x="436" y="'+(Yj(50)-4)+'" font-size="9.5" text-anchor="end" fill="#16794a">≥ 50 jobs/min</text><line x1="40" x2="440" y1="'+Yj(40)+'" y2="'+Yj(40)+'" stroke="#0a7479" stroke-dasharray="2 3"/><text x="44" y="'+(Yj(40)+12)+'" font-size="9.5" fill="#0a7479">40 TMDB req/s</text>';
+    var p="";for(var i=0;i<n;i++){var j=data[i][0],c=j>=50?"#16794a":"#b42335";s+='<rect x="'+(X(i)+3)+'" y="'+Yj(j)+'" width="'+(400/24-6)+'" height="'+(210-Yj(j))+'" rx="3" fill="'+c+'" opacity=".55"/>';p+=(i?"L":"M")+(X(i)+400/48).toFixed(1)+" "+Yj(data[i][1]).toFixed(1)}
+    s+='<path d="'+p+'" fill="none" stroke="#0a7479" stroke-width="2.4"/>';for(var k=0;k<=24;k+=6)s+='<text x="'+X(k)+'" y="226" font-size="9.5" text-anchor="middle" fill="#526471">'+k+'h</text>';svg.innerHTML=s}
+  frame(0);
+  $("#srun").onclick=function(){stopLab();var n=0;labTimer=setInterval(function(){n=reduce?24:n+1;frame(n);if(n>=24){stopLab();var mn=Math.min.apply(null,data.map(function(d){return d[0]})),mx=Math.max.apply(null,data.map(function(d){return d[1]}));var ok=mn>=50&&mx<=40;$("#sres").innerHTML='<div class="verdict '+(ok?'ok':'bad')+'">Slowest hour: '+Math.round(mn)+' jobs/min · peak TMDB rate: '+Math.round(mx)+' req/s → '+(ok?'pass':'fail')+' (simulated)</div>'}},120)}};
+LAB.zap=function(box){var EP=[["GET /films/autocomplete",null],["POST /auth/login","csrf"],["GET /me (session cookie)","cookie"],["POST /films/:id/reviews","valid"],["POST /polls/:id/votes","csrf"],["GET / (headers)","hdr"],["POST /admin/roles","admin"],["GET /reviews/:id/reveal","valid"]];
+  box.innerHTML='<div class="lab"><div><ul class="ep" id="ep">'+EP.map(function(e,i){return '<li data-i="'+i+'"><span>'+e[0]+'</span><span class="tag">queued</span></li>'}).join("")+'</ul></div><div><p class="small" style="margin-top:0">OWASP ZAP crawls each endpoint and fires attack payloads. Turn safeguards off in the <b>What-if controls</b> panel, then scan again to see what it would flag.</p><button class="btn brand" id="zrun">▶ Run ZAP scan</button><div id="zres"></div></div></div>';
+  $("#zrun").onclick=function(){stopLab();var i=0,found=0,lis=document.querySelectorAll("#ep li");lis.forEach(function(l){l.className="";$(".tag",l).className="tag";$(".tag",l).textContent="queued"});
+    labTimer=setInterval(function(){if(i>0){var p=lis[i-1],k=EP[i-1][1],bad=k&&!S[k];p.className="";var tg=$(".tag",p);tg.className="tag "+(bad?"bad":"ok");tg.textContent=bad?"HIGH":"clean";if(bad)found++}
+      if(i>=lis.length){stopLab();$("#zres").innerHTML='<div class="verdict '+(found?'bad':'ok')+'">'+found+' high/critical finding'+(found===1?'':'s')+' → '+(found?'NFR-06 fails':'NFR-06 passes')+' (simulated)</div>';return}
+      lis[i].className="scan";$(".tag",lis[i]).textContent="scanning";i++},reduce?1:420)}};
+function openLab(k){stopLab();document.querySelectorAll("#ltabs button").forEach(function(b){b.setAttribute("aria-selected",b.dataset.l===k)});LAB[k]($("#labbox"))}
+$("#ltabs").onclick=function(e){var b=e.target.closest("button");if(b)openLab(b.dataset.l)};
+
+roc();openLab("load");
+})();
+</script>
+</body>
+</html>
