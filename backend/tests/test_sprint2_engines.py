@@ -343,3 +343,12 @@ def test_tc_e3_06_health_reports_cache_counters_for_the_soak_test(admin, films):
     for c in caches.values():
         assert {"size", "capacity", "hits", "misses", "evictions", "hit_rate"} <= set(c)
     assert caches["automata"]["capacity"] == 128 and caches["plot_tfidf"]["capacity"] == 256
+
+
+def test_tc_e1_11_sentence_split_after_two_letter_word_without_space():
+    """DEF-12: 'Loved it.Dr. Crowe is great!' was split as 'Loved it.Dr.' + 'Crowe is great!'."""
+    from app.spoiler.text import split_sentences
+    txt = "Loved it.Dr. Crowe is great! He was dead all along... Wow"
+    assert [txt[s:e] for s, e in split_sentences(txt)] == ["Loved it.", "Dr. Crowe is great!", "He was dead all along...", "Wow"]
+    txt2 = "So good.Mr. Smith dies."            # three letters before the stop: worked before and must still work
+    assert [txt2[s:e] for s, e in split_sentences(txt2)] == ["So good.", "Mr. Smith dies."]

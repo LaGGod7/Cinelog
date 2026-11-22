@@ -1,0 +1,31 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.18, pytest-9.2.0, pluggy-1.7.0 -- /home/claude/venv/bin/python
+rootdir: /home/claude/cinelog_repo/backend
+plugins: anyio-4.16.0
+collecting ... collected 31 items / 30 deselected / 1 selected
+
+tests/test_sprint2_engines.py::test_tc_e1_11_sentence_split_after_two_letter_word_without_space FAILED [100%]
+
+=================================== FAILURES ===================================
+_______ test_tc_e1_11_sentence_split_after_two_letter_word_without_space _______
+
+    def test_tc_e1_11_sentence_split_after_two_letter_word_without_space():
+        """DEF-12: 'Loved it.Dr. Crowe is great!' was split as 'Loved it.Dr.' + 'Crowe is great!'."""
+        from app.spoiler.text import split_sentences
+        txt = "Loved it.Dr. Crowe is great! He was dead all along... Wow"
+>       assert [txt[s:e] for s, e in split_sentences(txt)] == ["Loved it.", "Dr. Crowe is great!", "He was dead all along...", "Wow"]
+E       AssertionError: assert ['Loved it.Dr...ng...', 'Wow'] == ['Loved it.',...ng...', 'Wow']
+E         
+E         At index 0 diff: 'Loved it.Dr.' != 'Loved it.'
+E         
+E         Full diff: (-: missing in left side, +: extra in left side)
+E           [
+E         -     'Loved it.',
+E         +     'Loved it.Dr.',...
+E         
+E         ...Full output truncated, use '-vv' to show
+
+tests/test_sprint2_engines.py:352: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_sprint2_engines.py::test_tc_e1_11_sentence_split_after_two_letter_word_without_space
+======================= 1 failed, 30 deselected in 0.15s =======================
