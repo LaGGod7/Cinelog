@@ -170,7 +170,7 @@ def test_sentences_split_when_people_forget_the_space_after_a_full_stop():
 def test_gold_labels_still_line_up_with_the_sentence_splitter():
     """ml/gold_sentences.json stores sentence texts; if the splitter changes, the labels must be regenerated."""
     gold = json.load(open(os.path.join(os.path.dirname(__file__), "..", "ml", "gold_sentences.json"), encoding="utf-8"))["reviews"]
-    assert len(gold) == 268 and sum(len(g["spoiler_sentences"]) for g in gold) == 118
+    assert len(gold) == 268 and sum(len(g["spoiler_sentences"]) for g in gold) == 120  # 118 before DEF-12 split 2 run-on sentences
     for g in gold:
         segs = {g["text"][s:e].strip() for s, e in split_sentences(g["text"])}
         assert set(map(str.strip, g["spoiler_sentences"] + g["unsure_sentences"])) <= segs

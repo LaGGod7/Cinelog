@@ -6,7 +6,7 @@ import unicodedata
 from typing import List, Tuple
 
 # a sentence ends at . ! ? then spaces - or, as people often type it, directly before a capital letter ("outside.The idiot")
-SENT_RE = re.compile(r"(?<=[.!?])[\"')\]]*\s+|\n+|(?<=[a-z]{3}[.!?])(?=[A-Z][a-z])|(?<=[a-z]{3}[.!?][\"')\]])(?=[A-Z][a-z])")
+SENT_RE = re.compile(r"(?<=[.!?])[\"')\]]*\s+|\n+|(?<=[a-z]{2}[.!?])(?=[A-Z][a-z])|(?<=[a-z]{2}[.!?][\"')\]])(?=[A-Z][a-z])")
 ABBR = {"mr.", "mrs.", "ms.", "dr.", "st.", "vs.", "etc.", "e.g.", "i.e.", "u.s.", "no.", "jr.", "sr."}
 TAG_RE = re.compile(r"\|\|(.+?)\|\|", re.S)
 

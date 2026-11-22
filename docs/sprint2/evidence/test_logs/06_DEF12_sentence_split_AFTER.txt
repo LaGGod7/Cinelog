@@ -1,0 +1,22 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.18, pytest-9.2.0, pluggy-1.7.0 -- /home/claude/venv/bin/python
+rootdir: /home/claude/cinelog_repo/backend
+plugins: anyio-4.16.0
+collecting ... collected 14 items
+
+tests/test_sprint2_engines.py::test_tc_e1_11_sentence_split_after_two_letter_word_without_space PASSED [  7%]
+tests/test_spoiler_ml.py::test_text_helpers PASSED                       [ 14%]
+tests/test_spoiler_ml.py::test_character_names_are_weak_terms PASSED     [ 21%]
+tests/test_spoiler_ml.py::test_shield_rules_and_rag_without_model PASSED [ 28%]
+tests/test_spoiler_ml.py::test_confirmed_spoilers_become_retrieval_context PASSED [ 35%]
+tests/test_spoiler_ml.py::test_train_and_serve_end_to_end PASSED         [ 42%]
+tests/test_spoiler_ml.py::test_cue_next_to_character_name_is_blurred_but_plain_praise_is_not PASSED [ 50%]
+tests/test_spoiler_ml.py::test_model_says_clean_so_soft_rules_alone_do_not_blur PASSED [ 57%]
+tests/test_spoiler_ml.py::test_hard_evidence_blurs_even_when_the_model_is_calm PASSED [ 64%]
+tests/test_spoiler_ml.py::test_model_says_spoiler_hides_only_the_telling_sentences PASSED [ 71%]
+tests/test_spoiler_ml.py::test_middle_band_goes_to_moderators_not_to_a_blur PASSED [ 78%]
+tests/test_spoiler_ml.py::test_tuned_thresholds_file_overrides_the_saved_ones PASSED [ 85%]
+tests/test_spoiler_ml.py::test_sentences_split_when_people_forget_the_space_after_a_full_stop PASSED [ 92%]
+tests/test_spoiler_ml.py::test_gold_labels_still_line_up_with_the_sentence_splitter PASSED [100%]
+
+============================== 14 passed in 9.75s ==============================
