@@ -1,0 +1,14 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.18, pytest-9.2.0, pluggy-1.7.0 -- /home/claude/venv/bin/python
+rootdir: /home/claude/cinelog_repo/backend
+plugins: anyio-4.16.0
+collecting ... collected 30 items / 24 deselected / 6 selected
+
+tests/test_sprint2_engines.py::test_tc_e3_01_user_jobs_run_before_batch_jobs PASSED [ 16%]
+tests/test_sprint2_engines.py::test_tc_e3_02_bounded_queue_rejects_when_full PASSED [ 33%]
+tests/test_sprint2_engines.py::test_tc_e3_03_failing_job_is_retried_3_times_then_marked_failed PASSED [ 50%]
+tests/test_sprint2_engines.py::test_tc_e3_04_lru_evicts_least_recently_used_and_counts_it PASSED [ 66%]
+tests/test_sprint2_engines.py::test_tc_e3_05_hundred_jobs_from_8_threads_all_finish_once PASSED [ 83%]
+tests/test_sprint2_engines.py::test_tc_e3_06_health_reports_cache_counters_for_the_soak_test PASSED [100%]
+
+======================= 6 passed, 24 deselected in 0.91s =======================

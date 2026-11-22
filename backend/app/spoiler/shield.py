@@ -145,6 +145,7 @@ class SpoilerShield:
         rnn_test = (self.rnn.meta.get("test") or {}) if self.rnn else {}
         dep = (self.rnn.meta.get("deployed") or {}) if self.rnn else {}
         return {"ml": self.ml is not None, "dl": self.dl is not None, "rnn": self.rnn is not None, "semantic": self.sem is not None, "warn_thresholds": self.warn_thr,
+                "caches": {"automata": self.automata.cache.stats(), "plot_tfidf": self.ctx_cache.stats(), "plot_embeddings": self.sem_cache.stats()},
                 "ml_meta": (self.ml.meta if self.ml else {}), "space_fitted": self.space.fitted,
                 "rnn_meta": ({"weight": self.rnn.weight, "tuned": self.rnn.tuned, "active": self.rnn.tuned and self.rnn.weight > 0,
                               "auc": dep.get("auc") or {"ml_only": (rnn_test.get("tfidf_ml") or {}).get("roc_auc"),

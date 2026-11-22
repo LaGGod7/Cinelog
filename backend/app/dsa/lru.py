@@ -23,7 +23,7 @@ class LRUCache(Generic[K, V]):
         self.head, self.tail = _N(), _N()  # sentinels
         self.head.next, self.tail.prev = self.tail, self.head
         self.lock = threading.Lock()
-        self.hits = self.misses = 0
+        self.hits = self.misses = self.evictions = 0
 
     def _unlink(self, n: _N) -> None:
         n.prev.next, n.next.prev = n.next, n.prev
@@ -54,6 +54,7 @@ class LRUCache(Generic[K, V]):
                 lru = self.tail.prev
                 self._unlink(lru)
                 del self.map[lru.k]
+                self.evictions += 1
             n = _N(key, value)
             self.map[key] = n
             self._push_front(n)
@@ -63,6 +64,13 @@ class LRUCache(Generic[K, V]):
             n = self.map.pop(key, None)
             if n:
                 self._unlink(n)
+
+    def stats(self) -> Dict[str, float]:
+        """Counters for the soak test and /health: a rising eviction rate with a falling hit rate means thrashing."""
+        with self.lock:
+            total = self.hits + self.misses
+            return {"size": len(self.map), "capacity": self.capacity, "hits": self.hits, "misses": self.misses,
+                    "evictions": self.evictions, "hit_rate": round(self.hits / total, 4) if total else 0.0}
 
     def __len__(self) -> int:
         return len(self.map)

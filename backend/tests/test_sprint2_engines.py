@@ -334,3 +334,12 @@ def test_tc_e4_08_convener_of_one_club_cannot_manage_another(admin, new_client, 
     other = new_client(); ou = other.register("other@x.io", "Other"); grant(admin, ou["id"], "convener")
     assert other.post(f"/polls/{poll['id']}/open").status_code == 403
     assert other.post(f"/clubs/{club['id']}/members", {"email": "x@x.io"}).status_code == 403
+
+
+def test_tc_e3_06_health_reports_cache_counters_for_the_soak_test(admin, films):
+    admin.post(f"/films/{films[0]}/reviews", {"text": "Mara dies in the burning tower. What an ending."})
+    caches = admin.get("/health").json()["shield"]["caches"]
+    assert set(caches) == {"automata", "plot_tfidf", "plot_embeddings"}
+    for c in caches.values():
+        assert {"size", "capacity", "hits", "misses", "evictions", "hit_rate"} <= set(c)
+    assert caches["automata"]["capacity"] == 128 and caches["plot_tfidf"]["capacity"] == 256
