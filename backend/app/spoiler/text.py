@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import re
+import unicodedata
 from typing import List, Tuple
 
 # a sentence ends at . ! ? then spaces - or, as people often type it, directly before a capital letter ("outside.The idiot")
@@ -20,6 +21,29 @@ you your yours yourself yourselves movie film films movies one get got really mu
 COMMON = set("""will rose mark grace hope joy faith star king queen john jack paul peter james george bill tom sam max ray
 dan ben jim joe frank bob dave tony ted fred sue ann may june april august summer winter spring day night man woman boy
 girl kid mother father son daughter friend""".split())
+
+
+_JOINERS = {"\u200c", "\u200d"}  # zero-width non-joiner / joiner: needed inside Indic words and emoji sequences
+
+
+def normalize_text(text: str) -> str:
+    """Make hidden-character tricks visible to the matcher (Sprint 2, DEF-07/DEF-08).
+
+    * NFKC folds look-alike forms: no-break spaces become spaces, full-width letters become normal letters.
+    * Invisible format characters (zero-width space, word joiner, BOM, soft hyphen...) are removed, so a spoiler
+      word split by one ("burn\u200bing") matches again.
+    * Joiners are kept only where they belong: between two non-ASCII characters (Indic scripts, emoji sequences).
+    """
+    text = unicodedata.normalize("NFKC", text)
+    out = []
+    n = len(text)
+    for i, ch in enumerate(text):
+        if unicodedata.category(ch) == "Cf":
+            if ch in _JOINERS and 0 < i < n - 1 and ord(text[i - 1]) > 127 and ord(text[i + 1]) > 127:
+                out.append(ch)
+            continue
+        out.append(ch)
+    return "".join(out)
 
 
 def split_sentences(text: str) -> List[Tuple[int, int]]:

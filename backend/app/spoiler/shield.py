@@ -18,7 +18,7 @@ from .ml import MLBundle, calibrate
 from .retrieval import FilmCtx, RetrievalSpace
 from .rnn import RNNScorer
 from .semantic import SemanticMatcher
-from .text import split_sentences, strip_tags
+from .text import normalize_text, split_sentences, strip_tags
 from .wordlist import AutomatonCache, TermT
 
 log = logging.getLogger("cinelog.shield")
@@ -185,7 +185,7 @@ class SpoilerShield:
         ml_model = self.ml if use_ml else None
         dl_model = self.dl if use_ml else None
         rnn_model = self.rnn if (use_ml and use_rnn and self.ml is not None and self.rnn is not None and self.rnn.tuned and self.rnn.weight > 0) else None  # untuned = not measured with the deployed ML yet; weight 0 = tuning found no gain
-        text, tagged = strip_tags(raw_text)
+        text, tagged = strip_tags(normalize_text(raw_text))
         spans = split_sentences(text)
         sents = [text[s:e] for s, e in spans]
         n = len(sents)
