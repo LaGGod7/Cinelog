@@ -1,0 +1,116 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.18, pytest-9.2.0, pluggy-1.7.0 -- /home/claude/venv/bin/python
+rootdir: /home/claude/cinelog_repo/backend
+plugins: anyio-4.16.0
+collecting ... collected 29 items
+
+tests/test_sprint2_engines.py::test_tc_e1_01_trie_returns_top10_by_popularity_for_prefix PASSED [  3%]
+tests/test_sprint2_engines.py::test_tc_e1_02_trie_boundary_one_letter_and_unknown_prefix PASSED [  6%]
+tests/test_sprint2_engines.py::test_tc_e1_03_aho_corasick_matches_whole_words_only PASSED [ 10%]
+tests/test_sprint2_engines.py::test_tc_e1_04_spoiler_sentence_is_blurred PASSED [ 13%]
+tests/test_sprint2_engines.py::test_tc_e1_05_clean_review_is_not_blurred PASSED [ 17%]
+tests/test_sprint2_engines.py::test_tc_e1_06_zero_width_space_cannot_hide_a_spoiler FAILED [ 20%]
+tests/test_sprint2_engines.py::test_tc_e1_07_no_break_space_cannot_hide_a_spoiler FAILED [ 24%]
+tests/test_sprint2_engines.py::test_tc_e1_08_empty_and_symbol_only_reviews_do_not_crash PASSED [ 27%]
+tests/test_sprint2_engines.py::test_tc_e1_09_normalize_keeps_indic_joiners_and_emoji FAILED [ 31%]
+tests/test_sprint2_engines.py::test_tc_e1_10_inverted_index_filters_by_genre_and_year PASSED [ 34%]
+tests/test_sprint2_engines.py::test_tc_e2_01_vote_is_saved_once PASSED   [ 37%]
+tests/test_sprint2_engines.py::test_tc_e2_02_vote_on_draft_or_closed_poll_is_rejected PASSED [ 41%]
+tests/test_sprint2_engines.py::test_tc_e2_03_invalid_state_change_returns_409_and_changes_nothing PASSED [ 44%]
+tests/test_sprint2_engines.py::test_tc_e2_04_audit_log_cannot_be_edited_or_deleted PASSED [ 48%]
+tests/test_sprint2_engines.py::test_tc_e2_05_review_shorter_than_10_characters_is_rejected_with_400 FAILED [ 51%]
+tests/test_sprint2_engines.py::test_tc_e2_06_twenty_simultaneous_votes_from_one_member_store_one_row PASSED [ 55%]
+tests/test_sprint2_engines.py::test_tc_e3_01_user_jobs_run_before_batch_jobs PASSED [ 58%]
+tests/test_sprint2_engines.py::test_tc_e3_02_bounded_queue_rejects_when_full PASSED [ 62%]
+tests/test_sprint2_engines.py::test_tc_e3_03_failing_job_is_retried_3_times_then_marked_failed PASSED [ 65%]
+tests/test_sprint2_engines.py::test_tc_e3_04_lru_evicts_least_recently_used_and_counts_it FAILED [ 68%]
+tests/test_sprint2_engines.py::test_tc_e3_05_hundred_jobs_from_8_threads_all_finish_once PASSED [ 72%]
+tests/test_sprint2_engines.py::test_tc_e4_01_login_sets_http_only_session_cookie PASSED [ 75%]
+tests/test_sprint2_engines.py::test_tc_e4_02_fifth_auth_attempt_in_a_minute_gets_429 PASSED [ 79%]
+tests/test_sprint2_engines.py::test_tc_e4_03_token_bucket_refills_over_time PASSED [ 82%]
+tests/test_sprint2_engines.py::test_tc_e4_04_no_token_gets_401_and_wrong_role_gets_403 PASSED [ 86%]
+tests/test_sprint2_engines.py::test_tc_e4_05_tampered_or_garbage_token_is_rejected PASSED [ 89%]
+tests/test_sprint2_engines.py::test_tc_e4_06_malformed_json_gets_400_with_a_clear_message FAILED [ 93%]
+tests/test_sprint2_engines.py::test_tc_e4_07_missing_csrf_header_is_refused PASSED [ 96%]
+tests/test_sprint2_engines.py::test_tc_e4_08_convener_of_one_club_cannot_manage_another PASSED [100%]
+
+=================================== FAILURES ===================================
+_____________ test_tc_e1_06_zero_width_space_cannot_hide_a_spoiler _____________
+
+shield_and_info = (<app.spoiler.shield.SpoilerShield object at 0x7f7d6373f380>, FilmInfo(film_id=1, version=1, terms=[('mara vell', 'nam...g.', 'Her brother Tobin betrays her to the king. In the finale Mara dies in the burning tower.'], spoiler_passages=[]))
+
+    def test_tc_e1_06_zero_width_space_cannot_hide_a_spoiler(shield_and_info):
+        """DEF-07: 'burn\\u200bing tower' scored 0.15 and was shown unblurred before Sprint 2."""
+        sh, info = shield_and_info
+        r = sh.scan("The burn​ing tower scene is the end.", info)
+>       assert blurred(r) and r.risk >= 0.7
+E       AssertionError: assert (False)
+E        +  where False = blurred(ScanResult(clean_text='The burn\u200bing tower scene is the end.', segments=[Segment(idx=0, start=0, end=36, text='The burn\u200bing tower scene is the end.', blurred=False, risk=0.15, reasons=[])], risk=0.15, uncertain=np.False_, p_ml=None, model='rules+rag', warn=False))
+
+tests/test_sprint2_engines.py:93: AssertionError
+______________ test_tc_e1_07_no_break_space_cannot_hide_a_spoiler ______________
+
+shield_and_info = (<app.spoiler.shield.SpoilerShield object at 0x7f7d6373f380>, FilmInfo(film_id=1, version=1, terms=[('mara vell', 'nam...g.', 'Her brother Tobin betrays her to the king. In the finale Mara dies in the burning tower.'], spoiler_passages=[]))
+
+    def test_tc_e1_07_no_break_space_cannot_hide_a_spoiler(shield_and_info):
+        """DEF-08: 'burning\\u00a0tower' scored 0.54 and was not blurred before Sprint 2."""
+        sh, info = shield_and_info
+        r = sh.scan("The burning tower scene is the end.", info)
+>       assert blurred(r) and r.risk >= 0.7
+E       assert (False)
+E        +  where False = blurred(ScanResult(clean_text='The burning\xa0tower scene is the end.', segments=[Segment(idx=0, start=0, end=35, text='The burning\xa0tower scene is the end.', blurred=False, risk=0.542, reasons=["closely matches the film's plot (similarity 0.32)", 'shares 2 rare plot terms'])], risk=0.542, uncertain=True, p_ml=None, model='rules+rag', warn=False))
+
+tests/test_sprint2_engines.py:100: AssertionError
+____________ test_tc_e1_09_normalize_keeps_indic_joiners_and_emoji _____________
+
+    def test_tc_e1_09_normalize_keeps_indic_joiners_and_emoji():
+>       from app.spoiler.text import normalize_text
+E       ImportError: cannot import name 'normalize_text' from 'app.spoiler.text' (/home/claude/cinelog_repo/backend/app/spoiler/text.py)
+
+tests/test_sprint2_engines.py:111: ImportError
+_____ test_tc_e2_05_review_shorter_than_10_characters_is_rejected_with_400 _____
+
+admin = <conftest.Api object at 0x7f7d623a9850>, films = [1, 2, 3]
+
+    def test_tc_e2_05_review_shorter_than_10_characters_is_rejected_with_400(admin, films):
+        """DEF-09: the design (S4.3) says 400 for invalid input; the build returned 422 before Sprint 2."""
+        r = admin.post(f"/films/{films[0]}/reviews", {"text": "too short"})
+>       assert r.status_code == 400
+E       assert 422 == 400
+E        +  where 422 = <Response [422 Unprocessable Content]>.status_code
+
+tests/test_sprint2_engines.py:180: AssertionError
+__________ test_tc_e3_04_lru_evicts_least_recently_used_and_counts_it __________
+
+    def test_tc_e3_04_lru_evicts_least_recently_used_and_counts_it():
+        c = LRUCache(2)
+        c.put("film-1", "A"); c.put("film-2", "B")
+        assert c.get("film-1") == "A"                 # film-1 is now most recent
+        c.put("film-3", "C")                          # evicts film-2
+        assert c.get("film-2") is None and c.get("film-1") == "A"
+>       assert c.evictions == 1 and c.hits == 2 and c.misses == 1
+               ^^^^^^^^^^^
+E       AttributeError: 'LRUCache' object has no attribute 'evictions'
+
+tests/test_sprint2_engines.py:246: AttributeError
+__________ test_tc_e4_06_malformed_json_gets_400_with_a_clear_message __________
+
+new_client = <function new_client.<locals>.<lambda> at 0x7f7d52f9dda0>
+
+    def test_tc_e4_06_malformed_json_gets_400_with_a_clear_message(new_client):
+        """DEF-09 (API side): malformed input must give 400 and name the problem, never a stack trace."""
+        c = new_client(); c.register("m@x.io")
+        r = c.c.post("/auth/login", content=b"{not json", headers={"content-type": "application/json"})
+>       assert r.status_code == 400
+E       assert 422 == 400
+E        +  where 422 = <Response [422 Unprocessable Content]>.status_code
+
+tests/test_sprint2_engines.py:321: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_sprint2_engines.py::test_tc_e1_06_zero_width_space_cannot_hide_a_spoiler
+FAILED tests/test_sprint2_engines.py::test_tc_e1_07_no_break_space_cannot_hide_a_spoiler
+FAILED tests/test_sprint2_engines.py::test_tc_e1_09_normalize_keeps_indic_joiners_and_emoji
+FAILED tests/test_sprint2_engines.py::test_tc_e2_05_review_shorter_than_10_characters_is_rejected_with_400
+FAILED tests/test_sprint2_engines.py::test_tc_e3_04_lru_evicts_least_recently_used_and_counts_it
+FAILED tests/test_sprint2_engines.py::test_tc_e4_06_malformed_json_gets_400_with_a_clear_message
+========================= 6 failed, 23 passed in 2.77s =========================
