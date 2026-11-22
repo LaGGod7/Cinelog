@@ -19,3 +19,4 @@ backend/models/spoiler_dl.onnx
 # install logs
 backend/logs/pip*.txt
 backend/logs/npm*.txt
+.coverage
