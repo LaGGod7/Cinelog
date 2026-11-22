@@ -284,7 +284,7 @@ def new_thread(club_id: int, body: ThreadIn, db: Session = Depends(get_db), user
     _club_view_or_403(db, club_id, user)
     _member_or_403(db, club_id, user)
     if body.tag not in THREAD_TAGS:
-        raise HTTPException(422, f"tag must be one of {', '.join(THREAD_TAGS)}")
+        raise HTTPException(400, f"tag must be one of {', '.join(THREAD_TAGS)}")
     t = ClubThread(club_id=club_id, user_id=user.id, title=body.title.strip(), body=body.body.strip(), tag=body.tag)
     db.add(t); db.flush()
     out = thread_view(t, {}, user, True, full=True)
@@ -377,7 +377,7 @@ def new_watchalong(club_id: int, body: WatchalongIn, db: Session = Depends(get_d
         raise HTTPException(404, "film not found")
     when = body.starts_at.astimezone(dt.timezone.utc).replace(tzinfo=None) if body.starts_at.tzinfo else body.starts_at
     if when < dt.datetime.utcnow():
-        raise HTTPException(422, "pick a time in the future")
+        raise HTTPException(400, "pick a time in the future")
     w = Watchalong(club_id=club_id, film_id=body.film_id, starts_at=when, created_by=user.id)
     db.add(w); db.flush()
     audit(db, user.id, "watchalong.create", f"club:{club_id}", f"film:{body.film_id} at {when.isoformat()}")

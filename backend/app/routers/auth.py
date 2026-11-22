@@ -105,7 +105,7 @@ def update_me(body: Profile, user: User = Depends(user_required), db: Session = 
         u.bio = " ".join(body.bio.split())  # one tidy paragraph: no stray newlines or runs of spaces
     if body.avatar is not None:
         if body.avatar and body.avatar not in AVATARS:
-            raise HTTPException(422, f"avatar must be one of: {', '.join(AVATARS)} (or empty)")
+            raise HTTPException(400, f"avatar must be one of: {', '.join(AVATARS)} (or empty)")
         u.avatar = body.avatar
     if body.email_opt_out is not None:
         u.email_opt_out = body.email_opt_out

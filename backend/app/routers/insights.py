@@ -24,7 +24,7 @@ def my_year(year: Optional[int] = None, db: Session = Depends(get_db), user: Use
     years = insights.years_with_entries(db, user.id)
     y = year or (years[0] if years else dt.date.today().year)
     if not 1888 <= y <= dt.date.today().year + 1:
-        raise HTTPException(422, "pick a real year")
+        raise HTTPException(400, "pick a real year")
     out = insights.year_in_review(db, user.id, y)
     out["years"] = years
     out["share"] = insights.share_text(out, user.display_name)
@@ -45,7 +45,7 @@ def my_goal(year: Optional[int] = None, db: Session = Depends(get_db), user: Use
 def set_my_goal(body: GoalIn, db: Session = Depends(get_db), user: User = Depends(require_perm("diary.write"))):
     y = body.year or dt.date.today().year
     if y < dt.date.today().year:
-        raise HTTPException(422, "that year is over")
+        raise HTTPException(400, "that year is over")
     insights.set_goal(db, user.id, y, body.target)
     return {"goal": insights.goal_progress(db, user.id, y)}
 

@@ -1,0 +1,10 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.18, pytest-9.2.0, pluggy-1.7.0 -- /home/claude/venv/bin/python
+rootdir: /home/claude/cinelog_repo/backend
+plugins: anyio-4.16.0
+collecting ... collected 29 items / 27 deselected / 2 selected
+
+tests/test_sprint2_engines.py::test_tc_e2_05_review_shorter_than_10_characters_is_rejected_with_400 PASSED [ 50%]
+tests/test_sprint2_engines.py::test_tc_e4_06_malformed_json_gets_400_with_a_clear_message PASSED [100%]
+
+======================= 2 passed, 27 deselected in 0.48s =======================

@@ -128,7 +128,7 @@ def reblur(review_id: int, body: ReblurIn, request: Request, db: Session = Depen
             g["blurred"] = True
             chosen.append(g["text"])
     if not chosen:
-        raise HTTPException(422, "no such segments")
+        raise HTTPException(400, "no such segments")
     if r.state == "hidden":
         _transition(db, r, "published")
     elif r.state != "published":

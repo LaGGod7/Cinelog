@@ -28,7 +28,7 @@ def browse(genre: Optional[str] = None, decade: Optional[int] = None, sort: str 
            offset: int = 0, db: Session = Depends(get_db), user: Optional[User] = Depends(user_optional)):
     """Film grid for Discover. sort = popular | top (average star rating) | new."""
     if sort not in ("popular", "top", "new"):
-        raise HTTPException(422, "sort must be popular, top or new")
+        raise HTTPException(400, "sort must be popular, top or new")
     limit = max(1, min(limit, 60))
     stmt = select(Film)
     if genre:

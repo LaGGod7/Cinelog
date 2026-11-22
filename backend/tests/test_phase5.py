@@ -37,7 +37,7 @@ def test_reset_flow_sets_new_password_once_and_kills_old_sessions(app, admin, ne
         assert s.scalar(select(PasswordReset.token_hash)) != tok
 
     assert anon.post("/auth/reset", {"token": "x" * 40, "password": "brandnewpass1"}).status_code == 400
-    assert anon.post("/auth/reset", {"token": tok, "password": "short"}).status_code == 422
+    assert anon.post("/auth/reset", {"token": tok, "password": "short"}).status_code == 400
     import time
     time.sleep(1.1)  # the old session was issued in an earlier second than the reset
     assert anon.post("/auth/reset", {"token": tok, "password": "brandnewpass1"}).status_code == 200
@@ -108,8 +108,8 @@ def test_change_password_needs_the_current_one_and_signs_other_devices_out(app, 
 def test_profile_bio_and_avatar(app, admin, new_client):
     u = new_client(); u.register("b@x.io", "Bea")
     assert u.get("/auth/me").json()["bio"] == "" and u.get("/auth/me").json()["avatar"] == ""
-    assert u.patch("/auth/me", {"avatar": "not-a-key"}).status_code == 422
-    assert u.patch("/auth/me", {"bio": "x" * 301}).status_code == 422
+    assert u.patch("/auth/me", {"avatar": "not-a-key"}).status_code == 400
+    assert u.patch("/auth/me", {"bio": "x" * 301}).status_code == 400
     r = u.patch("/auth/me", {"bio": "  Horror   fan.\n\nNight owl.  ", "avatar": "ghost"}).json()
     assert r["bio"] == "Horror fan. Night owl." and r["avatar"] == "ghost"
     assert u.patch("/auth/me", {"avatar": ""}).json()["avatar"] == ""

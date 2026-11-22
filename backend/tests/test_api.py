@@ -99,7 +99,7 @@ def test_admin_roles_audit_and_last_admin(admin, new_client):
     me = admin.get("/auth/me").json()
     r = admin.post(f"/admin/users/{me['id']}/roles", {"role": "admin", "action": "revoke"})
     assert r.status_code == 409  # last admin cannot be removed
-    assert admin.post(f"/admin/users/{u['id']}/roles", {"role": "wizard", "action": "grant"}).status_code == 422
+    assert admin.post(f"/admin/users/{u['id']}/roles", {"role": "wizard", "action": "grant"}).status_code == 400
 
 
 def test_audit_log_is_append_only(app, admin):
@@ -143,8 +143,8 @@ def test_diary_watchlist_aspects_and_taste(admin, films):
     assert admin.get("/watchlist").json() == []  # watched films leave the watchlist
     again = admin.post("/diary", {"film_id": f, "watched_on": "2026-01-02", "stars": 4})
     assert again.json()["rewatch"]  # same film again -> rewatch
-    assert admin.post("/diary", {"film_id": f, "stars": 4.3}).status_code == 422
-    assert admin.post("/diary", {"film_id": f, "stars": 5.5}).status_code == 422
+    assert admin.post("/diary", {"film_id": f, "stars": 4.3}).status_code == 400
+    assert admin.post("/diary", {"film_id": f, "stars": 5.5}).status_code == 400
     assert len(admin.get("/diary").json()) == 2
     t = admin.get("/me/taste").json()
     assert not t["ready"]
@@ -153,8 +153,8 @@ def test_diary_watchlist_aspects_and_taste(admin, films):
     admin.put(f"/films/{films[1]}/aspects", {"values": {"story": 2}})
     t = admin.get("/me/taste").json()
     assert t["ready"] and t["radar"]["story"] == 3.0 and t["radar"]["acting"] == 5.0
-    assert admin.put(f"/films/{f}/aspects", {"values": {"story": 9}}).status_code == 422
-    assert admin.put(f"/films/{f}/aspects", {"values": {"humour": 3}}).status_code == 422
+    assert admin.put(f"/films/{f}/aspects", {"values": {"story": 9}}).status_code == 400
+    assert admin.put(f"/films/{f}/aspects", {"values": {"humour": 3}}).status_code == 400
     d = admin.get(f"/films/{f}").json()
     assert d["aspects"]["story"]["avg"] == 4.0
     csv = admin.get("/diary/export", params={"format": "csv"})
@@ -326,7 +326,7 @@ def test_poll_lifecycle_one_vote_and_frozen_result(app, admin, new_client, films
     assert m0.post(f"/polls/{pid}/vote", {"option_id": opt[0]["id"]}).status_code == 409  # already voted
     assert members[1][0].post(f"/polls/{pid}/vote", {"option_id": opt[1]["id"]}).status_code == 200
     assert members[2][0].post(f"/polls/{pid}/vote", {"option_id": opt[0]["id"]}).status_code == 200
-    assert members[2][0].post(f"/polls/{pid}/vote", {"option_id": 99999}).status_code in (409, 422)
+    assert members[2][0].post(f"/polls/{pid}/vote", {"option_id": 99999}).status_code in (409, 400)
     outsider = new_client(); outsider.register("o@x.io")
     assert outsider.post(f"/polls/{pid}/vote", {"option_id": opt[0]["id"]}).status_code == 403
     closed = conv.post(f"/polls/{pid}/close").json()
@@ -447,7 +447,7 @@ def test_browse_stats_and_profile(app, admin, films):
     r = admin.get("/films", params={"sort": "top"}).json()
     assert r["total"] == 3 and r["films"][0]["id"] == fid and r["films"][0]["rating"] == 4.5
     assert any(f["on_watchlist"] for f in r["films"])
-    assert admin.get("/films", params={"sort": "nope"}).status_code == 422
+    assert admin.get("/films", params={"sort": "nope"}).status_code == 400
     g = admin.get("/genres").json()
     assert g and admin.get("/films", params={"genre": g[0]["genre"]}).json()["total"] == g[0]["films"]
     d = admin.get(f"/films/{fid}").json()
@@ -517,7 +517,7 @@ def test_badges_streaks_likes_lists_threads_watchalongs(app, admin, new_client, 
     assert b.post(f"/clubs/{cid}/threads", json={"title": "Hello there"}).status_code == 403
     assert b.post(f"/clubs/{cid}/join").status_code == 200
     t = b.post(f"/clubs/{cid}/threads", json={"title": "What should we watch?", "body": "Ideas please", "tag": "Question"}).json()
-    assert b.post(f"/clubs/{cid}/threads", json={"title": "Bad tag", "tag": "Nope"}).status_code == 422
+    assert b.post(f"/clubs/{cid}/threads", json={"title": "Bad tag", "tag": "Nope"}).status_code == 400
     assert admin.put(f"/likes/thread/{t['id']}").json()["likes"] == 1
     full = admin.post(f"/threads/{t['id']}/replies", json={"body": "Dark Orbit!"}).json()
     assert full["replies"] == 1 and full["reply_list"][0]["author"]["name"]
@@ -531,7 +531,7 @@ def test_badges_streaks_likes_lists_threads_watchalongs(app, admin, new_client, 
     soon = (dt.datetime.utcnow() + dt.timedelta(days=2)).isoformat()
     assert b.post(f"/clubs/{cid}/watchalongs", json={"film_id": films[0], "starts_at": soon}).status_code == 403
     past = (dt.datetime.utcnow() - dt.timedelta(days=2)).isoformat()
-    assert admin.post(f"/clubs/{cid}/watchalongs", json={"film_id": films[0], "starts_at": past}).status_code == 422
+    assert admin.post(f"/clubs/{cid}/watchalongs", json={"film_id": films[0], "starts_at": past}).status_code == 400
     w = admin.post(f"/clubs/{cid}/watchalongs", json={"film_id": films[0], "starts_at": soon}).json()
     assert w["going"] == 0 and w["film"]["id"] == films[0]
     assert v.put(f"/watchalongs/{w['id']}/rsvp").status_code == 403

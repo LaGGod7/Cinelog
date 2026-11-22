@@ -91,7 +91,7 @@ def _month_bounds(month: Optional[str]):
         y, m = (int(x) for x in (month or dt.date.today().strftime("%Y-%m")).split("-"))
         first = dt.date(y, m, 1)
     except ValueError as e:
-        raise HTTPException(422, "month must look like 2026-10") from e
+        raise HTTPException(400, "month must look like 2026-10") from e
     nxt = dt.date(y + (m == 12), m % 12 + 1, 1)
     return first, nxt
 

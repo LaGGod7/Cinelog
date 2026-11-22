@@ -5,6 +5,7 @@ import threading
 from typing import Optional
 
 from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse
@@ -50,6 +51,19 @@ class PollHub:
 def create_app(settings: Optional[Settings] = None) -> FastAPI:
     settings = settings or Settings()
     app = FastAPI(title="CineLog", version="1.0")
+
+    @app.exception_handler(RequestValidationError)
+    async def _bad_input(_request: Request, exc: RequestValidationError):
+        """Invalid input is 400 Bad Request with a message that names the field (S4.3 design; Sprint 2 DEF-09).
+        FastAPI's default is 422 with a nested list, which the design and the AI Mentor answers did not match."""
+        errs = exc.errors()
+        parts = []
+        for e in errs:
+            loc = [str(x) for x in e.get("loc", ()) if x not in ("body", "query", "path")]
+            parts.append(f"{'.'.join(loc) or 'request'}: {e.get('msg', 'invalid value')}")
+        return JSONResponse({"detail": "; ".join(parts) or "invalid request",
+                             "errors": [{"field": ".".join(str(x) for x in e.get("loc", ())), "msg": e.get("msg")} for e in errs]},
+                            status_code=400)
     st = app.state
     st.settings = settings
     st.db = Database(settings.database_url)

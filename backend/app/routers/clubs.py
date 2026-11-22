@@ -103,7 +103,7 @@ def add_member(club_id: int, body: MemberIn, db: Session = Depends(get_db), user
     _club_or_404(db, club_id)
     mine = require_club_role(db, club_id, user, CLUB_MANAGE)
     if body.role not in ("member", "co_convener"):
-        raise HTTPException(422, "role must be member or co_convener")
+        raise HTTPException(400, "role must be member or co_convener")
     if body.role == "co_convener" and mine != "convener":
         raise HTTPException(403, "only the convener can appoint co-conveners")
     target = db.scalar(select(User).where(User.email == body.email.lower()))
@@ -187,7 +187,7 @@ def create_poll(club_id: int, body: PollIn, db: Session = Depends(get_db), user:
     require_club_role(db, club_id, user, CLUB_MANAGE)
     films = set(body.film_ids)
     if len(films) < 2 or db.query(Film).filter(Film.id.in_(films)).count() != len(films):
-        raise HTTPException(422, "pick at least 2 existing, distinct films")
+        raise HTTPException(400, "pick at least 2 existing, distinct films")
     p = Poll(club_id=club_id, title=body.title, state="draft", deadline=_naive_utc(body.deadline), created_by=user.id)
     p.options = [PollOption(film_id=f) for f in sorted(films)]
     db.add(p); db.flush()
@@ -244,7 +244,7 @@ def open_poll(poll_id: int, request: Request, db: Session = Depends(get_db), use
     p = _poll_or_404(db, poll_id)
     require_club_role(db, p.club_id, user, CLUB_MANAGE)
     if p.deadline and p.deadline <= dt.datetime.utcnow():
-        raise HTTPException(422, "deadline is in the past")
+        raise HTTPException(400, "deadline is in the past")
     _transition(db, p, "open")
     members = [m.user for m in db.scalars(select(ClubMember).where(ClubMember.club_id == p.club_id))]
     ids = jobs.queue_emails(db, members, f"Poll open: {p.title}", f"Vote now in {db.get(Club, p.club_id).name}.")
@@ -299,7 +299,7 @@ async def vote(poll_id: int, body: VoteIn, request: Request, user: User = Depend
             if p.state != "open":
                 raise HTTPException(409, f"poll is {p.state}: voting is closed")
             if body.option_id not in {o.id for o in p.options}:
-                raise HTTPException(422, "option does not belong to this poll")
+                raise HTTPException(400, "option does not belong to this poll")
             try:
                 db.add(Vote(poll_id=poll_id, user_id=user.id, option_id=body.option_id))
                 db.flush()

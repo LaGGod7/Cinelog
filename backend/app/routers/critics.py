@@ -72,7 +72,7 @@ def apply(body: ApplyIn, db: Session = Depends(get_db), user: User = Depends(req
         raise HTTPException(409, "you already have an application waiting for a decision")
     p = progress(db, user.id)
     if not p["eligible"]:
-        raise HTTPException(422, f"log at least {NEED_FILMS} films and publish {NEED_REVIEWS} review first "
+        raise HTTPException(400, f"log at least {NEED_FILMS} films and publish {NEED_REVIEWS} review first "
                                  f"(you have {p['films']['have']} films, {p['reviews']['have']} reviews)")
     a = CriticApplication(user_id=user.id, statement=body.statement.strip(), links=body.links.strip())
     db.add(a); db.flush()
@@ -140,7 +140,7 @@ def approve(app_id: int, request: Request, body: Decision = Decision(), db: Sess
 def reject(app_id: int, request: Request, body: Decision = Decision(), db: Session = Depends(get_db),
            mod: User = Depends(require_perm("critic.review"))):
     if len(body.note.strip()) < 5:
-        raise HTTPException(422, "say why (at least a few words): the applicant will read it")
+        raise HTTPException(400, "say why (at least a few words): the applicant will read it")
     return _decide(request, db, app_id, mod, "rejected", body.note)
 
 

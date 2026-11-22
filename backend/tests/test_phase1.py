@@ -117,8 +117,8 @@ def _log(c, film, day, **kw):
 def test_diary_rejects_future_and_pre_cinema_dates(app, admin, films):
     today = dt.date.today()
     assert _log(admin, films[0], today).status_code == 201
-    assert _log(admin, films[0], today + dt.timedelta(days=30)).status_code == 422
-    assert _log(admin, films[0], dt.date(1800, 1, 1)).status_code == 422
+    assert _log(admin, films[0], today + dt.timedelta(days=30)).status_code == 400
+    assert _log(admin, films[0], dt.date(1800, 1, 1)).status_code == 400
     assert _log(admin, films[0], dt.date(1888, 1, 1)).status_code == 201
 
 
@@ -160,8 +160,8 @@ def test_others_can_like_and_it_counts(app, admin, new_client, films):
 
 # ------------------------------------------------------------------ B5 blank reviews
 def test_whitespace_only_review_is_rejected(app, admin, films):
-    assert admin.post(f"/films/{films[0]}/reviews", {"text": " " * 20}).status_code == 422
-    assert admin.post(f"/films/{films[0]}/reviews", {"text": "  short  "}).status_code == 422
+    assert admin.post(f"/films/{films[0]}/reviews", {"text": " " * 20}).status_code == 400
+    assert admin.post(f"/films/{films[0]}/reviews", {"text": "  short  "}).status_code == 400
 
 
 # ------------------------------------------------------------------ Phase 4: edit / delete reviews, search refresh
@@ -191,7 +191,7 @@ def test_author_can_edit_review_and_it_is_scanned_again(app, admin, new_client, 
     assert r.status_code == 202 and r.json()["state"] in ("pending_scan", "published")  # the scan can win the race
     again = _published(admin, rid)
     assert "burning tower" in again["text"]
-    assert admin.patch(f"/reviews/{rid}", {"text": "   short   "}).status_code == 422
+    assert admin.patch(f"/reviews/{rid}", {"text": "   short   "}).status_code == 400
     same = admin.patch(f"/reviews/{rid}", {"text": again["text"]})        # no change: no re-scan
     assert same.json()["state"] == "published"
 

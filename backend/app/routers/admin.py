@@ -37,7 +37,7 @@ class RoleChange(BaseModel):
 def change_role(uid: int, body: RoleChange, admin: User = Depends(require_perm("role.manage")),
                 db: Session = Depends(get_db)):
     if body.role not in ROLES or body.action not in ("grant", "revoke"):
-        raise HTTPException(422, "unknown role or action")
+        raise HTTPException(400, "unknown role or action")
     u = db.get(User, uid)
     if u is None:
         raise HTTPException(404, "user not found")

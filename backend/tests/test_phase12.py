@@ -86,13 +86,13 @@ def test_critic_application_flow_with_separation_of_duties(app, crowd):
     films, a, mod, admin = crowd["films"], crowd["a"], crowd["mod"], crowd["admin"]
     statement = "I review films for my college magazine and have written about cinema for three years."
     early = a.post("/critics/apply", {"statement": statement})
-    assert early.status_code == 422 and "log at least" in early.json()["detail"]
+    assert early.status_code == 400 and "log at least" in early.json()["detail"]
     st = a.get("/me/critic").json()
     assert st["is_critic"] is False and st["progress"]["eligible"] is False and st["application"] is None
     make_eligible(app, a, films)
     assert a.get("/me/critic").json()["progress"]["eligible"] is True
 
-    assert a.post("/critics/apply", {"statement": "too short"}).status_code == 422
+    assert a.post("/critics/apply", {"statement": "too short"}).status_code == 400
     r = a.post("/critics/apply", {"statement": statement, "links": "https://example.com/me"})
     assert r.status_code == 201 and r.json()["state"] == "pending"
     assert a.post("/critics/apply", {"statement": statement}).status_code == 409  # one at a time
@@ -103,7 +103,7 @@ def test_critic_application_flow_with_separation_of_duties(app, crowd):
     assert len(queue) == 1 and queue[0]["applicant"]["films"] == 5 and queue[0]["applicant"]["name"] == "Ann"
     assert mod.get("/moderation/stats").json()["critic_applications_waiting"] == 1
 
-    assert mod.post(f"/critics/applications/{queue[0]['id']}/reject", {"note": ""}).status_code == 422  # a reason is required
+    assert mod.post(f"/critics/applications/{queue[0]['id']}/reject", {"note": ""}).status_code == 400  # a reason is required
     ok = mod.post(f"/critics/applications/{queue[0]['id']}/approve", {"note": "Great magazine pieces"})
     assert ok.status_code == 200 and ok.json()["state"] == "approved"
     assert "critic" in a.get("/auth/me").json()["roles"]
@@ -144,7 +144,7 @@ def test_critics_get_a_split_score_picks_and_the_critic_filter(app, crowd):
     assert film["rating"]["avg"] == 4.0 and film["rating"]["n"] == 3  # the overall score is unchanged
 
     assert b.put(f"/films/{films[0]}/pick", {"blurb": "Watch it blind and thank me later."}).status_code == 403
-    assert a.put(f"/films/{films[0]}/pick", {"blurb": "short"}).status_code == 422
+    assert a.put(f"/films/{films[0]}/pick", {"blurb": "short"}).status_code == 400
     assert a.put(f"/films/{films[0]}/pick", {"blurb": "Watch it blind and thank me later."}).status_code == 200
     assert a.put(f"/films/{films[0]}/pick", {"blurb": "Watch it blind. Seriously."}).status_code == 200  # edit in place
     got = b.get(f"/films/{films[0]}").json()["picks"]
@@ -172,7 +172,7 @@ def test_moderators_strike_and_mute_but_only_downwards(crowd):
     assert admin.post("/moderation/users/1/strike", {"reason": "the other admin"}).status_code == 400  # self
     assert admin.post(f"/moderation/users/{mid}/strike", {"reason": "admin may act on a moderator"}).status_code == 201
 
-    assert mod.post(f"/moderation/users/{aid}/strike", {"reason": "x"}).status_code == 422  # a reason is required
+    assert mod.post(f"/moderation/users/{aid}/strike", {"reason": "x"}).status_code == 400  # a reason is required
     assert mod.post(f"/moderation/users/{aid}/strike", {"reason": "posted a spoiler as a joke"}).json() == {
         "strikes": 1, "auto_muted": False, "muted_until": None}
     hist = mod.get(f"/moderation/users/{aid}").json()
@@ -200,7 +200,7 @@ def test_three_strikes_mute_and_a_mute_blocks_posting_but_not_watching(app, crow
     assert mod.delete(f"/moderation/users/{aid}/mute").json() == {"muted_until": None}
     assert a.get("/auth/me").json()["muted_until"] is None
     assert a.post(f"/clubs/{cid}/threads", {"title": "Back again", "body": "hi"}).status_code == 201
-    assert mod.post(f"/moderation/users/{aid}/mute", {"days": 400, "reason": "too long"}).status_code == 422
+    assert mod.post(f"/moderation/users/{aid}/mute", {"days": 400, "reason": "too long"}).status_code == 400
     assert mod.post(f"/moderation/users/{aid}/mute", {"days": 2, "reason": "cooling off"}).status_code == 200
 
 
@@ -299,7 +299,7 @@ def test_year_in_review_numbers(app, crowd):
     assert r["years"] == [y, y - 1] and "3 films" in r["share"]
     old = a.get("/me/year", params={"year": y - 1}).json()
     assert old["films"] == 1 and old["entries"] == 1
-    assert a.get("/me/year", params={"year": 1500}).status_code == 422
+    assert a.get("/me/year", params={"year": 1500}).status_code == 400
     nothing = a.get("/me/year", params={"year": y - 5}).json()
     assert nothing["empty"] is True and "yet" in nothing["share"]
 
@@ -309,9 +309,9 @@ def test_goal_progress_and_pace(app, crowd):
     films, a = crowd["films"], crowd["a"]
     y = dt.date.today().year
     assert a.get("/me/goal").json() == {"goal": None}
-    assert a.put("/me/goal", {"target": 0}).status_code == 422
-    assert a.put("/me/goal", {"target": 2000}).status_code == 422
-    assert a.put("/me/goal", {"target": 50, "year": y - 1}).status_code == 422  # last year is over
+    assert a.put("/me/goal", {"target": 0}).status_code == 400
+    assert a.put("/me/goal", {"target": 2000}).status_code == 400
+    assert a.put("/me/goal", {"target": 50, "year": y - 1}).status_code == 400  # last year is over
     g = a.put("/me/goal", {"target": 10}).json()["goal"]
     assert g["target"] == 10 and g["done"] == 0 and g["percent"] == 0 and g["reached"] is False
     log(a, films[0], 4); log(a, films[1], 4); log(a, films[0], 4)  # a repeat of one film counts once
@@ -491,7 +491,7 @@ def test_club_calendar_month_view_and_ics(app, crowd, club):
     ev = [e for e in cal["events"] if e["type"] == "watchalong"]
     assert len(ev) == 1 and ev[0]["title"] == "Rosewood Heist" and ev[0]["going"] == 1 and ev[0]["rsvp"] is True
     assert admin.get(f"/clubs/{cid}/calendar", params={"month": "2020-01"}).json()["events"] == []
-    assert admin.get(f"/clubs/{cid}/calendar", params={"month": "nope"}).status_code == 422
+    assert admin.get(f"/clubs/{cid}/calendar", params={"month": "nope"}).status_code == 400
 
     ics = crowd["a"].get(f"/clubs/{cid}/calendar.ics")
     assert ics.status_code == 200 and ics.headers["content-type"].startswith("text/calendar")
