@@ -1,0 +1,30 @@
+Req ID,Source need,Owning engine,Owner,Design ref,Code ref,Test IDs,Sprint 2 result,Gap / Sprint 3 action
+FR01,N7,E4,Omkar A,S2 login sequence; S4.3,backend/app/security.py; app/routers/auth.py,TC-E4-01; TC-E4-02; TC-E4-03; TC-E4-05; test_google_callback_creates_viewer (mock),Pass,Google OAuth with real client keys
+FR02,N7,E4,Omkar A,S2 role-permission matrix,backend/app/rbac.py,TC-E4-04; TC-E4-07; TC-E4-08; test_rbac_matrix_deny_by_default,Pass,Generated role x route matrix
+FR03,"N7, N5",E2,Manish Singri,S2 audit design; S4.4 T7,backend/app/routers/admin.py; app/models.py AuditLog,TC-E2-04,Pass,Database permissions for append-only
+FR04,N3,E1,Goureesh N Doddamani,S3 search design,backend/app/dsa/trie.py; app/dsa/inverted_index.py; app/services/search.py,TC-E1-01; TC-E1-02; TC-E1-10; PT-01,Pass,HTTP benchmark on the synced catalogue
+FR05,"N3, N2",E3,Ashutosh Kulkarni,S3 sync job design,backend/app/services/jobs.py; app/clients/tmdb.py,test_clients_jobs.py (mock TMDB); TC-E3-01,Pass (mock),Real TMDB key and scheduled sync
+FR06,N2,E2,Manish Singri,S3 data model,backend/app/routers/diary.py,test_diary_watchlist_aspects_and_taste; test_diary_rejects_future_and_pre_cinema_dates,Pass,-
+FR07,N4,E2,Manish Singri,S3 data model,backend/app/routers/diary.py,test_diary_watchlist_aspects_and_taste,Pass,Stored average only if the film page is slow
+FR08,N1,E1,Goureesh N Doddamani,S3 spoiler scan design,backend/app/spoiler/shield.py; text.py; semantic.py; app/dsa/aho_corasick.py,TC-E1-03..TC-E1-09; TC-E1-11; AT-02; PT-02,Pass / AT-02 and PT-02 fail,NFR02 accuracy (85/10) and speed (20 ms)
+FR09,"N1, N5",E2,Manish Singri,S2 review state machine,backend/app/workflow.py,TC-E2-03; test_reveal_only_published,Pass,-
+FR10,"N1, N5",E2,Manish Singri,S2 review state machine,backend/app/routers/reviews.py,test_three_reports_hide_and_moderator_flow,Pass,Database trigger version
+FR11,N5,E1,Goureesh N Doddamani,S3 risk queue design,backend/app/routers/moderation.py,test_three_reports_hide_and_moderator_flow; API A26,Pass,-
+FR12,"N6, N7",E4,Omkar A,S2 club role model,backend/app/routers/clubs.py,TC-E4-08; test_club_permissions_private_and_roles,Pass,-
+FR13,N6,E2,Manish Singri,S2 poll state machine,backend/app/workflow.py; app/routers/clubs.py,TC-E2-02; TC-E2-03; test_poll_lifecycle_one_vote_and_frozen_result,Pass,-
+FR14,N6,E2,Manish Singri,S3 vote transaction,backend/app/models.py Vote; app/routers/clubs.py,TC-E2-01; TC-E2-06; TC-E2-07,Pass,PostgreSQL run
+FR15,N6,E3,Ashutosh Kulkarni,S3 job queue design,backend/app/services/jobs.py; app/clients/mailer.py,TC-E3-03; test_admin_can_read_the_dev_mailbox_but_nobody_else,Pass (stub),Real SMTP; 5-minute delivery check
+FR16,N2,E4,Omkar A,S3 API contract,backend/app/main.py; frontend/src,TC-E2-05; TC-E4-06,Pass,360 px layout and usability test
+FR17,N6,E4,Omkar A,S3 live channel,backend/app/routers/clubs.py /ws/polls,TC-E4-09 (test_websocket_live_poll_results),Pass,Two-browser timing <= 2 s
+FR18 (S4),N2,E4/E2,Omkar A,S4.1 FOLLOW,backend/app/routers/social.py,test_follow_feed_and_similarity,Pass,Add to S1 baseline
+FR19 (S4),N2,E1,Goureesh N Doddamani,S4.3 recommendations,backend/app/services/recommend.py,test_follow_feed_and_similarity,Pass,Ranking quality
+FR20 (S4),N5,E2,Manish Singri,S4.4 T9,backend/app/routers/moderation.py,test_three_strikes_mute_and_a_mute_blocks_posting_but_not_watching,Pass,Database trigger version
+NFR01,N3,E1,Goureesh N Doddamani,S3 search design,backend/scripts/sprint2_benchmarks.py,PT-01,Pass (p95 0.0044 ms in-process),HTTP benchmark on 10000+ synced titles
+NFR02,N1,E1,Goureesh N Doddamani,S3 spoiler scan design,backend/ml/eval_real_reviews.py; scripts/sprint2_benchmarks.py,AT-02; PT-02,Fail (53.7% / 12.0%; 49.9 ms),Tune and speed up in Sprint 3
+NFR03,N2,E2,Manish Singri,S3 index plan,-,LT-03,Not run,100-user load test in Sprint 3
+NFR04,N6,E2,Manish Singri,S3 locking strategy,backend/app/routers/clubs.py,TC-E2-06; TC-E2-07,Pass,PostgreSQL run
+NFR05,"N1, N6",E3,Ashutosh Kulkarni,S3 thread pool,backend/app/scheduler/pool.py; app/dsa/lru.py,TC-E3-02; TC-E3-05; TC-E3-06,Partial,1-hour soak test
+NFR06,N7,E4,Omkar A,S2 security design,backend/app/security.py,TC-E4-05; TC-E4-07,Partial,OWASP ZAP scan; HTTPS deployment
+NFR07,-,Team,All,S4 test plan,backend/tests,coverage report,Pass (93% overall),Per-engine coverage split
+NFR08,"N2, N3",E4,Omkar A,S3 UI flow,frontend/src,UT-08,Not run,Timed usability test with 10 users
+NFR09,N3,E3,Ashutosh Kulkarni,S4 deployment plan,docker-compose.yml,DT-09,Not run,Container memory and TMDB rate check
