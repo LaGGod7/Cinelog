@@ -111,7 +111,7 @@ def upcoming(limit: int = 5, db: Session = Depends(get_db), user: User = Depends
     """The next watch-alongs of the clubs you belong to."""
     rows = db.execute(select(Watchalong, Club.name).join(Club, Club.id == Watchalong.club_id)
                       .join(ClubMember, (ClubMember.club_id == Watchalong.club_id) & (ClubMember.user_id == user.id))
-                      .where(Watchalong.starts_at >= dt.datetime.utcnow()).order_by(Watchalong.starts_at)
+                      .where(Watchalong.starts_at >= dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)).order_by(Watchalong.starts_at)
                       .limit(max(1, min(limit, 20)))).all()
     mine = {wid for (wid,) in db.execute(select(WatchalongRsvp.watchalong_id).where(WatchalongRsvp.user_id == user.id))}
     out = []

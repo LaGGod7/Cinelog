@@ -348,7 +348,7 @@ def test_draft_poll_can_be_cancelled(admin, new_client, films):
 
 
 def test_poll_closes_at_deadline(app, admin, new_client, films):
-    soon = (dt.datetime.utcnow() + dt.timedelta(seconds=1)).isoformat()
+    soon = (dt.datetime.now(dt.timezone.utc).replace(tzinfo=None) + dt.timedelta(seconds=1)).isoformat()
     conv, club, members, poll = setup_club(admin, new_client, films, deadline=soon)
     conv.post(f"/polls/{poll['id']}/open")
     opt = poll["options"]
@@ -528,9 +528,9 @@ def test_badges_streaks_likes_lists_threads_watchalongs(app, admin, new_client, 
     assert admin.delete(f"/threads/{t['id']}").json() == {"ok": True} and admin.get(f"/clubs/{cid}/threads").json() == []
 
     # ---- watch-alongs: conveners schedule, members RSVP, a poll's screening date creates one
-    soon = (dt.datetime.utcnow() + dt.timedelta(days=2)).isoformat()
+    soon = (dt.datetime.now(dt.timezone.utc).replace(tzinfo=None) + dt.timedelta(days=2)).isoformat()
     assert b.post(f"/clubs/{cid}/watchalongs", json={"film_id": films[0], "starts_at": soon}).status_code == 403
-    past = (dt.datetime.utcnow() - dt.timedelta(days=2)).isoformat()
+    past = (dt.datetime.now(dt.timezone.utc).replace(tzinfo=None) - dt.timedelta(days=2)).isoformat()
     assert admin.post(f"/clubs/{cid}/watchalongs", json={"film_id": films[0], "starts_at": past}).status_code == 400
     w = admin.post(f"/clubs/{cid}/watchalongs", json={"film_id": films[0], "starts_at": soon}).json()
     assert w["going"] == 0 and w["film"]["id"] == films[0]

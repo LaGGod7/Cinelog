@@ -115,12 +115,12 @@ def _seed_engagement(app) -> None:
         s.flush()
         finalize_poll(s, poll)
         past = Watchalong(club_id=club.id, film_id=fb["Parasite"].id, poll_id=poll.id, created_by=u["convener"].id,
-                          starts_at=dt.datetime.utcnow() - dt.timedelta(days=9))
+                          starts_at=dt.datetime.now(dt.timezone.utc).replace(tzinfo=None) - dt.timedelta(days=9))
         s.add(past); s.flush()
         for who in ("viewer", "critic", "convener"):
             s.add(WatchalongRsvp(watchalong_id=past.id, user_id=u[who].id))
         later = Watchalong(club_id=club.id, film_id=fb["Mad Max: Fury Road"].id, created_by=u["convener"].id,
-                           starts_at=(dt.datetime.utcnow() + dt.timedelta(days=12)).replace(hour=19, minute=0, second=0, microsecond=0))
+                           starts_at=(dt.datetime.now(dt.timezone.utc).replace(tzinfo=None) + dt.timedelta(days=12)).replace(hour=19, minute=0, second=0, microsecond=0))
         s.add(later)
         s.flush()
         for x in list(u.values()) + [p]:
@@ -228,7 +228,7 @@ def main() -> None:
             for who, t in (("viewer", t1), ("critic", t1), ("viewer", t2), ("convener", t2)):
                 s.add(Like(user_id=u[who].id, kind="thread", target_id=t.id))
             w = Watchalong(club_id=club.id, film_id=fb["Interstellar"].id, created_by=u["convener"].id,
-                           starts_at=(dt.datetime.utcnow() + dt.timedelta(days=5)).replace(hour=14, minute=30, second=0, microsecond=0))
+                           starts_at=(dt.datetime.now(dt.timezone.utc).replace(tzinfo=None) + dt.timedelta(days=5)).replace(hour=14, minute=30, second=0, microsecond=0))
             s.add(w); s.flush()
             s.add(WatchalongRsvp(watchalong_id=w.id, user_id=u["critic"].id))
             s.flush()

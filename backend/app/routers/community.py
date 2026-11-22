@@ -342,7 +342,7 @@ def watchalong_view(db: Session, w: Watchalong, viewer: Optional[User]) -> dict:
     going = db.scalar(select(func.count()).select_from(WatchalongRsvp).where(WatchalongRsvp.watchalong_id == w.id)) or 0
     mine = bool(viewer and db.get(WatchalongRsvp, (w.id, viewer.id)))
     return {"id": w.id, "club_id": w.club_id, "starts_at": w.starts_at.isoformat(), "going": going, "rsvp": mine,
-            "past": w.starts_at < dt.datetime.utcnow(), "from_poll": w.poll_id is not None, "film": film_card(f)}
+            "past": w.starts_at < dt.datetime.now(dt.timezone.utc).replace(tzinfo=None), "from_poll": w.poll_id is not None, "film": film_card(f)}
 
 
 def upsert_poll_watchalong(db: Session, poll, user_id: int) -> None:
@@ -376,7 +376,7 @@ def new_watchalong(club_id: int, body: WatchalongIn, db: Session = Depends(get_d
     if db.get(Film, body.film_id) is None:
         raise HTTPException(404, "film not found")
     when = body.starts_at.astimezone(dt.timezone.utc).replace(tzinfo=None) if body.starts_at.tzinfo else body.starts_at
-    if when < dt.datetime.utcnow():
+    if when < dt.datetime.now(dt.timezone.utc).replace(tzinfo=None):
         raise HTTPException(400, "pick a time in the future")
     w = Watchalong(club_id=club_id, film_id=body.film_id, starts_at=when, created_by=user.id)
     db.add(w); db.flush()

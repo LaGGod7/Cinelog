@@ -24,7 +24,7 @@ router = APIRouter(tags=["club-insights"])
 def analytics(club_id: int, db: Session = Depends(get_db), user: User = Depends(user_required)):
     _club_view_or_403(db, club_id, user)
     require_club_role(db, club_id, user, CLUB_MATRIX["analytics"])
-    now = dt.datetime.utcnow()
+    now = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)
     members = db.execute(select(ClubMember.user_id, ClubMember.role).where(ClubMember.club_id == club_id)).all()
     member_ids = [m for m, _ in members]
     n_members = max(1, len(members))
@@ -143,7 +143,7 @@ def _fold(line: str) -> str:
 
 
 def build_ics(events: List[dict], name: str) -> str:
-    stamp = dt.datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+    stamp = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None).strftime("%Y%m%dT%H%M%SZ")
     lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//CineLog//Club calendar//EN", "CALSCALE:GREGORIAN",
              f"X-WR-CALNAME:{_ics_text(name)}"]
     for e in events:
@@ -163,7 +163,7 @@ def build_ics(events: List[dict], name: str) -> str:
 @router.get("/clubs/{club_id}/calendar.ics")
 def club_ics(club_id: int, db: Session = Depends(get_db), viewer: Optional[User] = Depends(user_optional)):
     club = _club_view_or_403(db, club_id, viewer)
-    now = dt.datetime.utcnow()
+    now = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)
     ev = _events(db, [club_id], now - dt.timedelta(days=30), now + dt.timedelta(days=365), viewer)
     return Response(build_ics(ev, f"{club.name} · CineLog"), media_type="text/calendar",
                     headers={"Content-Disposition": f"attachment; filename=cinelog_club_{club_id}.ics"})
@@ -172,7 +172,7 @@ def club_ics(club_id: int, db: Session = Depends(get_db), viewer: Optional[User]
 @router.get("/me/calendar.ics")
 def my_ics(db: Session = Depends(get_db), user: User = Depends(user_required)):
     ids = [c for (c,) in db.execute(select(ClubMember.club_id).where(ClubMember.user_id == user.id))]
-    now = dt.datetime.utcnow()
+    now = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)
     ev = _events(db, ids, now - dt.timedelta(days=30), now + dt.timedelta(days=365), user)
     return Response(build_ics(ev, "My CineLog clubs"), media_type="text/calendar",
                     headers={"Content-Disposition": "attachment; filename=cinelog_my_clubs.ics"})

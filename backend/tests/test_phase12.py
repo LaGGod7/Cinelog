@@ -452,7 +452,7 @@ def test_club_analytics_are_for_conveners_only(app, crowd, club):
     t = admin.get(f"/clubs/{cid}/threads").json()[0]["id"]
     b.post(f"/threads/{t}/replies", {"body": "me!"})
     with app.state.db.session() as s:
-        past = Watchalong(club_id=cid, film_id=films[0], starts_at=dt.datetime.utcnow() - dt.timedelta(days=3), created_by=1)
+        past = Watchalong(club_id=cid, film_id=films[0], starts_at=dt.datetime.now(dt.timezone.utc).replace(tzinfo=None) - dt.timedelta(days=3), created_by=1)
         s.add(past); s.flush()
         s.add(WatchalongRsvp(watchalong_id=past.id, user_id=crowd["aid"])); s.add(WatchalongRsvp(watchalong_id=past.id, user_id=crowd["bid"]))
         poll = Poll(club_id=cid, title="Pick a film", state="closed", winner_film_id=films[1], created_by=1)
@@ -460,7 +460,7 @@ def test_club_analytics_are_for_conveners_only(app, crowd, club):
         s.add(poll); s.flush()
         opt = poll.options[0].id
         s.add(Vote(poll_id=poll.id, user_id=crowd["aid"], option_id=opt)); s.add(Vote(poll_id=poll.id, user_id=1, option_id=opt))
-    soon = (dt.datetime.utcnow() + dt.timedelta(days=2)).isoformat()
+    soon = (dt.datetime.now(dt.timezone.utc).replace(tzinfo=None) + dt.timedelta(days=2)).isoformat()
     admin.post(f"/clubs/{cid}/watchalongs", {"film_id": films[2], "starts_at": soon})
     log(a, films[0], 5); log(b, films[0], 3); log(a, films[1], 4)
 
@@ -482,7 +482,7 @@ def test_club_analytics_are_for_conveners_only(app, crowd, club):
 
 def test_club_calendar_month_view_and_ics(app, crowd, club):
     admin, films, cid = crowd["admin"], crowd["films"], club
-    when = dt.datetime.utcnow().replace(hour=19, minute=30, second=0, microsecond=0) + dt.timedelta(days=2)
+    when = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None).replace(hour=19, minute=30, second=0, microsecond=0) + dt.timedelta(days=2)
     w = admin.post(f"/clubs/{cid}/watchalongs", {"film_id": films[0], "starts_at": when.isoformat()}).json()
     crowd["a"].put(f"/watchalongs/{w['id']}/rsvp")
     month = when.strftime("%Y-%m")
@@ -523,8 +523,8 @@ def test_ics_escaping_and_folding():
 
 def test_upcoming_watchalongs_across_my_clubs(app, crowd, club):
     admin, a, films, cid = crowd["admin"], crowd["a"], crowd["films"], club
-    soon = (dt.datetime.utcnow() + dt.timedelta(days=1)).isoformat()
-    later = (dt.datetime.utcnow() + dt.timedelta(days=5)).isoformat()
+    soon = (dt.datetime.now(dt.timezone.utc).replace(tzinfo=None) + dt.timedelta(days=1)).isoformat()
+    later = (dt.datetime.now(dt.timezone.utc).replace(tzinfo=None) + dt.timedelta(days=5)).isoformat()
     admin.post(f"/clubs/{cid}/watchalongs", {"film_id": films[2], "starts_at": later})
     first = admin.post(f"/clubs/{cid}/watchalongs", {"film_id": films[0], "starts_at": soon}).json()
     a.put(f"/watchalongs/{first['id']}/rsvp")

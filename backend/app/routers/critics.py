@@ -89,7 +89,7 @@ def withdraw(db: Session = Depends(get_db), user: User = Depends(user_required))
     if a is None:
         raise HTTPException(404, "nothing to withdraw")
     application_transition(db, a, "withdrawn")
-    a.decided_at = dt.datetime.utcnow()
+    a.decided_at = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)
     audit(db, user.id, "critic.withdraw", f"application:{a.id}")
     return {"state": a.state}
 
@@ -116,7 +116,7 @@ def _decide(request: Request, db: Session, app_id: int, mod: User, dst: str, not
         application_transition(db, a, dst)
     except InvalidTransition as e:
         raise HTTPException(409, str(e)) from e
-    a.decided_by, a.decided_at, a.decision_note = mod.id, dt.datetime.utcnow(), note.strip()
+    a.decided_by, a.decided_at, a.decision_note = mod.id, dt.datetime.now(dt.timezone.utc).replace(tzinfo=None), note.strip()
     u = db.get(User, a.user_id)
     if dst == "approved" and "critic" not in u.role_names:
         u.roles.append(UserRole(user_id=u.id, role="critic"))

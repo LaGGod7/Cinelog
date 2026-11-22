@@ -39,7 +39,7 @@ def user_json(u: User) -> dict:
             "permissions": sorted(permissions_of(set(roles))), "email_opt_out": u.email_opt_out,
             "bio": u.bio or "", "avatar": u.avatar or "", "has_password": bool(u.password_hash),
             "spoiler_safe": bool(u.spoiler_safe if u.spoiler_safe is not None else True),
-            "muted_until": u.muted_until.isoformat() if u.muted_until and u.muted_until > dt.datetime.utcnow() else None}
+            "muted_until": u.muted_until.isoformat() if u.muted_until and u.muted_until > dt.datetime.now(dt.timezone.utc).replace(tzinfo=None) else None}
 
 
 def start_session(resp: Response, user: User, request: Request) -> str:

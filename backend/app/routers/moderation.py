@@ -172,12 +172,12 @@ def _sanction_target(db: Session, mod: User, uid: int) -> User:
 
 
 def _recent_strikes(db: Session, uid: int) -> int:
-    since = dt.datetime.utcnow() - dt.timedelta(days=STRIKE_WINDOW_DAYS)
+    since = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None) - dt.timedelta(days=STRIKE_WINDOW_DAYS)
     return db.scalar(select(func.count()).select_from(UserStrike).where(UserStrike.user_id == uid, UserStrike.created_at >= since)) or 0
 
 
 def _mute(u: User, days: int) -> dt.datetime:
-    until = dt.datetime.utcnow() + dt.timedelta(days=days)
+    until = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None) + dt.timedelta(days=days)
     u.muted_until = max(until, u.muted_until) if u.muted_until else until
     return u.muted_until
 
@@ -188,7 +188,7 @@ def sanction_history(uid: int, db: Session = Depends(get_db), mod: User = Depend
     if u is None:
         raise HTTPException(404, "user not found")
     rows = db.scalars(select(UserStrike).where(UserStrike.user_id == uid).order_by(UserStrike.id.desc()).limit(20))
-    muted = u.muted_until is not None and u.muted_until > dt.datetime.utcnow()
+    muted = u.muted_until is not None and u.muted_until > dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)
     return {"id": u.id, "name": u.display_name, "roles": sorted(u.role_names), "muted_until": u.muted_until.isoformat() if muted else None,
             "recent_strikes": _recent_strikes(db, uid), "can_sanction": rank_of(u.role_names) < rank_of(mod.role_names) and u.id != mod.id,
             "strikes": [{"id": x.id, "reason": x.reason, "review_id": x.review_id, "at": x.created_at.isoformat(), "by": x.issued_by} for x in rows]}
@@ -232,7 +232,7 @@ def unmute(uid: int, db: Session = Depends(get_db), mod: User = Depends(require_
 # ================================================================= the moderator's dashboard
 @router.get("/stats")
 def stats(db: Session = Depends(get_db), _: User = Depends(require_perm("review.moderate"))):
-    now = dt.datetime.utcnow()
+    now = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)
     n = lambda *cond: db.scalar(select(func.count()).select_from(Review).where(*cond)) or 0  # noqa: E731
     week, month = now - dt.timedelta(days=7), now - dt.timedelta(days=30)
     decisions = ("review.approve", "review.reblur", "review.remove")

@@ -123,7 +123,7 @@ def close_due_polls(app) -> int:
     n = 0
     with app.state.db.session() as s:
         for p in s.scalars(select(Poll).where(Poll.state == "open", Poll.deadline.is_not(None),
-                                              Poll.deadline <= dt.datetime.utcnow())):
+                                              Poll.deadline <= dt.datetime.now(dt.timezone.utc).replace(tzinfo=None))):
             try:
                 finalize_poll(s, p)
                 n += 1

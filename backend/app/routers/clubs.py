@@ -207,7 +207,7 @@ def club_polls(club_id: int, db: Session = Depends(get_wdb), user: Optional[User
 
 
 def _lazy_close(db: Session, p: Poll) -> None:
-    if p.state == "open" and p.deadline and p.deadline <= dt.datetime.utcnow():
+    if p.state == "open" and p.deadline and p.deadline <= dt.datetime.now(dt.timezone.utc).replace(tzinfo=None):
         try:
             finalize_poll(db, p)
         except InvalidTransition:
@@ -243,7 +243,7 @@ def _transition(db: Session, p: Poll, dst: str) -> None:
 def open_poll(poll_id: int, request: Request, db: Session = Depends(get_db), user: User = Depends(user_required)):
     p = _poll_or_404(db, poll_id)
     require_club_role(db, p.club_id, user, CLUB_MANAGE)
-    if p.deadline and p.deadline <= dt.datetime.utcnow():
+    if p.deadline and p.deadline <= dt.datetime.now(dt.timezone.utc).replace(tzinfo=None):
         raise HTTPException(400, "deadline is in the past")
     _transition(db, p, "open")
     members = [m.user for m in db.scalars(select(ClubMember).where(ClubMember.club_id == p.club_id))]

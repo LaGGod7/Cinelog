@@ -167,7 +167,7 @@ def require_perm(perm: str) -> Callable[..., User]:
 def ensure_can_post(user: User) -> None:
     """A moderator's mute blocks new reviews and club posts (reading, rating and logging stay open)."""
     until = getattr(user, "muted_until", None)
-    if until is not None and until > dt.datetime.utcnow():
+    if until is not None and until > dt.datetime.now(dt.timezone.utc).replace(tzinfo=None):
         raise HTTPException(403, f"you are muted until {until.strftime('%d %b %Y %H:%M')} UTC")
 
 

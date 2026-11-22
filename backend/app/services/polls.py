@@ -41,4 +41,4 @@ def finalize_poll(db: Session, p: Poll) -> None:
     winner = best[0] if best and c.get(best[0].id, 0) > 0 else None
     p.winner_film_id = winner.film_id if winner else None
     p.result_json = json.dumps({"counts": {str(k): v for k, v in c.items()},
-                                "total": sum(c.values()), "closed_at": dt.datetime.utcnow().isoformat()})
+                                "total": sum(c.values()), "closed_at": dt.datetime.now(dt.timezone.utc).replace(tzinfo=None).isoformat()})

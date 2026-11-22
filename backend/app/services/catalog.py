@@ -26,7 +26,7 @@ def upsert_tmdb_film(db: Session, d: Dict[str, Any]) -> Film:
     f.popularity = float(d.get("popularity") or 0)
     f.runtime = d.get("runtime")
     f.imdb_id = d.get("imdb_id") or f.imdb_id
-    f.synced_at = dt.datetime.utcnow()
+    f.synced_at = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)
     db.flush()
     if "genres" in d:
         db.execute(delete(FilmGenre).where(FilmGenre.film_id == f.id))
