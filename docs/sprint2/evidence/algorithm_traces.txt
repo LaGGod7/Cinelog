@@ -1,0 +1,97 @@
+CineLog Sprint 2 algorithm trace  |  run: 2026-11-22 11:51:36
+
+==============================================================================
+E1-A  Trie with top-10 per node (autocomplete, FR-04 / NFR-01)
+==============================================================================
+search('dar'  ) -> ['The Dark Knight', 'Darkest Hour', 'Dark Orbit']
+search('da'   ) -> ['The Dark Knight', 'Dangal', 'Darkest Hour', 'Dark Orbit']
+search('in'   ) -> ['Inception', 'Interstellar']
+search('d'    ) -> ['The Dark Knight', 'Dangal', 'Drishyam', 'Darkest Hour', 'Dark Orbit']
+search('xyz'  ) -> []
+Edge case: one letter is still answered by the Trie; the API layer refuses < 2 letters (returns []).
+Edge case: 'dark k' (half-typed second word) is matched because titles are also indexed from each word.
+search('knight') -> [1]
+
+==============================================================================
+E1-B  Aho-Corasick automaton (spoiler word list, one pass over the review)
+==============================================================================
+terms  : ['tyler durden', 'split personality', 'durden', 'tower']
+review : Great twist. Tyler Durden is his own split personality. Towering performance.
+  hit [13,25) 'tyler durden'       kind=name
+  hit [19,25) 'durden'             kind=name
+  hit [37,54) 'split personality'  kind=plot
+Edge case: 'Towering' does NOT match 'tower' (whole words only); overlapping 'durden' inside
+           'tyler durden' is reported too, so names and phrases both count.
+
+==============================================================================
+E1-C  Unicode normalisation before matching (DEF-07 / DEF-08 fixed in Sprint 2)
+==============================================================================
+  'Tyler Dur\u200bden'         -> 'Tyler Durden'         hits=['tyler durden', 'durden']
+  'split\xa0personality'       -> 'split personality'    hits=['split personality']
+  'ｓｐｌｉｔ'                      -> 'split'                hits=[]
+  'क्\u200dष'                  -> 'क्\u200dष'            hits=[]
+
+==============================================================================
+E1-D  Sentence splitter used for sentence-level blurring
+==============================================================================
+Loved it.Dr. Crowe is great! He was dead all along... Wow
+  [ 0, 9) 'Loved it.'
+  [ 9,28) 'Dr. Crowe is great!'
+  [29,53) 'He was dead all along...'
+  [54,57) 'Wow'
+
+==============================================================================
+E1-E  Inverted index with sorted posting lists + heap top-k (search with filters, FR-05)
+==============================================================================
+search('dark')                 -> [1, 2]
+search('dark', genre='Crime')  -> [1]
+search('dark', year=2021)      -> [2]
+search('dark', genre='Horror') -> []  (edge case: empty, no error)
+top_k([(0.2,1),(0.9,2),(0.5,3),(0.7,4)], 2) -> [(0.9, 2), (0.7, 4)]
+
+==============================================================================
+E2-A  State machines with compare-and-swap (reviews FR-09, polls FR-13)
+==============================================================================
+  poll       draft -> open      allowed=True
+  poll        open -> closed    allowed=True
+  poll        open -> cancelled allowed=False
+  poll      closed -> open      allowed=False
+  review pending_scan -> published allowed=True
+  review    published -> hidden    allowed=True
+  review      removed -> published allowed=False
+Edge case: a disallowed change raises InvalidTransition -> HTTP 409; the UPDATE ... WHERE state=<old>
+           changes 0 rows if someone else changed the state first.
+
+==============================================================================
+E3-A  Bounded priority queue (mutex + 2 semaphores): USER before BATCH, FIFO inside a priority
+==============================================================================
+submitted: ['BATCH sync-0', 'BATCH sync-1', 'BATCH sync-2', 'USER scan-0', 'USER scan-1']
+ran      : ['USER scan-0', 'USER scan-1', 'BATCH sync-0', 'BATCH sync-1', 'BATCH sync-2']
+Edge case: capacity 2, third put -> QueueFull after 0.1 s (producer never blocks forever)
+
+==============================================================================
+E3-B  Retry with exponential back-off (0.01 s, 0.02 s, 0.04 s), then failed
+==============================================================================
+job sync-film-42 failed (TMDB timeout); retry 1
+job sync-film-42 failed (TMDB timeout); retry 2
+job sync-film-42 failed (TMDB timeout); retry 3
+job sync-film-42 failed permanently: TMDB timeout
+attempts=4 gaps=[0.01, 0.021, 0.041] stats={'submitted': 1, 'done': 0, 'failed': 1, 'retried': 3, 'postponed': 0} failed_jobs=['sync-film-42']
+
+==============================================================================
+E3-C  LRU cache (hash map + doubly linked list), eviction counter added in Sprint 2 (DEF-10)
+==============================================================================
+MRU -> LRU: ['film-4', 'film-1', 'film-3']  (film-2 was evicted)
+stats     : {'size': 3, 'capacity': 3, 'hits': 1, 'misses': 0, 'evictions': 1, 'hit_rate': 1.0}
+
+==============================================================================
+E4-A  Token bucket (5 sign-in attempts per minute per address, FR-01)
+==============================================================================
+t=0s  attempts 1-6: [True, True, True, True, True, False]
+t=12s attempt 7  : True (one token refilled)
+other address     : True
+
+==============================================================================
+E4-B  Concurrency: 20 threads take the last token at the same moment
+==============================================================================
+allowed=1 refused=19 (the bucket's lock makes it exactly one)

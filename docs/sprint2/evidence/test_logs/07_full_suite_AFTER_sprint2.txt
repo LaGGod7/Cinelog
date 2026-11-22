@@ -1,0 +1,357 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.18, pytest-9.2.0, pluggy-1.7.0 -- /home/claude/venv/bin/python
+rootdir: /home/claude/cinelog_repo/backend
+plugins: anyio-4.16.0, cov-7.1.0
+collecting ... collected 189 items
+
+tests/test_api.py::test_register_login_logout_and_generic_errors PASSED  [  0%]
+tests/test_api.py::test_password_is_bcrypt_hashed PASSED                 [  1%]
+tests/test_api.py::test_csrf_required_for_cookie_sessions PASSED         [  1%]
+tests/test_api.py::test_login_rate_limit_429_on_sixth_attempt PASSED     [  2%]
+tests/test_api.py::test_forged_and_expired_tokens_rejected PASSED        [  2%]
+tests/test_api.py::test_google_callback_creates_viewer PASSED            [  3%]
+tests/test_api.py::test_rbac_matrix_deny_by_default PASSED               [  3%]
+tests/test_api.py::test_admin_roles_audit_and_last_admin PASSED          [  4%]
+tests/test_api.py::test_audit_log_is_append_only PASSED                  [  4%]
+tests/test_api.py::test_search_endpoints PASSED                          [  5%]
+tests/test_api.py::test_diary_watchlist_aspects_and_taste PASSED         [  5%]
+tests/test_api.py::test_review_scanned_before_visible_and_blurred PASSED [  6%]
+tests/test_api.py::test_pending_review_invisible_until_scan PASSED       [  6%]
+tests/test_api.py::test_writer_tags_and_clean_review PASSED              [  7%]
+tests/test_api.py::test_three_reports_hide_and_moderator_flow PASSED     [  7%]
+tests/test_api.py::test_moderator_reblur_teaches_rag_and_wordlist PASSED [  8%]
+tests/test_api.py::test_reveal_only_published PASSED                     [  8%]
+tests/test_api.py::test_club_permissions_private_and_roles PASSED        [  9%]
+tests/test_api.py::test_poll_lifecycle_one_vote_and_frozen_result PASSED [ 10%]
+tests/test_api.py::test_draft_poll_can_be_cancelled PASSED               [ 10%]
+tests/test_api.py::test_poll_closes_at_deadline PASSED                   [ 11%]
+tests/test_api.py::test_100_concurrent_votes_no_duplicates PASSED        [ 11%]
+tests/test_api.py::test_websocket_live_poll_results PASSED               [ 12%]
+tests/test_api.py::test_follow_feed_and_similarity PASSED                [ 12%]
+tests/test_api.py::test_health_and_security_headers PASSED               [ 13%]
+tests/test_api.py::test_browse_stats_and_profile PASSED                  [ 13%]
+tests/test_api.py::test_badges_streaks_likes_lists_threads_watchalongs PASSED [ 14%]
+tests/test_clients_jobs.py::test_tmdb_backs_off_on_429_and_caches PASSED [ 14%]
+tests/test_clients_jobs.py::test_tmdb_gives_up_and_raises PASSED         [ 15%]
+tests/test_clients_jobs.py::test_wikipedia_plot_extraction PASSED        [ 15%]
+tests/test_clients_jobs.py::test_catalog_sync_and_plot_fetch_jobs PASSED [ 16%]
+tests/test_clients_jobs.py::test_sync_without_key_is_503 PASSED          [ 16%]
+tests/test_dsa_scheduler.py::test_trie_prefix_and_word_boundary PASSED   [ 17%]
+tests/test_dsa_scheduler.py::test_inverted_index_and_filters PASSED      [ 17%]
+tests/test_dsa_scheduler.py::test_aho_corasick_one_pass_whole_words PASSED [ 18%]
+tests/test_dsa_scheduler.py::test_lru_eviction_order PASSED              [ 19%]
+tests/test_dsa_scheduler.py::test_feed_merge_and_cosine PASSED           [ 19%]
+tests/test_dsa_scheduler.py::test_queue_priority_and_bounds PASSED       [ 20%]
+tests/test_dsa_scheduler.py::test_pool_runs_all_jobs_retries_and_no_loss PASSED [ 20%]
+tests/test_dsa_scheduler.py::test_user_jobs_run_before_batch_jobs PASSED [ 21%]
+tests/test_phase1.py::test_client_ip_trusts_forwarded_header_only_from_our_proxy PASSED [ 21%]
+tests/test_phase1.py::test_client_ip_uses_rightmost_untrusted_hop_and_survives_garbage PASSED [ 22%]
+tests/test_phase1.py::test_login_limit_is_per_client_not_global PASSED   [ 22%]
+tests/test_phase1.py::test_secret_key_is_generated_once_and_reused PASSED [ 23%]
+tests/test_phase1.py::test_secret_key_env_wins_but_placeholder_is_ignored PASSED [ 23%]
+tests/test_phase1.py::test_deep_model_loads_only_when_enabled PASSED     [ 24%]
+tests/test_phase1.py::test_top_words_builds_feature_names_once PASSED    [ 24%]
+tests/test_phase1.py::test_actor_terms_use_full_name_and_surname_not_first_name PASSED [ 25%]
+tests/test_phase1.py::test_actor_names_reach_the_shield_and_backfill_is_idempotent PASSED [ 25%]
+tests/test_phase1.py::test_diary_rejects_future_and_pre_cinema_dates PASSED [ 26%]
+tests/test_phase1.py::test_one_film_logged_three_times_is_not_a_marathon PASSED [ 26%]
+tests/test_phase1.py::test_cannot_like_your_own_review_or_list PASSED    [ 27%]
+tests/test_phase1.py::test_others_can_like_and_it_counts PASSED          [ 28%]
+tests/test_phase1.py::test_whitespace_only_review_is_rejected PASSED     [ 28%]
+tests/test_phase1.py::test_author_can_edit_review_and_it_is_scanned_again PASSED [ 29%]
+tests/test_phase1.py::test_only_the_author_can_edit_or_delete PASSED     [ 29%]
+tests/test_phase1.py::test_delete_review_hides_it_clears_likes_and_allows_a_new_one PASSED [ 30%]
+tests/test_phase1.py::test_moderator_hidden_review_cannot_be_edited_by_its_author PASSED [ 30%]
+tests/test_phase1.py::test_search_index_notices_films_added_by_another_process PASSED [ 31%]
+tests/test_phase1.py::test_search_finds_a_new_film_on_tmdb_imports_it_and_serves_it_locally_next_time PASSED [ 31%]
+tests/test_phase1.py::test_autocomplete_falls_back_to_tmdb_only_for_real_queries PASSED [ 32%]
+tests/test_phase1.py::test_tmdb_failure_never_breaks_search_and_is_visible_to_admins PASSED [ 32%]
+tests/test_phase1.py::test_search_without_a_tmdb_key_just_searches_the_local_catalogue PASSED [ 33%]
+tests/test_phase1.py::test_filters_do_not_trigger_an_outside_search PASSED [ 33%]
+tests/test_phase12.py::test_permission_matrix_is_served_to_staff_only_and_matches_the_enforced_table PASSED [ 34%]
+tests/test_phase12.py::test_role_change_keeps_reason_notifies_the_person_and_can_be_filtered PASSED [ 34%]
+tests/test_phase12.py::test_critic_application_flow_with_separation_of_duties PASSED [ 35%]
+tests/test_phase12.py::test_withdraw_and_reject_leave_the_door_open PASSED [ 35%]
+tests/test_phase12.py::test_critics_get_a_split_score_picks_and_the_critic_filter PASSED [ 36%]
+tests/test_phase12.py::test_moderators_strike_and_mute_but_only_downwards PASSED [ 37%]
+tests/test_phase12.py::test_three_strikes_mute_and_a_mute_blocks_posting_but_not_watching PASSED [ 37%]
+tests/test_phase12.py::test_decision_notes_reach_the_author_and_become_training_labels PASSED [ 38%]
+tests/test_phase12.py::test_moderator_dashboard_numbers PASSED           [ 38%]
+tests/test_phase12.py::test_writer_can_tag_the_whole_review_as_spoilers PASSED [ 39%]
+tests/test_phase12.py::test_spoiler_safe_preference_is_saved PASSED      [ 39%]
+tests/test_phase12.py::test_persona_rules PASSED                         [ 40%]
+tests/test_phase12.py::test_year_in_review_numbers PASSED                [ 40%]
+tests/test_phase12.py::test_goal_progress_and_pace PASSED                [ 41%]
+tests/test_phase12.py::test_goal_pace_math PASSED                        [ 41%]
+tests/test_phase12.py::test_recommendations_cold_start_then_personal_with_reasons PASSED [ 42%]
+tests/test_phase12.py::test_recommendations_use_friends_ratings PASSED   [ 42%]
+tests/test_phase12.py::test_taste_match PASSED                           [ 43%]
+tests/test_phase12.py::test_taste_match_with_few_shared_films_uses_genres_only PASSED [ 43%]
+tests/test_phase12.py::test_friends_who_watched PASSED                   [ 44%]
+tests/test_phase12.py::test_film_of_the_day_is_stable_within_a_day PASSED [ 44%]
+tests/test_phase12.py::test_film_of_the_day_with_an_empty_catalogue PASSED [ 45%]
+tests/test_phase12.py::test_club_analytics_are_for_conveners_only PASSED [ 46%]
+tests/test_phase12.py::test_club_calendar_month_view_and_ics PASSED      [ 46%]
+tests/test_phase12.py::test_private_club_calendar_is_members_only PASSED [ 47%]
+tests/test_phase12.py::test_ics_escaping_and_folding PASSED              [ 47%]
+tests/test_phase12.py::test_upcoming_watchalongs_across_my_clubs PASSED  [ 48%]
+tests/test_phase12.py::test_migration_3_adds_columns_to_an_old_users_table PASSED [ 48%]
+tests/test_phase5.py::test_forgot_password_answers_the_same_for_unknown_and_known_addresses PASSED [ 49%]
+tests/test_phase5.py::test_reset_flow_sets_new_password_once_and_kills_old_sessions PASSED [ 49%]
+tests/test_phase5.py::test_expired_reset_link_is_refused_and_requests_are_throttled PASSED [ 50%]
+tests/test_phase5.py::test_a_new_reset_request_does_not_leave_an_old_link_usable_after_success PASSED [ 50%]
+tests/test_phase5.py::test_forgot_is_not_blocked_by_csrf_for_a_signed_in_browser PASSED [ 51%]
+tests/test_phase5.py::test_admin_can_read_the_dev_mailbox_but_nobody_else PASSED [ 51%]
+tests/test_phase5.py::test_change_password_needs_the_current_one_and_signs_other_devices_out PASSED [ 52%]
+tests/test_phase5.py::test_profile_bio_and_avatar PASSED                 [ 52%]
+tests/test_phase5.py::test_public_profile_shows_bio_and_avatar PASSED    [ 53%]
+tests/test_phase5.py::test_like_follow_reply_and_moderation_notify_the_right_person PASSED [ 53%]
+tests/test_phase5.py::test_notifications_are_private_and_need_login PASSED [ 54%]
+tests/test_phase5.py::test_migration_upgrades_an_old_database_and_is_idempotent PASSED [ 55%]
+tests/test_phase5.py::test_app_starts_on_an_old_database_file PASSED     [ 55%]
+tests/test_speed.py::test_read_sessions_cannot_write PASSED              [ 56%]
+tests/test_speed.py::test_page_views_do_not_wait_for_a_long_write PASSED [ 56%]
+tests/test_speed.py::test_tmdb_calls_run_in_parallel_not_one_after_another PASSED [ 57%]
+tests/test_speed.py::test_a_slow_tmdb_lookup_does_not_freeze_other_requests PASSED [ 57%]
+tests/test_speed.py::test_after_a_tmdb_failure_the_next_searches_skip_tmdb_for_a_while PASSED [ 58%]
+tests/test_speed.py::test_tmdb_client_single_attempt_does_not_sleep PASSED [ 58%]
+tests/test_speed.py::test_built_site_is_served_next_to_the_api_under_api_prefix PASSED [ 59%]
+tests/test_speed.py::test_site_not_served_unless_asked PASSED            [ 59%]
+tests/test_spoiler_ml.py::test_text_helpers PASSED                       [ 60%]
+tests/test_spoiler_ml.py::test_character_names_are_weak_terms PASSED     [ 60%]
+tests/test_spoiler_ml.py::test_shield_rules_and_rag_without_model PASSED [ 61%]
+tests/test_spoiler_ml.py::test_confirmed_spoilers_become_retrieval_context PASSED [ 61%]
+tests/test_spoiler_ml.py::test_train_and_serve_end_to_end PASSED         [ 62%]
+tests/test_spoiler_ml.py::test_cue_next_to_character_name_is_blurred_but_plain_praise_is_not PASSED [ 62%]
+tests/test_spoiler_ml.py::test_model_says_clean_so_soft_rules_alone_do_not_blur PASSED [ 63%]
+tests/test_spoiler_ml.py::test_hard_evidence_blurs_even_when_the_model_is_calm PASSED [ 64%]
+tests/test_spoiler_ml.py::test_model_says_spoiler_hides_only_the_telling_sentences PASSED [ 64%]
+tests/test_spoiler_ml.py::test_middle_band_goes_to_moderators_not_to_a_blur PASSED [ 65%]
+tests/test_spoiler_ml.py::test_tuned_thresholds_file_overrides_the_saved_ones PASSED [ 65%]
+tests/test_spoiler_ml.py::test_sentences_split_when_people_forget_the_space_after_a_full_stop PASSED [ 66%]
+tests/test_spoiler_ml.py::test_gold_labels_still_line_up_with_the_sentence_splitter PASSED [ 66%]
+tests/test_spoiler_rnn.py::test_tokenizer_keeps_contractions_and_exclamations PASSED [ 67%]
+tests/test_spoiler_rnn.py::test_numpy_server_matches_pytorch SKIPPED     [ 67%]
+tests/test_spoiler_rnn.py::test_padding_does_not_change_a_score PASSED   [ 68%]
+tests/test_spoiler_rnn.py::test_fuse_is_a_logit_average PASSED           [ 68%]
+tests/test_spoiler_rnn.py::test_attention_words_skip_function_words PASSED [ 69%]
+tests/test_spoiler_rnn.py::test_files_round_trip_and_damage_is_tolerated PASSED [ 69%]
+tests/test_spoiler_rnn.py::test_tuned_fused_thresholds_are_read_and_nonsense_is_ignored PASSED [ 70%]
+tests/test_spoiler_rnn.py::test_shield_uses_the_blend_and_its_own_thresholds PASSED [ 70%]
+tests/test_spoiler_rnn.py::test_rnn_can_raise_a_borderline_review_to_a_blur PASSED [ 71%]
+tests/test_spoiler_rnn.py::test_rnn_cannot_blur_a_review_when_both_models_are_calm PASSED [ 71%]
+tests/test_spoiler_rnn.py::test_weight_zero_means_ml_only PASSED         [ 72%]
+tests/test_spoiler_rnn.py::test_a_failing_rnn_falls_back_to_ml PASSED    [ 73%]
+tests/test_spoiler_rnn.py::test_status_reports_the_rnn PASSED            [ 73%]
+tests/test_spoiler_rnn.py::test_an_untuned_rnn_is_loaded_but_not_used PASSED [ 74%]
+tests/test_spoiler_rnn.py::test_cue_in_a_plot_restating_sentence_blurs_even_when_the_model_is_calm PASSED [ 74%]
+tests/test_spoiler_rnn.py::test_plot_recap_without_a_giveaway_word_or_a_giveaway_word_without_plot_is_left_alone PASSED [ 75%]
+tests/test_spoiler_rnn.py::test_seed_spoiler_test_script_runs_and_leaks_nothing PASSED [ 75%]
+tests/test_spoiler_rnn.py::test_warn_label_is_given_between_the_recall_cutoff_and_the_moderator_band PASSED [ 76%]
+tests/test_spoiler_rnn.py::test_warn_thresholds_are_read_from_the_tuned_file_and_garbage_is_ignored PASSED [ 76%]
+tests/test_spoiler_rnn.py::test_warn_label_reaches_readers_and_old_databases_are_migrated PASSED [ 77%]
+tests/test_spoiler_semantic.py::test_plot_sentences_undo_the_overlapping_windows PASSED [ 77%]
+tests/test_spoiler_semantic.py::test_late_plot_match_scores_higher_than_early_plot_match PASSED [ 78%]
+tests/test_spoiler_semantic.py::test_scores_are_empty_safe PASSED        [ 78%]
+tests/test_spoiler_semantic.py::test_a_one_sentence_plot_has_no_late_part_and_does_not_crash PASSED [ 79%]
+tests/test_spoiler_semantic.py::test_cut_off_rises_with_review_length_but_never_drops_below_the_short_review_value PASSED [ 79%]
+tests/test_spoiler_semantic.py::test_a_long_review_needs_a_stronger_match_than_a_short_one PASSED [ 80%]
+tests/test_spoiler_semantic.py::test_shield_blurs_a_sentence_that_matches_the_late_plot_and_warns_on_a_weaker_match PASSED [ 80%]
+tests/test_spoiler_semantic.py::test_clean_review_is_untouched_and_the_layer_can_be_switched_off PASSED [ 81%]
+tests/test_spoiler_semantic.py::test_a_failing_semantic_layer_never_breaks_the_scan PASSED [ 82%]
+tests/test_spoiler_semantic.py::test_missing_or_damaged_files_mean_the_layer_is_off PASSED [ 82%]
+tests/test_spoiler_semantic.py::test_the_real_encoder_understands_paraphrases PASSED [ 83%]
+tests/test_spoiler_semantic.py::test_an_outright_fate_statement_in_a_short_review_goes_to_a_moderator_even_when_the_model_is_calm PASSED [ 83%]
+tests/test_sprint2_engines.py::test_tc_e1_01_trie_returns_top10_by_popularity_for_prefix PASSED [ 84%]
+tests/test_sprint2_engines.py::test_tc_e1_02_trie_boundary_one_letter_and_unknown_prefix PASSED [ 84%]
+tests/test_sprint2_engines.py::test_tc_e1_03_aho_corasick_matches_whole_words_only PASSED [ 85%]
+tests/test_sprint2_engines.py::test_tc_e1_04_spoiler_sentence_is_blurred PASSED [ 85%]
+tests/test_sprint2_engines.py::test_tc_e1_05_clean_review_is_not_blurred PASSED [ 86%]
+tests/test_sprint2_engines.py::test_tc_e1_06_zero_width_space_cannot_hide_a_spoiler PASSED [ 86%]
+tests/test_sprint2_engines.py::test_tc_e1_07_no_break_space_cannot_hide_a_spoiler PASSED [ 87%]
+tests/test_sprint2_engines.py::test_tc_e1_08_empty_and_symbol_only_reviews_do_not_crash PASSED [ 87%]
+tests/test_sprint2_engines.py::test_tc_e1_09_normalize_keeps_indic_joiners_and_emoji PASSED [ 88%]
+tests/test_sprint2_engines.py::test_tc_e1_10_inverted_index_filters_by_genre_and_year PASSED [ 88%]
+tests/test_sprint2_engines.py::test_tc_e2_01_vote_is_saved_once PASSED   [ 89%]
+tests/test_sprint2_engines.py::test_tc_e2_02_vote_on_draft_or_closed_poll_is_rejected PASSED [ 89%]
+tests/test_sprint2_engines.py::test_tc_e2_03_invalid_state_change_returns_409_and_changes_nothing PASSED [ 90%]
+tests/test_sprint2_engines.py::test_tc_e2_04_audit_log_cannot_be_edited_or_deleted PASSED [ 91%]
+tests/test_sprint2_engines.py::test_tc_e2_05_review_shorter_than_10_characters_is_rejected_with_400 PASSED [ 91%]
+tests/test_sprint2_engines.py::test_tc_e2_06_twenty_simultaneous_votes_from_one_member_store_one_row PASSED [ 92%]
+tests/test_sprint2_engines.py::test_tc_e3_01_user_jobs_run_before_batch_jobs PASSED [ 92%]
+tests/test_sprint2_engines.py::test_tc_e3_02_bounded_queue_rejects_when_full PASSED [ 93%]
+tests/test_sprint2_engines.py::test_tc_e3_03_failing_job_is_retried_3_times_then_marked_failed PASSED [ 93%]
+tests/test_sprint2_engines.py::test_tc_e3_04_lru_evicts_least_recently_used_and_counts_it PASSED [ 94%]
+tests/test_sprint2_engines.py::test_tc_e3_05_hundred_jobs_from_8_threads_all_finish_once PASSED [ 94%]
+tests/test_sprint2_engines.py::test_tc_e4_01_login_sets_http_only_session_cookie PASSED [ 95%]
+tests/test_sprint2_engines.py::test_tc_e4_02_fifth_auth_attempt_in_a_minute_gets_429 PASSED [ 95%]
+tests/test_sprint2_engines.py::test_tc_e4_03_token_bucket_refills_over_time PASSED [ 96%]
+tests/test_sprint2_engines.py::test_tc_e4_04_no_token_gets_401_and_wrong_role_gets_403 PASSED [ 96%]
+tests/test_sprint2_engines.py::test_tc_e4_05_tampered_or_garbage_token_is_rejected PASSED [ 97%]
+tests/test_sprint2_engines.py::test_tc_e4_06_malformed_json_gets_400_with_a_clear_message PASSED [ 97%]
+tests/test_sprint2_engines.py::test_tc_e4_07_missing_csrf_header_is_refused PASSED [ 98%]
+tests/test_sprint2_engines.py::test_tc_e4_08_convener_of_one_club_cannot_manage_another PASSED [ 98%]
+tests/test_sprint2_engines.py::test_tc_e3_06_health_reports_cache_counters_for_the_soak_test PASSED [ 99%]
+tests/test_sprint2_engines.py::test_tc_e1_11_sentence_split_after_two_letter_word_without_space PASSED [100%]
+
+=============================== warnings summary ===============================
+tests/test_api.py: 81 warnings
+tests/test_clients_jobs.py: 6 warnings
+tests/test_phase1.py: 51 warnings
+tests/test_phase12.py: 78 warnings
+tests/test_phase5.py: 41 warnings
+tests/test_speed.py: 21 warnings
+tests/test_spoiler_rnn.py: 6 warnings
+tests/test_sprint2_engines.py: 42 warnings
+  /home/claude/venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py:1192: DeprecationWarning: The default datetime adapter is deprecated as of Python 3.12; see the sqlite3 documentation for suggested replacement recipes
+    cursor.execute(statement, parameters)
+
+tests/test_api.py: 27 warnings
+tests/test_clients_jobs.py: 2 warnings
+tests/test_phase1.py: 17 warnings
+tests/test_phase12.py: 25 warnings
+tests/test_phase5.py: 11 warnings
+tests/test_speed.py: 7 warnings
+tests/test_spoiler_rnn.py: 4 warnings
+tests/test_sprint2_engines.py: 14 warnings
+  /home/claude/cinelog_repo/backend/app/main.py:134: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+tests/test_api.py: 54 warnings
+tests/test_clients_jobs.py: 4 warnings
+tests/test_phase1.py: 34 warnings
+tests/test_phase12.py: 50 warnings
+tests/test_phase5.py: 22 warnings
+tests/test_speed.py: 14 warnings
+tests/test_spoiler_rnn.py: 8 warnings
+tests/test_sprint2_engines.py: 28 warnings
+  /home/claude/venv/lib/python3.13/site-packages/fastapi/applications.py:4723: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+tests/test_api.py: 27 warnings
+tests/test_clients_jobs.py: 2 warnings
+tests/test_phase1.py: 17 warnings
+tests/test_phase12.py: 25 warnings
+tests/test_phase5.py: 11 warnings
+tests/test_speed.py: 7 warnings
+tests/test_spoiler_rnn.py: 4 warnings
+tests/test_sprint2_engines.py: 14 warnings
+  /home/claude/cinelog_repo/backend/app/main.py:142: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("shutdown")
+
+tests/test_api.py::test_forged_and_expired_tokens_rejected
+  /home/claude/venv/lib/python3.13/site-packages/jwt/api_jwt.py:149: InsecureKeyLengthWarning: The HMAC key is 11 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+    return self._jws.encode(
+
+tests/test_phase5.py::test_forgot_password_answers_the_same_for_unknown_and_known_addresses
+  /home/claude/venv/lib/python3.13/site-packages/anyio/_core/_eventloop.py:221: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7f3f2cffe020>
+    asyncio.get_running_loop()
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_speed.py::test_read_sessions_cannot_write
+  /home/claude/venv/lib/python3.13/site-packages/sqlalchemy/sql/schema.py:1138: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7f3f5d83ee30>
+    fkc.constraint
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_speed.py::test_read_sessions_cannot_write
+  /home/claude/venv/lib/python3.13/site-packages/sqlalchemy/sql/schema.py:1138: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7f3f5da4cc70>
+    fkc.constraint
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_spoiler_semantic.py::test_missing_or_damaged_files_mean_the_layer_is_off
+  <frozen importlib._bootstrap>:488: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7f3f87c0c220>
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_sprint2_engines.py::test_tc_e4_05_tampered_or_garbage_token_is_rejected
+tests/test_sprint2_engines.py::test_tc_e4_05_tampered_or_garbage_token_is_rejected
+tests/test_sprint2_engines.py::test_tc_e4_05_tampered_or_garbage_token_is_rejected
+  /home/claude/venv/lib/python3.13/site-packages/starlette/testclient.py:518: DeprecationWarning: Setting per-request cookies=<...> is being deprecated, because the expected behaviour on cookie persistence is ambiguous. Set cookies directly on the client instance instead.
+    return super().request(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /home/claude/cinelog_repo/docs/sprint2/evidence/test_logs/junit_full_suite.xml -
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.18-final-0 _______________
+
+Name                            Stmts   Miss  Cover
+---------------------------------------------------
+app/__init__.py                     0      0   100%
+app/audit.py                        6      0   100%
+app/clients/__init__.py             0      0   100%
+app/clients/mailer.py              22      9    59%
+app/clients/tmdb.py                61      5    92%
+app/clients/wikipedia.py           38      1    97%
+app/config.py                      71      6    92%
+app/db.py                          55      3    95%
+app/dsa/__init__.py                 0      0   100%
+app/dsa/aho_corasick.py            72      2    97%
+app/dsa/feed.py                    24      0   100%
+app/dsa/inverted_index.py          98      9    91%
+app/dsa/lru.py                     64      8    88%
+app/dsa/trie.py                    58      1    98%
+app/gamification.py               126      2    98%
+app/main.py                       140      9    94%
+app/migrations.py                  37      0   100%
+app/models.py                     314      0   100%
+app/rbac.py                        68      0   100%
+app/routers/__init__.py             0      0   100%
+app/routers/admin.py               88     13    85%
+app/routers/auth.py               171     25    85%
+app/routers/browse.py              84      9    89%
+app/routers/club_insights.py      110      1    99%
+app/routers/clubs.py              292     42    86%
+app/routers/community.py          310     23    93%
+app/routers/critics.py            135      2    99%
+app/routers/diary.py              127     15    88%
+app/routers/films.py              126     18    86%
+app/routers/insights.py            85      0   100%
+app/routers/moderation.py         200     10    95%
+app/routers/notifications.py       29      0   100%
+app/routers/reviews.py            127     12    91%
+app/routers/social.py              70      4    94%
+app/scheduler/__init__.py           0      0   100%
+app/scheduler/pool.py             138      6    96%
+app/security.py                    82      6    93%
+app/services/__init__.py            0      0   100%
+app/services/catalog.py            95      0   100%
+app/services/insights.py          149      2    99%
+app/services/jobs.py              105     22    79%
+app/services/notifications.py       8      0   100%
+app/services/online.py             67      6    91%
+app/services/polls.py              26      0   100%
+app/services/recommend.py         111      7    94%
+app/services/reviews.py            61      8    87%
+app/services/search.py             56      1    98%
+app/spa.py                         40      2    95%
+app/spoiler/__init__.py             0      0   100%
+app/spoiler/dl.py                  47     34    28%
+app/spoiler/ml.py                  82      1    99%
+app/spoiler/retrieval.py           95      3    97%
+app/spoiler/rnn.py                137      3    98%
+app/spoiler/semantic.py           104      4    96%
+app/spoiler/shield.py             298     16    95%
+app/spoiler/text.py                58      3    95%
+app/spoiler/wordlist.py            42      1    98%
+app/workflow.py                    30      2    93%
+---------------------------------------------------
+TOTAL                            5039    356    93%
+=========== 188 passed, 1 skipped, 762 warnings in 75.47s (0:01:15) ============

@@ -1,0 +1,68 @@
+CineLog Sprint 2 - database state after the API run (SQLite demo database). Captured 2026-11-22 11:56
+
+sqlite> SELECT id, title, state, winner_film_id, substr(result_json,1,70) AS result FROM polls;
+id  title               state   winner_film_id  result                                                                
+--  ------------------  ------  --------------  ----------------------------------------------------------------------
+1   Friday's screening  closed  6               {"counts": {"1": 1}, "total": 1, "closed_at": "2026-11-22T11:53:59.338
+2   Last month's pick   closed  7               {"counts": {"4": 3, "5": 1}, "total": 4, "closed_at": "2026-11-22T11:5
+
+sqlite> SELECT poll_id, user_id, option_id, created_at FROM votes WHERE poll_id=1;
+poll_id  user_id  option_id  created_at                
+-------  -------  ---------  --------------------------
+1        5        1          2026-11-22 11:53:59.311969
+
+sqlite> SELECT poll_id, user_id, COUNT(*) AS rows_per_member FROM votes GROUP BY poll_id, user_id HAVING COUNT(*)>1;
+poll_id  user_id  rows_per_member
+-------  -------  ---------------
+(no rows)
+
+sqlite> SELECT id, user_id, film_id, state, length(text) AS chars FROM reviews ORDER BY id;
+id  user_id  film_id  state      chars
+--  -------  -------  ---------  -----
+1   5        2        published  176  
+2   4        6        published  169  
+3   5        4        published  128  
+4   4        7        published  126  
+5   6        7        published  58   
+6   5        5        published  134  
+7   4        3        published  84   
+
+sqlite> SELECT id, actor_id, action, target, substr(detail,1,55) AS detail FROM audit_log ORDER BY id DESC LIMIT 8;
+id  actor_id  action      target  detail
+--  --------  ----------  ------  ------
+2   3         poll.close  poll:1        
+1   3         poll.open   poll:1        
+
+sqlite> SELECT sql FROM sqlite_master WHERE name IN ('votes','user_roles','follows');
+CREATE TABLE user_roles (
+	user_id INTEGER NOT NULL, 
+	role VARCHAR(20) NOT NULL, 
+	PRIMARY KEY (user_id, role), 
+	CHECK (role in ('viewer','critic','convener','moderator','admin')), 
+	FOREIGN KEY(user_id) REFERENCES users (id) ON DELETE CASCADE
+)
+CREATE TABLE follows (
+	follower_id INTEGER NOT NULL, 
+	followee_id INTEGER NOT NULL, 
+	PRIMARY KEY (follower_id, followee_id), 
+	CHECK (follower_id != followee_id), 
+	FOREIGN KEY(follower_id) REFERENCES users (id) ON DELETE CASCADE, 
+	FOREIGN KEY(followee_id) REFERENCES users (id) ON DELETE CASCADE
+)
+CREATE TABLE votes (
+	id INTEGER NOT NULL, 
+	poll_id INTEGER NOT NULL, 
+	user_id INTEGER NOT NULL, 
+	option_id INTEGER NOT NULL, 
+	created_at DATETIME NOT NULL, 
+	PRIMARY KEY (id), 
+	CONSTRAINT uq_one_vote_per_member UNIQUE (poll_id, user_id), 
+	FOREIGN KEY(poll_id) REFERENCES polls (id) ON DELETE CASCADE, 
+	FOREIGN KEY(user_id) REFERENCES users (id) ON DELETE CASCADE, 
+	FOREIGN KEY(option_id) REFERENCES poll_options (id) ON DELETE CASCADE
+)
+
+sqlite> PRAGMA journal_mode;
+journal_mode
+------------
+wal         
