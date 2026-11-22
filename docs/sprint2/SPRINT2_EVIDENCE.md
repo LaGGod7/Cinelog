@@ -270,7 +270,7 @@ Evidence: `evidence/test_logs/07_full_suite_AFTER_sprint2.txt`, `junit_full_suit
 | TC-E1-11 before / after | `pytest -k tc_e1_11 -v` | `test_logs/05_DEF12_…_BEFORE.txt`, `06_DEF12_…_AFTER.txt` | 22-11-2026 / 6258a5f, a3601ad |
 | Full suite + coverage | `pytest -v --cov=app --junitxml=…` | `test_logs/07_full_suite_AFTER_sprint2.txt`, `junit_full_suite.xml`, `screenshots/11_tests_after_fixes_all_pass_coverage.png` | 22-11-2026 / a3601ad |
 | A01–A29 API | `python -m scripts.sprint2_api_evidence` against the seeded server | `evidence/api/api_exchanges.md` | 22-11-2026 / a3601ad |
-| UI checks | Playwright screenshots of the running site | `evidence/screenshots/01…09_*.png` | 22-11-2026 / a3601ad |
+| UI checks | Playwright screenshots of the running site | `evidence/screenshots/01–09_*.png` (06 removed: it did not show the refusal; see API A05) | 22-11-2026 / a3601ad |
 | PT-01, PT-02 | `python -m scripts.sprint2_benchmarks` | `evidence/benchmarks.txt` | 22-11-2026 / 0215c13 |
 
 ---
