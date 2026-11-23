@@ -1,73 +1,128 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CineLog Readiness Board</title><style>
-:root{--bg:#0d1020;--panel:#151a30;--panel2:#1c2240;--line:#2a3158;--text:#e8eaf6;--muted:#9aa3c7;--brand:#ff6a2b;
---acc:#a78bfa;--cat:#2dd4bf;--diary:#fbbf24;--rev:#fb923c;--club:#f472b6;--sup:#94a3b8;
---ok:#34d399;--prog:#fbbf24;--plan:#60a5fa;--bad:#f87171}
-*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 "Segoe UI",system-ui,-apple-system,Arial,sans-serif}
-.wrap{max-width:1180px;margin:0 auto;padding:22px 18px 40px}
-h1{font:700 30px/1.2 Cambria,Georgia,serif;margin:0 0 6px}h1 .b{color:var(--brand)}
-h2{font:700 18px/1.3 Cambria,Georgia,serif;margin:0 0 10px}
-.lead{color:var(--muted);max-width:900px;margin:0 0 16px}
-.stats{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 14px}
-.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 16px;min-width:110px}
-.stat b{display:block;font:700 26px/1.1 Cambria,Georgia,serif}.stat span{color:var(--muted);font-size:12.5px}
-.legend{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px;font-size:13px;color:var(--muted)}
-.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
-.badge{display:inline-block;border-radius:999px;padding:1px 9px;font-size:12px;font-weight:700;white-space:nowrap}
-.s-built{background:rgba(52,211,153,.15);color:var(--ok)}.s-prog{background:rgba(251,191,36,.15);color:var(--prog)}
-.s-plan{background:rgba(96,165,250,.15);color:var(--plan)}.s-bad{background:rgba(248,113,113,.15);color:var(--bad)}
-.tabs{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px;margin:0 0 14px;flex-wrap:wrap}
-.tabs button,.btn{background:transparent;color:var(--text);border:0;border-radius:9px;padding:7px 14px;font:600 14px inherit;cursor:pointer}
-.tabs button.on{background:var(--text);color:var(--bg)}
-.btn{background:var(--panel2);border:1px solid var(--line)}.btn:hover{border-color:var(--brand)}.btn.pri{background:var(--brand);border-color:var(--brand);color:#fff}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
-.grid{display:grid;gap:14px}.g2{grid-template-columns:1.35fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
-@media(max-width:860px){.g2,.g3{grid-template-columns:1fr}}
-.muted{color:var(--muted)}.small{font-size:13px}.mono{font-family:Consolas,"Courier New",monospace;font-size:13px}
-table.t{width:100%;border-collapse:collapse;font-size:13.5px}table.t th,table.t td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
-table.t th{color:var(--muted);font-weight:600}
-.chip{display:inline-block;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:3px 9px;margin:3px;font-size:13px;cursor:pointer}
-.chip:hover{border-color:var(--brand)}.chip.on{border-color:var(--brand);background:#2a1b17}
-.hide{display:none!important}
-.foot{margin-top:18px;color:var(--muted);font-size:12.5px}
-pre.code{background:#0a0d1a;border:1px solid var(--line);border-radius:10px;padding:10px 12px;overflow:auto;margin:6px 0;font:12.5px/1.45 Consolas,"Courier New",monospace;color:#dbe1ff;white-space:pre-wrap}
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CineLog S4 Readiness Board</title><style>
+*{box-sizing:border-box}
+:root{--ink:#111c26;--mut:#4a5a68;--line:#dfe5ea;--bg:#f5f7f9;--stage:#eef1f4;--or:#d9480f;--tl:#0f766e;--tlbg:#e6f6f4;--gr:#2f8f5b;--grbg:#e7f5ec;--rd:#c0392b;--rdbg:#fdecea;--am:#b7791f;--ambg:#fdf4e1;--pu:#6d4fc2;--con:#14212b;
+--sans:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;--mono:Consolas,"SF Mono",ui-monospace,Menlo,monospace}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--sans);padding:18px}
+.wrap{max-width:980px;margin:auto}
+h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-.01em;display:flex;flex-wrap:wrap;align-items:baseline;gap:12px}
+h1 b{color:var(--or);font-size:32px;font-weight:800}
+.lead{margin:6px 0 14px;color:#2c3a47}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:10px}
+.tabs button{flex:none;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:8px 14px;font:600 14.5px var(--sans);color:var(--ink);cursor:pointer;white-space:nowrap}
+.tabs button i{font:700 12px var(--mono);color:var(--or);font-style:normal;margin-right:6px}
+.tabs button.on{background:var(--con);color:#fff;border-color:var(--con)}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px}
+.card h2{margin:0 0 4px;font-size:20px;font-weight:800}
+.card p{margin:0 0 10px;color:#2c3a47}
+.lab{font:700 11.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin:14px 0 8px}
+.chip{display:inline-block;font:700 11.5px var(--mono);border:1.5px solid #5bb8ae;background:var(--tlbg);color:var(--tl);border-radius:999px;padding:2px 9px;margin:0 5px 5px 0}
+.chip.r{border-color:#e08a7d;background:var(--rdbg);color:var(--rd)}
+.chip.g{border-color:#cfd6dd;background:#f1f3f5;color:var(--mut)}
+.stage{background:var(--stage);border:1px solid var(--line);border-radius:14px;padding:14px;overflow-x:auto}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 12px;align-items:center}
+.play{background:var(--or);color:#fff;border:0;border-radius:9px;padding:9px 16px;font:700 15px var(--sans);cursor:pointer}
+.sec{background:#fff;color:var(--ink);border:1.5px solid var(--con);border-radius:9px;padding:8px 15px;font:600 15px var(--sans);cursor:pointer}
+.con{background:var(--con);color:#dfe8ef;border-radius:12px;padding:12px 14px;font:13.5px/1.6 var(--mono);min-height:96px;white-space:pre-wrap;word-break:break-word}
+.con .ok{color:#7fe0a6}.con .no{color:#ff9f8e}.con .am{color:#ffd27a}.con .dim{color:#8fa1b0}
+.req{border-left:3px solid #cfd6dd;padding:4px 0 4px 12px;margin:8px 0;transition:.3s}
+.req b{font:700 13px var(--mono);margin-right:6px}
+.req.hit{border-left-color:var(--or);background:#fff4ee}
+.pick{display:flex;flex-wrap:wrap;gap:7px}
+.pick button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:6px 13px;font:600 13.5px var(--sans);color:var(--ink);cursor:pointer}
+.pick button.on{background:var(--con);color:#fff;border-color:var(--con)}
+.pick.m button{border-radius:9px;font:700 12.5px var(--mono)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+th{font:700 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+td.m{font:700 13px var(--mono);white-space:nowrap}
+.k{display:inline-block;font:700 10.5px var(--mono);border-radius:5px;padding:1px 6px;margin-right:3px;color:#fff}
+.PK{background:var(--con)}.FK{background:var(--tl)}.UQ{background:var(--pu)}.CK{background:var(--am)}.TR{background:var(--or)}
+.foot{color:var(--mut);font-size:13px;margin-top:6px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:620px){.two{grid-template-columns:1fr}body{padding:12px}h1{font-size:21px}h1 b{font-size:27px}}
+
+.gates{display:flex;align-items:stretch;gap:0;min-width:500px;position:relative}
+.node{flex:1 1 0;min-width:0;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:9px 5px;text-align:center;transition:.25s;position:relative;z-index:1}
+.node b{display:block;font-size:13.5px}.node small{display:block;color:var(--mut);font-size:11.5px;line-height:1.3}
+.node em{display:block;font:700 11.5px var(--mono);font-style:normal;margin-top:6px;color:var(--mut);min-height:16px}
+.node.pass{border-color:var(--gr);background:var(--grbg)}.node.pass em{color:var(--gr)}
+.node.fail{border-color:var(--rd);background:var(--rdbg)}.node.fail em{color:var(--rd)}
+.node.skip{opacity:.38}
+.arr{flex:none;width:14px;display:flex;align-items:center;justify-content:center;color:#9aa7b3;font-weight:700}
+.st{display:inline-block;font:800 14px var(--mono);border-radius:7px;padding:3px 10px;color:#fff;margin-bottom:8px}
+.s2{background:var(--gr)}.s4{background:var(--rd)}.s5{background:var(--pu)}.s0{background:#9aa7b3}
+.why{margin-top:12px;border-left:3px solid var(--or);background:#fff4ee;padding:8px 12px;border-radius:0 8px 8px 0;min-height:42px}
+.tiles{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.tile{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 16px;min-width:90px;text-align:center}.tile b{display:block;font:800 22px var(--sans)}.tile b.o{color:var(--or)}.tile small{color:var(--mut);font-size:12.5px}.spd{display:inline-flex;border:1.5px solid var(--line);border-radius:9px;overflow:hidden}.spd button{background:#fff;border:0;border-right:1px solid var(--line);padding:8px 13px;font:600 14px var(--sans);cursor:pointer;color:var(--ink)}.spd button:last-child{border-right:0}.spd button.on{background:var(--con);color:#fff}.fly{color:var(--or);font-weight:600;font-size:14px}.node.now{border-color:var(--or);box-shadow:0 0 0 3px #ffd9c7}.node.now em{color:var(--or)}
+.ring{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.ring svg{width:150px;height:150px;flex:none}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.col{background:var(--stage);border:1px solid var(--line);border-radius:14px;padding:10px;min-height:120px}
+.col h4{margin:0 0 8px;font:700 11.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--mut);display:flex;justify-content:space-between}
+.it{background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;margin-bottom:8px;cursor:pointer;transition:.2s;font-size:14px;line-height:1.35}
+.it:hover{border-color:var(--con)}
+.it b{font:700 11.5px var(--mono);display:block;color:var(--or)}
+.it small{display:block;color:var(--mut);font-size:12.5px;margin-top:3px}
+.it.sel{border-color:var(--con);box-shadow:0 0 0 3px #dfe5ea}
+.c0 .it{border-left:4px solid var(--or)}.c1 .it{border-left:4px solid var(--am)}.c2 .it{border-left:4px solid var(--gr)}
+.det{border-left:3px solid var(--or);background:#fff4ee;padding:10px 14px;border-radius:0 8px 8px 0;margin-top:12px;min-height:60px}
+.det b{font:700 12.5px var(--mono);color:var(--or)}
+.own{display:inline-block;font:700 11px var(--mono);border-radius:999px;padding:1px 9px;background:var(--tlbg);color:var(--tl);border:1px solid #5bb8ae;margin-right:5px}
+@media(max-width:620px){.cols{grid-template-columns:1fr}}
+
+.bs{display:inline-block;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:2px 10px;border:1.5px solid currentColor;margin:0 6px 4px 0;white-space:nowrap;vertical-align:1px}
+.bs.b{color:#2f8f5b}.bs.p{color:#b7791f}.bs.l{color:#1d6fb8}.bs.d{color:#6d4fc2}.bs.x{color:#c0392b}
+.stleg{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;margin:0 0 14px;color:#4a5a68;font-size:13.5px}
+.bld{background:#ffffff;border:1px solid #dfe5ea;border-left:4px solid #2f8f5b;border-radius:12px;padding:10px 14px;margin:12px 0 4px;color:#111c26}
+.bld.p{border-left-color:#b7791f}.bld.l{border-left-color:#1d6fb8}.bld.d{border-left-color:#6d4fc2}.bld.x{border-left-color:#c0392b}
+.bld .mm{font:12.5px var(--mono);color:#4a5a68;margin-top:4px}.bld p{margin:4px 0 0}
 </style></head><body><div class="wrap">
-<h1><span class="b">CineLog</span> Readiness board</h1><p class="lead">Where each engine stands at the end of Sprint 2. Most of the core work is built and tested; some parts run on mocks or miss their target, and the remaining checks are planned for Sprint 3. Filter by engine, click a card for its evidence, or open the per-engine view.</p>
-<div class="stats"><div class="stat"><b style="color:var(--text)">34</b><span>work items</span></div><div class="stat"><b style="color:var(--ok)">18</b><span>done</span></div><div class="stat"><b style="color:var(--prog)">7</b><span>in progress</span></div><div class="stat"><b style="color:var(--plan)">9</b><span>planned</span></div><div class="stat"><b style="color:var(--ok)">193</b><span>tests passed</span></div><div class="stat"><b style="color:var(--ok)">93%</b><span>coverage</span></div></div><div class="legend"><span><span class="badge s-built">Built</span> in the first version of the code</span>
-<span><span class="badge s-prog">In progress</span> being finished or tested now</span>
-<span><span class="badge s-plan">Planned</span> agreed, not built yet</span></div>
-<div class="tabs" id="tb"><button data-tab="board" class="on">Board</button><button data-tab="eng">Per engine</button><button data-tab="next">Next actions</button><button data-tab="risk">Risks</button></div>
-<div data-pane="board"><div style="margin:0 0 12px"><span class="small muted">Engine</span> <span id="fe"></span></div>
-<div class="grid g3" id="cols"></div></div>
-<div data-pane="eng" class="hide"><div class="grid g2" style="grid-template-columns:1fr 1fr" id="engs"></div></div>
-<div data-pane="next" class="hide"><div class="card"><table class="t" id="nx"></table></div></div>
-<div data-pane="risk" class="hide"><div class="card"><table class="t" id="rk"></table></div></div>
 
-<div class="foot">Source: docs/sprint2/SPRINT2_EVIDENCE.md sections 3, 11 and 12 (sprint-2 branch, commit 3008928) · 13 defects logged, all retested · 4 engines as approved at Gate 1.</div></div>
-<script>const DATA={"cards": [{"e": "E1", "s": "built", "t": "Autocomplete (Trie, top 10 per node)", "d": "Up to 10 titles after 2 letters, word-start matches for half-typed titles", "ev": "TC-E1-01/02 · PT-01 p95 0.0044 ms"}, {"e": "E1", "s": "built", "t": "Filtered search (inverted index + heap)", "d": "Genre, cast and year filters on sorted posting lists", "ev": "TC-E1-10"}, {"e": "E1", "s": "built", "t": "Aho-Corasick word-list match", "d": "One automaton per film and list version, whole-word hits with positions", "ev": "TC-E1-03..06"}, {"e": "E1", "s": "built", "t": "Unicode clean-up and sentence splitter", "d": "NFKC, hidden characters removed, joiners kept for Indic text and emoji", "ev": "TC-E1-11 · DEF-07, DEF-12"}, {"e": "E1", "s": "built", "t": "New TMDB films in search", "d": "Online lookup adds up to 3 new titles to suggestions", "ev": "TC-E1-12..14 · DEF-13"}, {"e": "E1", "s": "prog", "t": "Spoiler Shield accuracy", "d": "53.7% caught, 12.0% wrongly blurred against the 85% / 10% target", "ev": "AT-02 (fails)"}, {"e": "E1", "s": "prog", "t": "Spoiler scan speed", "d": "49.9 ms per review against the 20 ms target", "ev": "PT-02 (fails)"}, {"e": "E1", "s": "plan", "t": "Full-catalogue HTTP benchmark", "d": "Search timing through the API on 10,000+ synced titles", "ev": "NFR01 · Sprint 3"}, {"e": "E2", "s": "built", "t": "Schema in 3NF", "d": "36 tables, 56 foreign keys, UNIQUE / CHECK / PK rules", "ev": "test_api.py · S4.1"}, {"e": "E2", "s": "built", "t": "Review and poll state machines", "d": "Compare-and-swap UPDATE, 409 on a wrong move", "ev": "TC-E2-02/03"}, {"e": "E2", "s": "built", "t": "One vote per member", "d": "Row lock on the poll plus UNIQUE (poll_id, user_id)", "ev": "TC-E2-01/06 · 100 voters → 0 duplicates"}, {"e": "E2", "s": "built", "t": "Append-only audit log", "d": "Update and delete refused in the ORM hook", "ev": "TC-E2-04"}, {"e": "E2", "s": "prog", "t": "Report and strike rules", "d": "Work as application code; database trigger version being written", "ev": "FR10, FR20"}, {"e": "E2", "s": "plan", "t": "PostgreSQL concurrency run", "d": "Same vote tests on PostgreSQL in Docker", "ev": "NFR04 · Sprint 3"}, {"e": "E2", "s": "plan", "t": "100-user load test", "d": "p95 ≤ 300 ms over 10 minutes", "ev": "NFR03 · Sprint 3"}, {"e": "E2", "s": "plan", "t": "Hide instead of delete", "d": "Soft delete for films and reviews instead of cascades", "ev": "S4.1 rule · Sprint 3"}, {"e": "E3", "s": "built", "t": "Bounded priority queue + 4 workers", "d": "Mutex and two semaphores, USER jobs before BATCH", "ev": "TC-E3-01/02"}, {"e": "E3", "s": "built", "t": "Retry with back-off", "d": "3 retries at 0.5 s × 2ⁿ, then the failed list", "ev": "TC-E3-03"}, {"e": "E3", "s": "built", "t": "LRU caches with counters", "d": "Hits, misses and evictions shown on /health", "ev": "TC-E3-05/06 · 18d5554"}, {"e": "E3", "s": "built", "t": "Automatic TMDB sync", "d": "First run 2 minutes after start, then every 6 hours", "ev": "TC-E3-07/08 · DEF-13"}, {"e": "E3", "s": "prog", "t": "Email delivery", "d": "Outbox and retries work; sending is a dev-mailbox stub, no SMTP yet", "ev": "FR15 (stub)"}, {"e": "E3", "s": "prog", "t": "TMDB in tests", "d": "Tests use a mock TMDB; live key used only in the demo", "ev": "FR05 (mock)"}, {"e": "E3", "s": "plan", "t": "1-hour soak test", "d": "≥ 50 jobs/min, 0 lost jobs, 0 deadlocks", "ev": "NFR05 · Sprint 3"}, {"e": "E3", "s": "plan", "t": "Stuck-review sweep", "d": "Re-queue reviews left in pending_scan", "ev": "Sprint 3"}, {"e": "E4", "s": "built", "t": "Email sign-in and sessions", "d": "bcrypt, JWT in HTTP-only SameSite cookie (8 h), CSRF header", "ev": "TC-E4-01/05"}, {"e": "E4", "s": "built", "t": "Deny-by-default RBAC", "d": "Role matrix plus club roles per club", "ev": "TC-E4-04/07/08"}, {"e": "E4", "s": "built", "t": "Sign-in rate limit", "d": "Token bucket, 5 per minute, 6th → 429", "ev": "TC-E4-02/03"}, {"e": "E4", "s": "built", "t": "Input checks", "d": "400 with the field name on bad input", "ev": "TC-E4-06 · c19b0c7"}, {"e": "E4", "s": "built", "t": "REST API, WebSocket, React UI", "d": "100+ endpoints, /ws/polls/{id}, one-port site", "ev": "TC-E4-09"}, {"e": "E4", "s": "prog", "t": "Google sign-in", "d": "Callback built; token exchange mocked until client keys are set", "ev": "FR01"}, {"e": "E4", "s": "prog", "t": "HTTPS", "d": "Works behind the deployment proxy only", "ev": "NFR06"}, {"e": "E4", "s": "plan", "t": "OWASP ZAP scan", "d": "0 high or critical findings", "ev": "NFR06 · Sprint 3"}, {"e": "E4", "s": "plan", "t": "Usability and live-update timing", "d": "10-user timed test; two browsers within 2 s", "ev": "NFR08, FR17 · Sprint 3"}, {"e": "E4", "s": "plan", "t": "Full role × route test matrix", "d": "Generated test for every role on every route", "ev": "FR02 · Sprint 3"}], "next": [["E1", "Tune thresholds and retrain on the gold set; batch and shrink the semantic model to reach 20 ms", "Week 14"], ["E1", "Re-measure the 268-review gold set after DEF-12", "Week 14"], ["E2", "Run the vote and moderation tests on PostgreSQL in Docker", "Week 14"], ["E2", "Database triggers for 3 reports → hidden and 3 strikes → muted", "Week 15"], ["E3", "1-hour soak test with job counters", "Week 14"], ["E3", "Connect a real SMTP account and check 5-minute delivery", "Week 15"], ["E4", "OWASP ZAP scan and HTTPS deployment", "Week 15"], ["E4", "10-user usability test and two-browser poll timing", "Week 15"], ["Team", "Push tag gate3-sprint2; add FR18–FR20 to the S1 baseline", "Gate 3"]], "risk": [["Spoiler target may need a lighter model", "E1", "High", "Keep rules + TF-IDF as the fast path; run the heavy layer only on risky sentences"], ["No TMDB key or SMTP account on the free tier", "E3", "Medium", "Mocks and the dev mailbox keep demos working; keys added at deployment"], ["SQLite behaves differently from PostgreSQL under load", "E2", "Medium", "Repeat the concurrency tests on PostgreSQL before Gate 4"], ["Google client keys not issued yet", "E4", "Low", "Email sign-in stays as the fallback (FR01)"]]};
-const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const badge=s=>{const m={built:['s-built','Built'],prog:['s-prog','In progress'],plan:['s-plan','Planned'],bad:['s-bad','Not met']}[s]||['s-plan',s];return `<span class="badge ${m[0]}">${m[1]}</span>`};
-function tabs(root){$$('.tabs button',root).forEach(b=>b.onclick=()=>{$$('.tabs button',root).forEach(x=>x.classList.toggle('on',x===b));$$('[data-pane]',root).forEach(p=>p.classList.toggle('hide',p.dataset.pane!==b.dataset.tab))})}
+<h1><b>CineLog</b> S4 readiness board</h1>
+<p class="lead">What S4 has settled, what is still open, and who acts next. Since Gate 2 most of the S4 design has been built on branch sprint-2 (36 tables, 100+ routes, 193 tests passed, 93% coverage), so every card now says what the build answered. Some items are still being finished and a few are planned for Sprint 3. Select a card to see why it matters and where it stands.</p>
+<div class="card">
+<div class="ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="48" fill="none" stroke="#dfe5ea" stroke-width="14"/><circle id="arc" cx="60" cy="60" r="48" fill="none" stroke="#2f8f5b" stroke-width="14" stroke-linecap="round" stroke-dasharray="0 302" transform="rotate(-90 60 60)" style="transition:stroke-dasharray 1s"/><text x="60" y="58" text-anchor="middle" style="font:800 24px Segoe UI,system-ui,sans-serif" id="pc">0</text><text x="60" y="76" text-anchor="middle" style="font:700 9px Consolas,monospace;letter-spacing:.1em;fill:#4a5a68">SETTLED</text></svg>
+<div style="flex:1;min-width:220px"><h2>Where S4 stands in the build</h2><p id="sum"></p><div class="pick" id="flt"></div></div></div>
+<div class="stleg" style="margin:14px 0 0"><span><span class="bs b">Built</span>in the code and tested</span><span><span class="bs p">In progress</span>works in part, being finished</span><span><span class="bs l">Planned</span>agreed for Sprint 3</span></div><div class="lab">Board</div>
+<div class="cols" id="cols"></div>
+<div class="det" id="det"></div>
+</div>
+<div class="card"><h2>Next actions</h2>
+<div style="overflow-x:auto"><table><tr><th>#</th><th>Action</th><th>Owner</th><th>Output</th><th>Status</th></tr><tr><td class="m">1</td><td>Update S2.5 to the four approved engines (S3.7, step 1)</td><td><span class="own">Team</span></td><td>S2.5 agrees with S3</td><td><span class="bs l">Planned</span></td></tr><tr><td class="m">2</td><td>Redraw Figure 4.15 with the built tables</td><td><span class="own">E2</span><span class="own">Team</span></td><td>Revised ER diagram</td><td><span class="bs p">In progress</span></td></tr><tr><td class="m">3</td><td>Write the table definitions with all keys and rules from S4.1</td><td><span class="own">E2</span></td><td>backend/app/models.py (done)</td><td><span class="bs b">Done</span></td></tr><tr><td class="m">4</td><td>Confirm each proposed endpoint and fix the JSON fields</td><td><span class="own">E4</span></td><td>100+ routes; A01–A29 recorded (done)</td><td><span class="bs b">Done</span></td></tr><tr><td class="m">5</td><td>Write the concurrency checks as automated tests; run on SQLite and PostgreSQL</td><td><span class="own">E2</span></td><td>SQLite done (0 duplicates); PostgreSQL in Sprint 3</td><td><span class="bs p">In progress</span></td></tr><tr><td class="m">6</td><td>Add the repository link, commits and dates in S4.5</td><td><span class="own">E1</span><span class="own">E2</span><span class="own">E3</span><span class="own">E4</span></td><td>Filled in; push tag gate3-sprint2</td><td><span class="bs p">In progress</span></td></tr><tr><td class="m">7</td><td>Move the 3-report and 3-strike rules into database triggers</td><td><span class="own">E2</span></td><td>Trigger version + same tests</td><td><span class="bs p">In progress</span></td></tr><tr><td class="m">8</td><td>Reach the NFR-02 spoiler target (85% / 10%, 20 ms)</td><td><span class="own">E1</span></td><td>Re-run AT-02 and PT-02</td><td><span class="bs p">In progress</span></td></tr><tr><td class="m">9</td><td>1-hour soak test; real SMTP and TMDB keys</td><td><span class="own">E3</span></td><td>NFR-05 result; FR-15 delivery check</td><td><span class="bs l">Planned</span></td></tr><tr><td class="m">10</td><td>OWASP ZAP scan, HTTPS deployment, usability test</td><td><span class="own">E4</span></td><td>NFR-06 and NFR-08 results</td><td><span class="bs l">Planned</span></td></tr><tr><td class="m">11</td><td>Move to S5: algorithms and business logic for each engine</td><td><span class="own">Team</span></td><td>S5 record</td><td><span class="bs l">Planned</span></td></tr></table></div></div>
 
-tabs(document);const K=DATA.cards;let fe='All';
-const NAMES={E1:'Search & Spoiler Matching (DSA) · Goureesh',E2:'Storage & Transaction (DBMS) · Manish',E3:'Background Job Scheduler (OS) · Ashutosh',E4:'CN & Web Tech · Omkar'};
-const COLS=[['built','Done','var(--ok)'],['prog','In progress','var(--prog)'],['plan','Planned for Sprint 3','var(--plan)']];
-$('#fe').innerHTML=['All','E1','E2','E3','E4'].map(e=>`<span class="chip${e===fe?' on':''}" data-e="${e}">${e}</span>`).join('');
-$$('#fe .chip').forEach(c=>c.onclick=()=>{fe=c.dataset.e;$$('#fe .chip').forEach(x=>x.classList.toggle('on',x===c));board()});
-function card(c){return `<div class="kc" style="background:var(--panel2);border:1px solid var(--line);border-left:3px solid ${COLS.find(x=>x[0]===c.s)[2]};border-radius:10px;padding:9px 11px;margin:0 0 8px;cursor:pointer">
-<div style="display:flex;justify-content:space-between;gap:8px"><b style="font-size:13.5px">${esc(c.t)}</b><span class="small muted">${c.e}</span></div>
-<div class="det hide small" style="margin-top:6px"><div class="muted">${esc(c.d)}</div><div class="mono" style="margin-top:4px;color:var(--acc)">${esc(c.ev)}</div></div></div>`}
-function board(){$('#cols').innerHTML=COLS.map(([s,l,col])=>{const v=K.filter(c=>c.s===s&&(fe==='All'||c.e===fe));
- return `<div class="card"><h2 style="color:${col}">${l} <span class="small muted">(${v.length})</span></h2>${v.map(card).join('')||'<p class="muted small">None</p>'}</div>`}).join('');
- $$('.kc').forEach(k=>k.onclick=()=>$('.det',k).classList.toggle('hide'))}
-board();
-$('#engs').innerHTML=['E1','E2','E3','E4'].map(e=>{const v=K.filter(c=>c.e===e),b=v.filter(c=>c.s==='built').length,p=v.filter(c=>c.s==='prog').length,q=v.length-b-p,pct=x=>100*x/v.length;
- return `<div class="card"><h2>${e} <span class="small muted">${NAMES[e]}</span></h2>
- <div style="display:flex;height:16px;border-radius:8px;overflow:hidden;background:var(--panel2)"><div class="bar" data-w="${pct(b)}" style="width:0;background:var(--ok);transition:width .9s"></div><div class="bar" data-w="${pct(p)}" style="width:0;background:var(--prog);transition:width .9s .3s"></div><div class="bar" data-w="${pct(q)}" style="width:0;background:var(--plan);transition:width .9s .6s"></div></div>
- <p class="small" style="margin:8px 0 0"><span style="color:var(--ok)">${b} done</span> · <span style="color:var(--prog)">${p} in progress</span> · <span style="color:var(--plan)">${q} planned</span></p>
- <p class="small muted" style="margin:6px 0 0">Waiting on: ${v.filter(c=>c.s!=='built').map(c=>esc(c.t)).join(', ')}</p></div>`}).join('');
-$$('#tb button').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.tab==='eng')setTimeout(()=>$$('.bar').forEach(x=>x.style.width=x.dataset.w+'%'),50)}));
-$('#nx').innerHTML='<tr><th>Engine</th><th>Next action</th><th>When</th><th></th></tr>'+DATA.next.map((n,i)=>`<tr><td>${n[0]}</td><td>${esc(n[1])}</td><td class="small muted">${n[2]}</td><td><input type="checkbox" aria-label="mark seen"></td></tr>`).join('');
-$('#rk').innerHTML='<tr><th>Risk</th><th>Engine</th><th>Level</th><th>What we do about it</th></tr>'+DATA.risk.map(r=>`<tr><td>${esc(r[0])}</td><td>${r[1]}</td><td><span class="badge ${r[2]==='High'?'s-bad':r[2]==='Medium'?'s-prog':'s-plan'}">${r[2]}</span></td><td class="muted">${esc(r[3])}</td></tr>`).join('');
+<div class="foot">CineLog · Mini Project, Theme 01 · Role based management · Guide: Prof. Vijay B · Snapshot of the S4 record and the Sprint 2 build (branch sprint-2, commit 3008928).</div>
+</div><script>const STN={b:'Built',p:'In progress',l:'Planned',d:'Built differently',x:'Not met yet'};const st=s=>`<span class="bs ${s}">${STN[s]}</span>`;
+
+
+const $=id=>document.getElementById(id);
+// col: 0 open, 1 proposed (needs owner's yes), 2 settled
+const I=[[1, "S3.7", "Do SQLite and PostgreSQL lock the same way in the 100-user vote test?", "E2", "Not the same mechanism, but the same result. PostgreSQL uses a row lock; SQLite in WAL mode lets one writer in at a time. <br><b>Build:</b> the SQLite run is done: 100 members voting at once → 100 votes, 0 duplicates (test_100_concurrent_votes_no_duplicates, TC-E2-06). The same run on PostgreSQL in Docker is still to do."], [2, "S4.1", "Keys, UNIQUE rules, triggers, review and poll states", "E2", "<b>Build:</b> all keys, UNIQUE and CHECK rules and both state machines are in backend/app/models.py and workflow.py (36 tables, 56 foreign keys). The two triggers (3 reports, 3 strikes) run as application code in the same transaction while the trigger version is written."], [2, "S4.3", "Status codes and error behaviour", "E4", "<b>Build:</b> the five checks run in the designed order and return 400, 401, 403, 409 and 429, recorded in 29 real exchanges (A01–A29). The framework's 422 was changed to 400 with the field name (DEF-09). A 503 for an unavailable database is planned."], [2, "S4.4", "Transaction boundaries", "E2", "<b>Build:</b> all ten transactions exist with BEGIN IMMEDIATE on SQLite. Six match the design exactly; T5 and T9 use application code instead of triggers; T8 reads the average instead of storing it; T10 has no activity row because the feed reads diary entries and reviews."], [2, "S4.2", "Normal form and deliberate exceptions", "E2", "<b>Build:</b> 3NF throughout. POLL.result is stored on close as designed. Genres and cast became separate tables. FILM.avg_rating is not stored yet: it is calculated when read (planned only if the film page gets slow)."], [1, "S4.1", "7 added tables", "E2", "<b>Build:</b> accepted and built: follows, user_strikes, club_watchlist, critic_picks, watch_goals, and watchalongs in place of SCREENING. ACTIVITY was not needed. Redrawing Figure 4.15 with the built tables is still in progress."], [2, "S4.3", "Endpoints beyond the three in the handbook", "E4", "<b>Build:</b> confirmed and built: 100+ routes plus WS /ws/polls/{id}. Paths that changed: GET /films/autocomplete, POST /films/{id}/reviews, POST /polls/{id}/vote, POST /admin/users/{uid}/roles."], [1, "S4.2", "Index list", "E2", "<b>Build:</b> 4 of the 7 design indexes are built (users email, reviews film+state, votes poll+user, diary user+date) plus films title and year. The rest are checked with the 100-user load test."], [1, "S4.4", "Isolation level", "E2", "<b>Build:</b> on SQLite writes are serialised with WAL and BEGIN IMMEDIATE. Read Committed on PostgreSQL is still the plan and is confirmed in the PostgreSQL run."], [2, "S3.7", "How long does a JWT session last?", "E4", "<b>Answered:</b> 8 hours. The JWT sits in an HTTP-only, SameSite cookie with Max-Age 28800 (TC-E4-01, A03). After that the user signs in again."], [2, "S3.7", "Which screens besides polls need live updates?", "E4", "<b>Answered:</b> only poll results, over WS /ws/polls/{id} (FR-17, TC-E4-09). Other screens load fresh data when opened, which keeps WebSocket load low. The two-browser ≤ 2 s timing is still to be measured."], [0, "S4.4", "A saved review with no scan job", "E2 · E3", "Still open. The worker pool retries failed scans 3 times, but a review saved while the queue was full can stay Pending Scan. A periodic sweep that re-queues old pending_scan reviews is planned for Sprint 3."], [2, "S4.2", "Genres and cast: list columns or separate tables?", "E2", "<b>Answered:</b> separate tables (film_genres, cast_members, film_keywords), so search can filter by genre and cast directly (TC-E1-10)."], [1, "S4.5", "Repository link, commits and dates", "All", "<b>Build:</b> filled in: https://github.com/LaGGod7/Cinelog, branch sprint-2 (merged to main), latest commit 3008928, traceability in docs/sprint2/traceability.csv. The tag gate3-sprint2 still has to be pushed from the laptop."], [1, "Sprint 2", "Spoiler Shield accuracy and speed (NFR-02)", "E1", "Built and tested, but not on target yet: 53.7% caught and 12.0% wrongly blurred against 85% / 10%, and 49.9 ms per review against 20 ms. Tuning thresholds and a lighter semantic layer are being worked on."], [1, "Sprint 2", "External services: Google sign-in, TMDB key, SMTP", "E3 · E4", "The code paths are built, but tests use a mock TMDB, a mocked Google token exchange and a dev mailbox instead of SMTP. Real keys are added at deployment."], [0, "Sprint 3", "Load, soak and security tests", "E2 · E3 · E4", "Planned: 100-user load test (NFR-03), 1-hour job soak test (NFR-05), OWASP ZAP scan and HTTPS (NFR-06), 10-user usability test (NFR-08)."], [0, "S2.5", "Update S2.5 to the four approved engines", "All", "Still open from S3.7 step 1: S2.5 shows six engines; the approved design and the code use four (E1 to E4)."]];const I_OLD=[
+[2,'S3.7','Do SQLite and PostgreSQL lock the same way in the 100-user vote test?','E2','Not the same mechanism, but the same result. PostgreSQL uses a row lock; SQLite in WAL mode lets one writer in at a time. In both, UNIQUE (poll_id, user_id) rejects the second vote. The test runs on both and must give 0 duplicates on both.'],
+[2,'S4.1','Keys, UNIQUE rules, triggers, review and poll states','E2','Listed for all 16 tables of Figure 4.15 in S4.1, with the requirement each rule serves. This closes step 3 of the S3.7 plan.'],
+[2,'S4.3','Status codes and error behaviour','E4','One fixed order of five checks and six error codes (400, 401, 403, 409, 429, 503), each with its effect on data.'],
+[2,'S4.4','Transaction boundaries','E2','Ten transactions (T1 to T10), each with what is saved together, its concurrency control and what happens on failure.'],
+[2,'S4.2','Normal form and deliberate exceptions','E2','3NF, with three recorded exceptions (FILM.avg_rating, POLL.result, genres and cast lists) and the guard that keeps each correct.'],
+[1,'S4.1','7 added tables','E2','FOLLOW, ACTIVITY, STRIKE, CLUB_WATCHLIST, SCREENING, CRITIC_PICK and YEARLY_GOAL cover FR-12, FR-15, FR-18 to FR-20 and the S1.3 scope. They are not in Figure 4.15, so the team must accept them and redraw the diagram.'],
+[1,'S4.3','Endpoints beyond the three in the handbook','E4','Only /auth/login, /films/suggest and /reviews are fixed. The rest are proposed paths that E4 must confirm (S3.7, step 2).'],
+[1,'S4.2','Index list','E2','Seven B+-tree indexes proposed from the frequent queries. To be confirmed with EXPLAIN ANALYZE during the load test.'],
+[1,'S4.4','Isolation level','E2','Read Committed on PostgreSQL is proposed, because the rules that matter are enforced by constraints, row locks and compare-and-swap.'],
+[0,'S3.7','How long does a JWT session last?','E4','Carried from S3.7. It decides the expiry field in the session and how often users sign in again.'],
+[0,'S3.7','Which screens besides polls need live updates?','E4','Carried from S3.7. Only poll counts are required (FR-17); every extra live screen adds WebSocket load.'],
+[0,'S4.4','A saved review with no scan job','E2 · E3','If the queue stays full for 2 seconds after a review is saved, the review is stored as Pending Scan with no job. Should a periodic sweep re-queue reviews that wait too long?'],
+[0,'S4.2','Genres and cast: list columns or separate tables?','E2','Lists are simple and match TMDB, but they are not strictly First Normal Form. Separate tables are needed only if SQL must filter by genre or cast.'],
+[0,'S4.5','Repository link, commits and dates','All','S4.5 still shows "to be added" for the repository link and for every test or commit reference.']];
+const CN=['Open · Sprint 3','In progress','Settled and built'];let f='All',sel=0;
+function render(){const own=['All','E1','E2','E3','E4'];
+  $('flt').innerHTML=own.map(o=>'<button class="'+(o===f?'on':'')+'">'+o+'</button>').join('');document.querySelectorAll('#flt button').forEach(b=>b.onclick=()=>{f=b.textContent;render()});
+  const vis=I.map((x,i)=>[x,i]).filter(([x])=>f==='All'||x[3].includes(f)||x[3]==='All');
+  if(!vis.some(([x,i])=>i===sel))sel=vis[0][1];
+  $('cols').innerHTML=[0,1,2].map(c=>'<div class="col c'+c+'"><h4>'+CN[c]+'<span>'+vis.filter(([x])=>x[0]===c).length+'</span></h4>'+vis.filter(([x])=>x[0]===c).map(([x,i])=>'<div class="it'+(i===sel?' sel':'')+'" data-i="'+i+'"><b>'+x[1]+'</b>'+x[2]+'<small>'+x[3]+'</small></div>').join('')+'</div>').join('');
+  document.querySelectorAll('.it').forEach(e=>e.onclick=()=>{sel=+e.dataset.i;render()});
+  const x=I[sel];$('det').innerHTML='<b>'+x[1]+' · '+CN[x[0]]+'</b><br>'+x[4];
+  const n=[0,1,2].map(c=>I.filter(x=>x[0]===c).length),pc=Math.round(n[2]/I.length*100);
+  $('sum').textContent=n[2]+' items settled and built, '+n[1]+' in progress, '+n[0]+' still open for Sprint 3, out of '+I.length+'. Sprint 2: 193 tests passed, 13 defects found and retested.';
+  setTimeout(()=>{$('arc').setAttribute('stroke-dasharray',(302*pc/100)+' 302');$('pc').textContent=pc+'%'},150)}
+render();
+
 </script></body></html>

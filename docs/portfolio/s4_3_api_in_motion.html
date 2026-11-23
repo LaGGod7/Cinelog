@@ -1,69 +1,167 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CineLog API in Motion</title><style>
-:root{--bg:#0d1020;--panel:#151a30;--panel2:#1c2240;--line:#2a3158;--text:#e8eaf6;--muted:#9aa3c7;--brand:#ff6a2b;
---acc:#a78bfa;--cat:#2dd4bf;--diary:#fbbf24;--rev:#fb923c;--club:#f472b6;--sup:#94a3b8;
---ok:#34d399;--prog:#fbbf24;--plan:#60a5fa;--bad:#f87171}
-*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 "Segoe UI",system-ui,-apple-system,Arial,sans-serif}
-.wrap{max-width:1180px;margin:0 auto;padding:22px 18px 40px}
-h1{font:700 30px/1.2 Cambria,Georgia,serif;margin:0 0 6px}h1 .b{color:var(--brand)}
-h2{font:700 18px/1.3 Cambria,Georgia,serif;margin:0 0 10px}
-.lead{color:var(--muted);max-width:900px;margin:0 0 16px}
-.stats{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 14px}
-.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 16px;min-width:110px}
-.stat b{display:block;font:700 26px/1.1 Cambria,Georgia,serif}.stat span{color:var(--muted);font-size:12.5px}
-.legend{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px;font-size:13px;color:var(--muted)}
-.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
-.badge{display:inline-block;border-radius:999px;padding:1px 9px;font-size:12px;font-weight:700;white-space:nowrap}
-.s-built{background:rgba(52,211,153,.15);color:var(--ok)}.s-prog{background:rgba(251,191,36,.15);color:var(--prog)}
-.s-plan{background:rgba(96,165,250,.15);color:var(--plan)}.s-bad{background:rgba(248,113,113,.15);color:var(--bad)}
-.tabs{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px;margin:0 0 14px;flex-wrap:wrap}
-.tabs button,.btn{background:transparent;color:var(--text);border:0;border-radius:9px;padding:7px 14px;font:600 14px inherit;cursor:pointer}
-.tabs button.on{background:var(--text);color:var(--bg)}
-.btn{background:var(--panel2);border:1px solid var(--line)}.btn:hover{border-color:var(--brand)}.btn.pri{background:var(--brand);border-color:var(--brand);color:#fff}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
-.grid{display:grid;gap:14px}.g2{grid-template-columns:1.35fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
-@media(max-width:860px){.g2,.g3{grid-template-columns:1fr}}
-.muted{color:var(--muted)}.small{font-size:13px}.mono{font-family:Consolas,"Courier New",monospace;font-size:13px}
-table.t{width:100%;border-collapse:collapse;font-size:13.5px}table.t th,table.t td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
-table.t th{color:var(--muted);font-weight:600}
-.chip{display:inline-block;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:3px 9px;margin:3px;font-size:13px;cursor:pointer}
-.chip:hover{border-color:var(--brand)}.chip.on{border-color:var(--brand);background:#2a1b17}
-.hide{display:none!important}
-.foot{margin-top:18px;color:var(--muted);font-size:12.5px}
-pre.code{background:#0a0d1a;border:1px solid var(--line);border-radius:10px;padding:10px 12px;overflow:auto;margin:6px 0;font:12.5px/1.45 Consolas,"Courier New",monospace;color:#dbe1ff;white-space:pre-wrap}
+*{box-sizing:border-box}
+:root{--ink:#111c26;--mut:#4a5a68;--line:#dfe5ea;--bg:#f5f7f9;--stage:#eef1f4;--or:#d9480f;--tl:#0f766e;--tlbg:#e6f6f4;--gr:#2f8f5b;--grbg:#e7f5ec;--rd:#c0392b;--rdbg:#fdecea;--am:#b7791f;--ambg:#fdf4e1;--pu:#6d4fc2;--con:#14212b;
+--sans:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;--mono:Consolas,"SF Mono",ui-monospace,Menlo,monospace}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--sans);padding:18px}
+.wrap{max-width:980px;margin:auto}
+h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-.01em;display:flex;flex-wrap:wrap;align-items:baseline;gap:12px}
+h1 b{color:var(--or);font-size:32px;font-weight:800}
+.lead{margin:6px 0 14px;color:#2c3a47}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:10px}
+.tabs button{flex:none;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:8px 14px;font:600 14.5px var(--sans);color:var(--ink);cursor:pointer;white-space:nowrap}
+.tabs button i{font:700 12px var(--mono);color:var(--or);font-style:normal;margin-right:6px}
+.tabs button.on{background:var(--con);color:#fff;border-color:var(--con)}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px}
+.card h2{margin:0 0 4px;font-size:20px;font-weight:800}
+.card p{margin:0 0 10px;color:#2c3a47}
+.lab{font:700 11.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin:14px 0 8px}
+.chip{display:inline-block;font:700 11.5px var(--mono);border:1.5px solid #5bb8ae;background:var(--tlbg);color:var(--tl);border-radius:999px;padding:2px 9px;margin:0 5px 5px 0}
+.chip.r{border-color:#e08a7d;background:var(--rdbg);color:var(--rd)}
+.chip.g{border-color:#cfd6dd;background:#f1f3f5;color:var(--mut)}
+.stage{background:var(--stage);border:1px solid var(--line);border-radius:14px;padding:14px;overflow-x:auto}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 12px;align-items:center}
+.play{background:var(--or);color:#fff;border:0;border-radius:9px;padding:9px 16px;font:700 15px var(--sans);cursor:pointer}
+.sec{background:#fff;color:var(--ink);border:1.5px solid var(--con);border-radius:9px;padding:8px 15px;font:600 15px var(--sans);cursor:pointer}
+.con{background:var(--con);color:#dfe8ef;border-radius:12px;padding:12px 14px;font:13.5px/1.6 var(--mono);min-height:96px;white-space:pre-wrap;word-break:break-word}
+.con .ok{color:#7fe0a6}.con .no{color:#ff9f8e}.con .am{color:#ffd27a}.con .dim{color:#8fa1b0}
+.req{border-left:3px solid #cfd6dd;padding:4px 0 4px 12px;margin:8px 0;transition:.3s}
+.req b{font:700 13px var(--mono);margin-right:6px}
+.req.hit{border-left-color:var(--or);background:#fff4ee}
+.pick{display:flex;flex-wrap:wrap;gap:7px}
+.pick button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:6px 13px;font:600 13.5px var(--sans);color:var(--ink);cursor:pointer}
+.pick button.on{background:var(--con);color:#fff;border-color:var(--con)}
+.pick.m button{border-radius:9px;font:700 12.5px var(--mono)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+th{font:700 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+td.m{font:700 13px var(--mono);white-space:nowrap}
+.k{display:inline-block;font:700 10.5px var(--mono);border-radius:5px;padding:1px 6px;margin-right:3px;color:#fff}
+.PK{background:var(--con)}.FK{background:var(--tl)}.UQ{background:var(--pu)}.CK{background:var(--am)}.TR{background:var(--or)}
+.foot{color:var(--mut);font-size:13px;margin-top:6px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:620px){.two{grid-template-columns:1fr}body{padding:12px}h1{font-size:21px}h1 b{font-size:27px}}
+
+.gates{display:flex;align-items:stretch;gap:0;min-width:500px;position:relative}
+.node{flex:1 1 0;min-width:0;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:9px 5px;text-align:center;transition:.25s;position:relative;z-index:1}
+.node b{display:block;font-size:13.5px}.node small{display:block;color:var(--mut);font-size:11.5px;line-height:1.3}
+.node em{display:block;font:700 11.5px var(--mono);font-style:normal;margin-top:6px;color:var(--mut);min-height:16px}
+.node.pass{border-color:var(--gr);background:var(--grbg)}.node.pass em{color:var(--gr)}
+.node.fail{border-color:var(--rd);background:var(--rdbg)}.node.fail em{color:var(--rd)}
+.node.skip{opacity:.38}
+.arr{flex:none;width:14px;display:flex;align-items:center;justify-content:center;color:#9aa7b3;font-weight:700}
+.st{display:inline-block;font:800 14px var(--mono);border-radius:7px;padding:3px 10px;color:#fff;margin-bottom:8px}
+.s2{background:var(--gr)}.s4{background:var(--rd)}.s5{background:var(--pu)}.s0{background:#9aa7b3}
+.why{margin-top:12px;border-left:3px solid var(--or);background:#fff4ee;padding:8px 12px;border-radius:0 8px 8px 0;min-height:42px}
+.tiles{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.tile{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 16px;min-width:90px;text-align:center}.tile b{display:block;font:800 22px var(--sans)}.tile b.o{color:var(--or)}.tile small{color:var(--mut);font-size:12.5px}.spd{display:inline-flex;border:1.5px solid var(--line);border-radius:9px;overflow:hidden}.spd button{background:#fff;border:0;border-right:1px solid var(--line);padding:8px 13px;font:600 14px var(--sans);cursor:pointer;color:var(--ink)}.spd button:last-child{border-right:0}.spd button.on{background:var(--con);color:#fff}.fly{color:var(--or);font-weight:600;font-size:14px}.node.now{border-color:var(--or);box-shadow:0 0 0 3px #ffd9c7}.node.now em{color:var(--or)}
+.bs{display:inline-block;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:2px 10px;border:1.5px solid currentColor;margin:0 6px 4px 0;white-space:nowrap;vertical-align:1px}
+.bs.b{color:#2f8f5b}.bs.p{color:#b7791f}.bs.l{color:#1d6fb8}.bs.d{color:#6d4fc2}.bs.x{color:#c0392b}
+.stleg{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;margin:0 0 14px;color:#4a5a68;font-size:13.5px}
+.bld{background:#ffffff;border:1px solid #dfe5ea;border-left:4px solid #2f8f5b;border-radius:12px;padding:10px 14px;margin:12px 0 4px;color:#111c26}
+.bld.p{border-left-color:#b7791f}.bld.l{border-left-color:#1d6fb8}.bld.d{border-left-color:#6d4fc2}.bld.x{border-left-color:#c0392b}
+.bld .mm{font:12.5px var(--mono);color:#4a5a68;margin-top:4px}.bld p{margin:4px 0 0}
 </style></head><body><div class="wrap">
-<h1><span class="b">CineLog</span> API in motion</h1><p class="lead">Every request to CineLog passes the same five checks inside Engine E4 (CN &amp; Web Tech), in the same order: Token, Rate limit, Role, Input, State. Pick a request and a situation, then press Play. The first check that fails decides the status code, and nothing after it runs. Responses are the real ones from the running server.</p>
-<div class="stats"><div class="stat"><b style="color:var(--text)">9</b><span>requests</span></div><div class="stat"><b style="color:var(--text)">30</b><span>situations</span></div><div class="stat"><b style="color:var(--text)">5</b><span>checks</span></div><div class="stat"><b style="color:var(--brand)">6</b><span>error codes</span></div><div class="stat"><b style="color:var(--ok)">29</b><span>real exchanges logged</span></div><div class="stat"><b style="color:var(--acc)">8 h</b><span>session length</span></div></div><div class="legend"><span><span class="badge s-built">Built</span> in the first version of the code</span>
-<span><span class="badge s-prog">In progress</span> being finished or tested now</span>
-<span><span class="badge s-plan">Planned</span> agreed, not built yet</span></div>
-<div class="grid g2"><div class="card"><h2>1 · Pick a request</h2><div id="reqs"></div>
-<h2 style="margin-top:14px">2 · Pick the situation</h2><div id="sits"></div>
-<div style="margin-top:10px"><button class="btn pri" id="play">▶ Play</button></div></div>
-<div class="card"><h2 id="rt">Request</h2><div id="line" class="mono"></div>
-<div id="checks" style="margin:14px 0"></div><div class="small muted" id="cs"></div>
-<h2 style="margin-top:12px">Response</h2><pre class="code" id="resp">—</pre><div class="small muted" id="ev"></div></div></div>
-<div class="card" style="margin-top:14px"><h2>Status of every endpoint in this page</h2><table class="t" id="stat"></table>
-<p class="small muted" style="margin:8px 0 0">A first working version of these endpoints is built in <span class="mono">backend/app/routers/</span>. E4 is still adding access tests for every role and route, and an OWASP ZAP scan is planned (NFR06).</p></div>
 
-<div class="foot">Source: backend/app/routers/, backend/app/rbac.py, backend/app/main.py · real exchanges: docs/sprint2/evidence/api/api_exchanges.md (A01–A29) · error codes: 400, 401, 403, 404, 409, 429.</div></div>
-<script>const DATA={"req": [{"name": "Sign in", "m": "POST", "p": "/auth/login", "who": "anyone", "eng": "E4", "fr": "FR01", "st": "built", "sit": [{"s": "Correct email and password", "fail": null, "code": "200 OK", "body": "set-cookie: cl_session=eyJhbG…; HttpOnly; Max-Age=28800; SameSite=lax\n{\"user\": {\"display_name\": \"Vic Viewer\", \"roles\": [\"viewer\"]}}", "A": "A03"}, {"s": "Wrong password", "fail": 4, "code": "401 Unauthorized", "body": "{\"detail\": \"invalid email or password\"}", "A": "A02"}, {"s": "6th try within a minute", "fail": 1, "code": "429 Too Many Requests", "body": "{\"detail\": \"too many attempts, slow down\"}", "A": "A29"}, {"s": "Body is not JSON", "fail": 3, "code": "400 Bad Request", "body": "{\"detail\": \"1: JSON decode error\", \"errors\": [...]}", "A": "TC-E4-06"}]}, {"name": "Search", "m": "GET", "p": "/films/autocomplete?q=inc", "who": "anyone", "eng": "E1", "fr": "FR04, FR05", "st": "built", "sit": [{"s": "3 letters", "fail": null, "code": "200 OK", "body": "[{\"id\": 6, \"title\": \"Inception\", \"year\": 2010}]", "A": "A06"}, {"s": "1 letter", "fail": null, "code": "200 OK", "body": "[]   (fewer than 2 letters are not searched)", "A": "A07"}, {"s": "A new release not in CineLog yet", "fail": null, "code": "200 OK", "body": "local matches + up to 3 new films found on TMDB, imported on the spot (DEF-13 fix)", "A": "TC-E1-12/13"}]}, {"name": "Write a review", "m": "POST", "p": "/films/{film_id}/reviews", "who": "Viewer, Critic", "eng": "E4 → E2 → E3 → E1", "fr": "FR08, FR16", "st": "built", "sit": [{"s": "Normal review", "fail": null, "code": "202 Accepted", "body": "{\"id\": 6, \"state\": \"pending_scan\", ...}\n…scan job runs in E3; GET /reviews/6 → \"published\", spoiler sentence blurred", "A": "A09, A10"}, {"s": "Not signed in", "fail": 0, "code": "401 Unauthorized", "body": "{\"detail\": \"authentication required\"}", "A": "A04"}, {"s": "No CSRF header", "fail": 0, "code": "403 Forbidden", "body": "{\"detail\": \"CSRF token missing or invalid\"}", "A": "TC-E4-07"}, {"s": "Muted account", "fail": 2, "code": "403 Forbidden", "body": "{\"detail\": \"you are muted until 26 Nov 2026 10:00 UTC\"}", "A": "FR20 tests"}, {"s": "Text of 9 characters", "fail": 3, "code": "400 Bad Request", "body": "{\"detail\": \"text: String should have at least 10 characters\"}", "A": "A12"}, {"s": "Second review of the same film", "fail": 4, "code": "409 Conflict", "body": "{\"detail\": \"you already reviewed this film\"}", "A": "A11"}]}, {"name": "Report a review", "m": "POST", "p": "/reviews/{id}/report", "who": "any signed-in reader", "eng": "E2", "fr": "FR10", "st": "built", "sit": [{"s": "First report", "fail": null, "code": "200 OK", "body": "{\"reports\": 1}   (3 different reporters → review hidden, same transaction)", "A": "test_three_reports_hide…"}, {"s": "Same user reports again", "fail": null, "code": "200 OK", "body": "{\"ignored\": true, \"reports\": 1}", "A": "UNIQUE (review_id, user_id)"}, {"s": "Reporting your own review", "fail": 4, "code": "400 Bad Request", "body": "{\"detail\": \"you cannot report your own review\"}", "A": "reviews.py"}]}, {"name": "Moderate", "m": "POST", "p": "/moderation/{id}/approve", "who": "Moderator, Admin", "eng": "E2 + E1", "fr": "FR09, FR11", "st": "built", "sit": [{"s": "Moderator approves a held review", "fail": null, "code": "200 OK", "body": "{\"state\": \"published\"} + audit_log row", "A": "moderation tests; queue: A26"}, {"s": "Viewer tries it", "fail": 2, "code": "403 Forbidden", "body": "{\"detail\": \"missing permission: review.moderate\"}", "A": "A05"}, {"s": "Another moderator acted first", "fail": 4, "code": "409 Conflict", "body": "{\"detail\": \"cannot approve a review in state published\"}", "A": "compare-and-swap"}]}, {"name": "Vote", "m": "POST", "p": "/polls/{id}/vote", "who": "club member", "eng": "E2 + E4", "fr": "FR14, FR17", "st": "built", "sit": [{"s": "Member votes", "fail": null, "code": "200 OK", "body": "new tally pushed to everyone on /ws/polls/{id}", "A": "A19"}, {"s": "Same member again", "fail": 4, "code": "409 Conflict", "body": "{\"detail\": \"already voted\"}", "A": "A20"}, {"s": "Not a club member", "fail": 2, "code": "403 Forbidden", "body": "{\"detail\": \"only club members can vote\"}", "A": "clubs.py"}, {"s": "Poll still a draft", "fail": 4, "code": "409 Conflict", "body": "{\"detail\": \"poll is draft: voting is closed\"}", "A": "A17"}]}, {"name": "Close a poll", "m": "POST", "p": "/polls/{id}/close", "who": "convener of that club", "eng": "E2", "fr": "FR13, FR15", "st": "built", "sit": [{"s": "Convener closes it", "fail": null, "code": "200 OK", "body": "state closed, result_json frozen, winner set", "A": "A22"}, {"s": "A Viewer tries", "fail": 2, "code": "403 Forbidden", "body": "{\"detail\": \"club role does not allow this action\"}", "A": "A21"}, {"s": "Cancel after closing", "fail": 4, "code": "409 Conflict", "body": "{\"detail\": \"invalid transition closed -> cancelled\"}", "A": "A23"}]}, {"name": "Follow", "m": "PUT", "p": "/follow/{uid}", "who": "any signed-in user", "eng": "E4 + E2", "fr": "FR18", "st": "built", "sit": [{"s": "Follow someone", "fail": null, "code": "200 OK", "body": "{\"following\": true}", "A": "test_follow_feed…"}, {"s": "Follow yourself", "fail": 3, "code": "400 Bad Request", "body": "{\"detail\": \"you cannot follow yourself\"}", "A": "social.py"}]}, {"name": "Change a role", "m": "POST", "p": "/admin/users/{uid}/roles", "who": "Admin", "eng": "E4 + E2", "fr": "FR03", "st": "built", "sit": [{"s": "Admin grants Moderator", "fail": null, "code": "200 OK", "body": "roles updated + audit_log row (who, what, when)", "A": "test_admin…"}, {"s": "Moderator tries it", "fail": 2, "code": "403 Forbidden", "body": "{\"detail\": \"missing permission: role.manage\"}", "A": "rbac.py"}]}], "checks": ["Token", "Rate limit", "Role", "Input", "State"], "say": {"Token": "Session cookie (JWT) signature and expiry; CSRF header on every write", "Rate limit": "Token bucket: 5 sign-in tries a minute per address; general API budget", "Role": "Permission matrix, deny by default; club role checked for that club; muted users blocked", "Input": "Body and query validated; 400 names the field", "State": "Row exists, state allows the change (compare-and-swap), uniqueness rules"}};
-const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const badge=s=>{const m={built:['s-built','Built'],prog:['s-prog','In progress'],plan:['s-plan','Planned'],bad:['s-bad','Not met']}[s]||['s-plan',s];return `<span class="badge ${m[0]}">${m[1]}</span>`};
-function tabs(root){$$('.tabs button',root).forEach(b=>b.onclick=()=>{$$('.tabs button',root).forEach(x=>x.classList.toggle('on',x===b));$$('[data-pane]',root).forEach(p=>p.classList.toggle('hide',p.dataset.pane!==b.dataset.tab))})}
+<h1><b>CineLog</b> API in motion</h1>
+<p class="lead">Every request to CineLog passes the same five checks inside Engine E4 (CN &amp; Web Tech), in the same order. Pick who is calling, the request and the situation, then press <b>Play</b>. The first check that fails decides the status code, and nothing after it runs. These checks are now built in <code>backend/app/security.py</code>, <code>rbac.py</code> and the routers on branch sprint-2. Under every answer, <b>In the build</b> shows the real route, the reply the code gives today and the recorded exchange or test (A01–A29 in docs/sprint2/evidence/api). Most answers match the design; where the build chose a different path or code, it says so.</p>
+<div class="tiles"><div class="tile"><b>9</b><small>requests</small></div><div class="tile"><b>24</b><small>situations</small></div><div class="tile"><b>5</b><small>checks</small></div><div class="tile"><b class="o">6</b><small>error codes</small></div><div class="tile"><b style="color:#2f8f5b">100+</b><small>routes built</small></div><div class="tile"><b style="color:#2f8f5b">29</b><small>recorded exchanges</small></div><div class="tile"><b style="color:#2f8f5b">5 / min</b><small>sign-in limit built</small></div></div>
+<div class="stleg"><span><span class="bs b">Built</span>in the code and tested</span><span><span class="bs p">In progress</span>works in part, being finished</span><span><span class="bs d">Built differently</span>same need, different table or rule</span></div><div class="tabs" id="tabs"></div>
+<div class="card">
+<h2 id="ttl"></h2><p id="sub"></p><div id="chips"></div>
+<div class="lab">Who is calling</div><div class="pick" id="roles"></div>
+<div class="lab">Situation</div><div class="pick" id="scs"></div>
+<div class="lab">Checks in order</div>
+<div class="stage"><div class="gates" id="gates"></div></div>
+<div class="btns"><button class="play" id="go">▶ Play</button><button class="sec" id="nx">Next request →</button><span class="spd" id="spd"><button data-v="2">Slow</button><button data-v="1" class="on">Normal</button><button data-v="0.45">Fast</button></span><span class="fly">● packet in flight</span></div>
+<div class="two"><div><div class="lab" style="margin-top:0">Request</div><div class="con" id="req"></div></div>
+<div><div class="lab" style="margin-top:0">Response</div><span class="st s0" id="st">···</span><div class="con" id="res" style="min-height:62px"></div></div></div>
+<div class="why" id="why"></div>
+<div id="bld"></div>
+<div class="lab">Requirements in this request</div><div id="rq"></div>
+</div>
+<div class="card"><h2>Status codes CineLog uses</h2>
+<table><tr><th>Code</th><th>When</th><th>Effect on data</th><th>In the build</th></tr>
+<tr><td class="m">200 · 201 · 202</td><td>Done · created · accepted while the scan still runs</td><td>Committed</td><td><span class="bs b">Built</span></td></tr>
+<tr><td class="m">400</td><td>Input fails validation</td><td>Nothing saved</td><td><span class="bs b">Built</span></td></tr>
+<tr><td class="m">401</td><td>Token missing, expired or tampered</td><td>Nothing changes</td><td><span class="bs b">Built</span></td></tr>
+<tr><td class="m">403</td><td>Role not allowed (deny by default)</td><td>Nothing changes</td><td><span class="bs b">Built</span></td></tr>
+<tr><td class="m">409</td><td>Invalid state change, second vote, or two people acting at once</td><td>The first change stays</td><td><span class="bs b">Built</span></td></tr>
+<tr><td class="m">429</td><td>More than 5 login tries a minute</td><td>Nothing changes</td><td><span class="bs b">Built</span></td></tr>
+<tr><td class="m">503</td><td>Database unavailable</td><td>Rolled back</td><td><span class="bs l">Planned</span></td></tr></table>
+<p style="margin-top:10px">All nine requests are now built. Some paths changed from the design: suggestions are GET /films/autocomplete, reviews are posted under the film (POST /films/{id}/reviews), votes go to /polls/{id}/vote and roles use POST. 422 from the framework was replaced by 400 with the field name (DEF-09). 503 is used today only when the TMDB key is missing; a 503 for an unavailable database is planned. Still open for Sprint 3: OWASP ZAP scan and HTTPS deployment (NFR-06).</p></div>
 
-let R=0,S=0,busy=false;const Q=DATA.req,C=DATA.checks;
-function drawReqs(){$('#reqs').innerHTML=Q.map((q,i)=>`<span class="chip ${i===R?'on':''}" data-i="${i}">${esc(q.name)}</span>`).join('');$$('#reqs .chip').forEach(c=>c.onclick=()=>{R=+c.dataset.i;S=0;drawReqs();drawSits();reset()})}
-function drawSits(){$('#sits').innerHTML=Q[R].sit.map((s,i)=>`<div class="chip ${i===S?'on':''}" style="display:block;margin:5px 0" data-i="${i}">${esc(s.s)}</div>`).join('');$$('#sits .chip').forEach(c=>c.onclick=()=>{S=+c.dataset.i;drawSits();reset()})}
-function reset(){const q=Q[R];$('#rt').textContent=q.name;$('#line').innerHTML=`<b style="color:var(--brand)">${q.m}</b> ${esc(q.p)} <span class="muted">· ${esc(q.who)} · ${esc(q.eng)} · ${q.fr}</span>`;
- $('#checks').innerHTML=C.map((c,i)=>`<span class="ck" data-i="${i}" style="display:inline-block;padding:8px 12px;margin:3px;border-radius:10px;border:1px solid var(--line);background:var(--panel2)">${i+1}. ${c}</span>`).join(' → ');
- $('#resp').textContent='press Play';$('#resp').style.borderColor='';$('#cs').textContent='';$('#ev').textContent=''}
-function play(){if(busy)return;busy=true;reset();const s=Q[R].sit[S],stopAt=s.fail===null?C.length:s.fail;let i=0;
- const tick=()=>{const el=$(`.ck[data-i="${i}"]`);$('#cs').textContent=DATA.say[C[i]];
-  if(i===stopAt){el.style.background='rgba(248,113,113,.2)';el.style.borderColor='#f87171';finish(s);return}
-  el.style.background='rgba(52,211,153,.18)';el.style.borderColor='#34d399';i++;if(i>=C.length){finish(s);return}setTimeout(tick,450)};setTimeout(tick,200)}
-function finish(s){busy=false;const ok=s.fail===null;$('#resp').textContent=s.code+'\n'+s.body;$('#resp').style.borderColor=ok?'#34d399':'#f87171';
- $('#cs').textContent=ok?'All five checks passed.':'Stopped at check '+(s.fail+1)+' ('+C[s.fail]+'): nothing after it runs, nothing is saved.';$('#ev').textContent='Evidence: '+s.A}
-$('#play').onclick=play;drawReqs();drawSits();reset();
-$('#stat').innerHTML='<tr><th>Request</th><th>Endpoint</th><th>Who</th><th>Req.</th><th>Status</th></tr>'+Q.map(q=>`<tr><td>${esc(q.name)}</td><td class="mono">${q.m} ${esc(q.p)}</td><td>${esc(q.who)}</td><td>${q.fr}</td><td>${badge(q.st)}</td></tr>`).join('');
+<div class="foot">CineLog · Mini Project, Theme 01 · Role based management · Guide: Prof. Vijay B · The animation shows the designed checks; the In the build boxes come from the recorded exchanges in docs/sprint2/evidence/api/api_exchanges.md (branch sprint-2).</div>
+</div><script>const STN={b:'Built',p:'In progress',l:'Planned',d:'Built differently',x:'Not met yet'};const st=s=>`<span class="bs ${s}">${STN[s]}</span>`;
+
+
+const ROLES=['Not signed in','Viewer','Critic','Club Convener','Moderator','Admin'],ALL=ROLES.slice(1);
+const GATES=[['Token','JWT cookie valid?'],['Rate limit','token bucket has a token?'],['Role','permission matrix allows it?'],['Input','fields valid on the server?'],['State','change allowed now?']];
+const RQ={'FR-01':'Sign in via Google (OAuth 2.0) or e-mail + password, producing a secure session.','FR-02':'Check every request against the role–permission matrix, allowing it or refusing with HTTP 403.','FR-03':'An Admin grants or revokes roles, producing the new role and an audit entry.','FR-04':'Up to 10 title suggestions when 2+ letters are typed, with genre, cast and year filters.','FR-08':'Scan every new review before it is visible; blurred matches get a Reveal button.','FR-09':'Fixed review lifecycle; an invalid transition is rejected with HTTP 409.','FR-10':'Hide a review automatically when 3 different users report it.','FR-11':'Moderators see flagged reviews ordered by risk and can approve or remove.','FR-13':'A poll accepts votes only while Open.','FR-14':'Exactly one vote per member per poll.','FR-16':'Validate every input in the browser and again on the server.','FR-17':'Update poll results on members\' screens live.','NFR-06':'Protection against common web attacks; login limited to 5 tries a minute.','FR-18':'Follow / unfollow works and the feed shows the latest activities of followed users, newest first.','FR-20':'The 3rd strike within 30 days mutes the account for 3 days; a muted user can read but not post.'};
+// scenario: [label, failGate(-1 none), status, body, why]
+const EP=[
+{t:'Sign in',n:'POST /auth/login',h:'Sign in and get a session',d:'The only request that works without a session. A correct sign-in returns a JWT in an HTTP-only cookie.',open:1,roles:ROLES,fr:['FR-01','NFR-06'],req:'POST /auth/login\n{"email": "asha@mail.com",\n "password": "••••••••"}',sc:[
+ ['Correct details',-1,200,'Set-Cookie: session=<JWT>; HttpOnly\n{"user_id": 12, "roles": ["Viewer"]}','bcrypt compares the password with the stored hash. The JWT goes into an HTTP-only cookie, so page scripts cannot read it.'],
+ ['Wrong password',0,401,'{"error": "Email or password is incorrect"}','The message is generic on purpose: it does not reveal whether the e-mail exists.'],
+ ['6th try in one minute',1,429,'Retry-After: 60\n{"error": "Too many attempts"}','The token bucket allows 5 login tries a minute per address, which slows password guessing.']]},
+{t:'Search',n:'GET /films/suggest',h:'Title suggestions while typing',d:'E4 checks the request and passes the prefix to Engine E1, which answers from the trie.',roles:ALL,fr:['FR-04','FR-16'],req:'GET /films/suggest?q=dar&genre=Drama',sc:[
+ ['Prefix "dar"',-1,200,'[{"id": 101, "title": "The Dark Knight", "year": 2008},\n {"id": 214, "title": "Darkest Hour", "year": 2017}]\n(up to 10 films)','The trie keeps a top-10 list on every node, so the answer costs O(L + K) whatever the catalogue size.'],
+ ['Only 1 letter typed',3,400,'{"error": "q must have at least 2 letters"}','Suggestions start at 2 letters, so the server rejects a shorter prefix.']]},
+{t:'Write a review',n:'POST /reviews',h:'Submit a review for scanning',d:'The review is saved as Pending Scan and the reply comes back at once. Nobody can read it until the spoiler scan finishes.',roles:['Viewer','Critic'],fr:['FR-08','FR-16','FR-02','FR-20'],req:'POST /reviews\n{"film_id": 101,\n "text": "A slow first hour, but ..."}',sc:[
+ ['Valid review',-1,202,'{"review_id": 41, "state": "pending_scan"}\n\nlater: GET /reviews/41\n{"state": "published", "risk": 0.82, "blurred": [3]}','202 means accepted, not published. E2 saves it, E3 queues the scan with USER priority, E1 scans, and E2 publishes it.'],
+ ['Text of 6 characters',3,400,'{"error": "text must be 10 to 5,000 characters"}','The same check runs in the browser and again on the server, because the browser check can be bypassed.'],
+ ['Writer is muted (3 strikes)',2,403,'{"error": "Muted", "muted_until": "3 days",\n "can": "read"}','A muted account keeps its role but loses every posting permission until the mute ends. Reading still works.']]},
+{t:'Report',n:'POST /reviews/41/reports',h:'Report a review',d:'Any signed-in reader can report a review once. The third distinct report hides it.',roles:ALL,fr:['FR-10','FR-09'],req:'POST /reviews/41/reports\n{"reason": "spoiler"}',sc:[
+ ['2nd distinct report',-1,201,'{"reports": 2, "state": "published"}','Two distinct reports are not enough: the review stays Published.'],
+ ['3rd distinct report',-1,201,'{"reports": 3, "state": "hidden"}','A trigger hides the review in the same transaction and it enters the moderator queue.'],
+ ['Same reader reports again',4,409,'{"error": "Already reported"}','UNIQUE (review_id, user_id) rejects the duplicate, so one reader cannot hide a review alone.']]},
+{t:'Moderate',n:'POST /moderation/reviews/41/remove',h:'A moderator removes a review',d:'Only a Moderator or Admin passes the role check. The state change and its audit entry are saved together.',roles:['Moderator','Admin'],fr:['FR-11','FR-09','FR-02'],req:'POST /moderation/reviews/41/remove',sc:[
+ ['Review is Hidden',-1,200,'{"review_id": 41, "state": "removed"}\naudit: meera REMOVE review#41','Hidden → Removed is a valid change. The audit row is written in the same transaction.'],
+ ['Another moderator acted first',4,409,'{"error": "State already changed",\n "state": "published"}','Compare-and-swap: the UPDATE matches 0 rows because the state is no longer Hidden. First wins, second gets 409.'],
+ ['Review is already Removed',4,409,'{"error": "Removed is final"}','Removed is a final state; every change is rejected.']]},
+{t:'Vote',n:'POST /polls/7/votes',h:'Vote in a club poll',d:'The club role is checked as well as the site role. A saved vote is pushed live to every member.',roles:ALL,fr:['FR-14','FR-13','FR-17'],req:'POST /polls/7/votes\n{"option_id": 21}',sc:[
+ ['Member, poll Open, first vote',-1,201,'{"poll_id": 7, "counts": {"21": 9, "22": 6}}\n→ pushed live over WebSocket','The vote is saved in one transaction, then the new count is pushed to every connected member.'],
+ ['Votes a second time',4,409,'{"error": "Already voted"}','UNIQUE (poll_id, user_id) holds even when two requests arrive at the same moment.'],
+ ['Poll is Closed',4,409,'{"error": "Poll is not open", "state": "closed"}','Votes are accepted only while the poll is Open.'],
+ ['Not a member of this club',2,403,'{"error": "Not allowed"}','Club roles are separate from site roles and work only inside one club.']]},
+{t:'Follow & feed',n:'POST /users/27/follow',h:'Follow a user and read the feed',d:'Following adds one row. The feed then lists the latest activities of followed users, newest first.',roles:ALL,fr:['FR-18','FR-16'],req:'POST /users/27/follow\n\nthen: GET /feed',sc:[
+ ['Follow a new user',-1,201,'{"following": true}\n\nGET /feed → [{"user": 27, "kind": "reviewed",\n  "film": 101, "at": "20:14"}, ...]','One FOLLOW row is saved. The feed is read from the activity rows of followed users, newest first.'],
+ ['Follow the same user again',-1,200,'{"following": true}','The primary key (follower, followee) keeps one row, so repeating the request changes nothing.'],
+ ['Follow yourself',3,400,'{"error": "You cannot follow yourself"}','Rejected by validation, and by a CHECK in the database as a second guard.']]},
+{t:'Strike',n:'POST /moderation/users/31/strikes',h:'A moderator gives a strike',d:'Strikes are counted over the last 30 days. The third one mutes the account for 3 days.',roles:['Moderator','Admin'],fr:['FR-20','FR-11','FR-02'],req:'POST /moderation/users/31/strikes\n{"review_id": 41, "reason": "spoiler abuse"}',sc:[
+ ['1st strike',-1,201,'{"strikes_30d": 1, "muted_until": null}\naudit: meera STRIKE user#31','The strike and its audit row are saved together. One strike does not mute.'],
+ ['3rd strike within 30 days',-1,201,'{"strikes_30d": 3, "muted_until": "+3 days"}\naudit: meera STRIKE user#31','The trigger sets the mute in the same transaction as the strike, so the account is muted at once.']]},
+{t:'Change a role',n:'PUT /admin/users/12/roles',h:'An Admin grants a role',d:'The most restricted request: only an Admin passes the role check.',roles:['Admin'],fr:['FR-03','FR-02'],req:'PUT /admin/users/12/roles\n{"grant": ["Critic"]}',sc:[
+ ['Grant Critic',-1,200,'{"user_id": 12, "roles": ["Viewer", "Critic"]}\naudit: admin#1 GRANT Critic → user#12','The role row and the audit row are saved together. The new role applies on the next request.']]}
+];
+const RT=["POST /auth/login", "GET /films/autocomplete?q= · GET /films/search", "POST /films/{film_id}/reviews", "POST /reviews/{review_id}/report", "POST /moderation/{review_id}/remove", "POST /polls/{poll_id}/vote", "PUT /follow/{uid} · GET /feed", "POST /moderation/users/{uid}/strike", "POST /admin/users/{uid}/roles"],BU=[[["b", "200 · set-cookie: cl_session=…; HttpOnly; Max-Age=28800; SameSite=lax", "A03 · TC-E4-01"], ["b", "401 · {\"detail\": \"invalid email or password\"}", "A02 · TC-E4-05"], ["b", "429 · {\"detail\": \"too many attempts, slow down\"}", "A29 · TC-E4-02, TC-E4-03"]], [["b", "200 · up to 10 local titles; for 3+ letters, up to 3 new films found on TMDB are added (DEF-13)", "A06 · TC-E1-01, TC-E1-12"], ["d", "200 · [] — fewer than 2 letters are simply not searched, no 400", "A07"]], [["b", "202 · {\"state\": \"pending_scan\"}; the E3 scan job publishes it and blurs spoiler sentences", "A09, A10"], ["b", "400 · {\"detail\": \"text: String should have at least 10 characters\"}", "A12 · TC-E2-05"], ["b", "403 · {\"detail\": \"you are muted until 26 Nov 2026 10:00 UTC\"}", "test_three_strikes_mute_and_a_mute_blocks_posting_but_not_watching"]], [["d", "200 · {\"reports\": 2} (200, not 201)", "test_three_reports_hide_and_moderator_flow"], ["p", "200 · review hidden in the same transaction by application code; the database trigger is being written", "test_three_reports_hide_and_moderator_flow"], ["d", "200 · {\"ignored\": true} — the UNIQUE row stops it, but the API answers quietly instead of 409", "UNIQUE (review_id, user_id)"]], [["b", "200 · {\"state\": \"removed\"} + audit_log row in the same transaction", "A26 · moderation tests"], ["b", "409 · invalid transition — another moderator acted first (compare-and-swap)", "TC-E2-03"], ["b", "409 · removed is final", "TC-E2-03"]], [["b", "200 · new tally pushed to every member on /ws/polls/{id}", "A19 · TC-E4-09"], ["b", "409 · {\"detail\": \"already voted\"} · 100 voters at once → 0 duplicates", "A20 · TC-E2-01, TC-E2-06"], ["b", "409 · {\"detail\": \"poll is closed: voting is closed\"}", "A17 · TC-E2-02"], ["b", "403 · {\"detail\": \"only club members can vote\"}", "TC-E4-08"]], [["b", "200 · {\"following\": true}; GET /feed merges the latest diary entries and reviews of people you follow", "test_follow_feed_and_similarity"], ["b", "200 · same row kept (PK follower, followee)", "test_follow_feed_and_similarity"], ["b", "400 · {\"detail\": \"you cannot follow yourself\"}", "test_follow_feed_and_similarity"]], [["b", "200 · strike saved with its audit row", "test_moderators_strike_and_mute_but_only_downwards"], ["p", "200 · 3rd strike in 30 days → 3-day mute, in application code; trigger version being written", "test_three_strikes_mute_and_a_mute_blocks_posting_but_not_watching"]], [["d", "200 · built as POST (not PUT); roles updated + audit_log row (who, what, when)", "TC-E2-04 · TC-E4-07"]]];
+let SP=1;document.querySelectorAll('#spd button').forEach(b=>b.onclick=()=>{SP=+b.dataset.v;document.querySelectorAll('#spd button').forEach(x=>x.classList.toggle('on',x===b))});
+let e=2,r=1,s=0,busy=0;
+const $=id=>document.getElementById(id);
+function outcome(){const ep=EP[e],sc=ep.sc[s],role=ROLES[r];
+  if(!ep.open&&r===0)return[0,401,'{"error": "Sign in required"}','No valid session cookie, so the request stops at the first check. Nothing else is evaluated.'];
+  if(!ep.roles.includes(role))return[2,403,'{"error": "Not allowed"}','The permission matrix has no entry that lets a '+role+' do this. Anything not listed is denied (deny by default), and nothing changes.'];
+  return[sc[1],sc[2],sc[3],sc[4]]}
+function render(){const ep=EP[e];
+  const tb=$('tabs');tb.innerHTML='';EP.forEach((x,i)=>{const b=document.createElement('button');b.innerHTML='<i>0'+(i+1)+'</i>'+x.t;if(i===e)b.className='on';b.onclick=()=>{if(busy)return;e=i;s=0;render()};tb.appendChild(b)});
+  $('ttl').textContent=ep.h;$('sub').textContent=ep.d;$('chips').innerHTML=ep.fr.map(c=>'<span class="chip">'+c+'</span>').join('');
+  const mk=(id,arr,cur,fn)=>{const d=$(id);d.innerHTML='';arr.forEach((t,i)=>{const b=document.createElement('button');b.textContent=t;if(i===cur)b.className='on';b.onclick=()=>{if(busy)return;fn(i);render()};d.appendChild(b)})};
+  mk('roles',ROLES,r,i=>r=i);mk('scs',ep.sc.map(x=>x[0]),s,i=>s=i);
+  $('gates').innerHTML=GATES.map((g,i)=>'<div class="node" id="g'+i+'"><b>'+g[0]+'</b><small>'+g[1]+'</small><em></em></div>'+(i<4?'<div class="arr">→</div>':'')).join('');
+  $('req').textContent=ep.n===ep.req.split('\n')[0]?ep.req:ep.req;$('req').innerHTML=ep.req.replace(/</g,'&lt;')+'\n<span class="dim">caller: '+ROLES[r]+'</span>';
+  $('res').innerHTML='<span class="dim">Press ▶ Play to send the request.</span>';$('st').textContent='···';$('st').className='st s0';$('why').textContent='';$('bld').innerHTML='';
+  $('rq').innerHTML=ep.fr.map(k=>'<div class="req"><b>'+k+'</b>'+RQ[k]+'</div>').join('');
+}
+function bld(fail,status){const ep=EP[e],u=BU[e][s];let k=u[0],t=u[1],ev=u[2];
+  if(!ep.open&&r===0){k='b';t='401 · {"detail": "authentication required"}';ev='A04'}
+  else if(!ep.roles.includes(ROLES[r])){k='b';t='403 · {"detail": "missing permission: …"} (deny by default)';ev='A05 · TC-E4-04, test_rbac_matrix_deny_by_default'}
+  $('bld').innerHTML='<div class="bld '+k+'"><b style="font:700 12px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--mut)">In the build</b><br>'+st(k)+'<code>'+RT[e]+'</code><p>'+t.replace(/</g,'&lt;')+'</p><div class="mm">Evidence: '+ev+'</div></div>'}
+function play(){if(busy)return;busy=1;render();const [fail,status,body,why]=outcome();let i=0;
+  const tick=()=>{const g=$('g'+i);g.classList.add('now');g.querySelector('em').textContent='● checking';setTimeout(()=>{g.classList.remove('now');
+    if(fail===i){g.classList.add('fail');g.querySelector('em').textContent='STOP → '+status;for(let j=i+1;j<5;j++){$('g'+j).classList.add('skip');$('g'+j).querySelector('em').textContent='not reached'}return end()}
+    g.classList.add('pass');g.querySelector('em').textContent='pass';i++;i<5?tick():end()},420*SP)};
+  const end=()=>setTimeout(()=>{$('st').textContent=status;$('st').className='st s'+String(status)[0];$('res').innerHTML='<span class="'+(status<300?'ok':'no')+'">'+body.replace(/</g,'&lt;')+'</span>';$('why').textContent=why;bld(fail,status);document.querySelectorAll('.req').forEach(x=>x.classList.add('hit'));busy=0},300*SP);
+  setTimeout(tick,200)}
+$('go').onclick=play;$('nx').onclick=()=>{if(busy)return;e=(e+1)%EP.length;s=0;render()};render();
+
 </script></body></html>

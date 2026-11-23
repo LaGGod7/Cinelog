@@ -1,83 +1,165 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CineLog Transactions in Motion</title><style>
-:root{--bg:#0d1020;--panel:#151a30;--panel2:#1c2240;--line:#2a3158;--text:#e8eaf6;--muted:#9aa3c7;--brand:#ff6a2b;
---acc:#a78bfa;--cat:#2dd4bf;--diary:#fbbf24;--rev:#fb923c;--club:#f472b6;--sup:#94a3b8;
---ok:#34d399;--prog:#fbbf24;--plan:#60a5fa;--bad:#f87171}
-*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 "Segoe UI",system-ui,-apple-system,Arial,sans-serif}
-.wrap{max-width:1180px;margin:0 auto;padding:22px 18px 40px}
-h1{font:700 30px/1.2 Cambria,Georgia,serif;margin:0 0 6px}h1 .b{color:var(--brand)}
-h2{font:700 18px/1.3 Cambria,Georgia,serif;margin:0 0 10px}
-.lead{color:var(--muted);max-width:900px;margin:0 0 16px}
-.stats{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 14px}
-.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 16px;min-width:110px}
-.stat b{display:block;font:700 26px/1.1 Cambria,Georgia,serif}.stat span{color:var(--muted);font-size:12.5px}
-.legend{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px;font-size:13px;color:var(--muted)}
-.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
-.badge{display:inline-block;border-radius:999px;padding:1px 9px;font-size:12px;font-weight:700;white-space:nowrap}
-.s-built{background:rgba(52,211,153,.15);color:var(--ok)}.s-prog{background:rgba(251,191,36,.15);color:var(--prog)}
-.s-plan{background:rgba(96,165,250,.15);color:var(--plan)}.s-bad{background:rgba(248,113,113,.15);color:var(--bad)}
-.tabs{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px;margin:0 0 14px;flex-wrap:wrap}
-.tabs button,.btn{background:transparent;color:var(--text);border:0;border-radius:9px;padding:7px 14px;font:600 14px inherit;cursor:pointer}
-.tabs button.on{background:var(--text);color:var(--bg)}
-.btn{background:var(--panel2);border:1px solid var(--line)}.btn:hover{border-color:var(--brand)}.btn.pri{background:var(--brand);border-color:var(--brand);color:#fff}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
-.grid{display:grid;gap:14px}.g2{grid-template-columns:1.35fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
-@media(max-width:860px){.g2,.g3{grid-template-columns:1fr}}
-.muted{color:var(--muted)}.small{font-size:13px}.mono{font-family:Consolas,"Courier New",monospace;font-size:13px}
-table.t{width:100%;border-collapse:collapse;font-size:13.5px}table.t th,table.t td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
-table.t th{color:var(--muted);font-weight:600}
-.chip{display:inline-block;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:3px 9px;margin:3px;font-size:13px;cursor:pointer}
-.chip:hover{border-color:var(--brand)}.chip.on{border-color:var(--brand);background:#2a1b17}
-.hide{display:none!important}
-.foot{margin-top:18px;color:var(--muted);font-size:12.5px}
-pre.code{background:#0a0d1a;border:1px solid var(--line);border-radius:10px;padding:10px 12px;overflow:auto;margin:6px 0;font:12.5px/1.45 Consolas,"Courier New",monospace;color:#dbe1ff;white-space:pre-wrap}
+*{box-sizing:border-box}
+:root{--ink:#111c26;--mut:#4a5a68;--line:#dfe5ea;--bg:#f5f7f9;--stage:#eef1f4;--or:#d9480f;--tl:#0f766e;--tlbg:#e6f6f4;--gr:#2f8f5b;--grbg:#e7f5ec;--rd:#c0392b;--rdbg:#fdecea;--am:#b7791f;--ambg:#fdf4e1;--pu:#6d4fc2;--con:#14212b;
+--sans:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;--mono:Consolas,"SF Mono",ui-monospace,Menlo,monospace}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--sans);padding:18px}
+.wrap{max-width:980px;margin:auto}
+h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-.01em;display:flex;flex-wrap:wrap;align-items:baseline;gap:12px}
+h1 b{color:var(--or);font-size:32px;font-weight:800}
+.lead{margin:6px 0 14px;color:#2c3a47}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:10px}
+.tabs button{flex:none;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:8px 14px;font:600 14.5px var(--sans);color:var(--ink);cursor:pointer;white-space:nowrap}
+.tabs button i{font:700 12px var(--mono);color:var(--or);font-style:normal;margin-right:6px}
+.tabs button.on{background:var(--con);color:#fff;border-color:var(--con)}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px}
+.card h2{margin:0 0 4px;font-size:20px;font-weight:800}
+.card p{margin:0 0 10px;color:#2c3a47}
+.lab{font:700 11.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin:14px 0 8px}
+.chip{display:inline-block;font:700 11.5px var(--mono);border:1.5px solid #5bb8ae;background:var(--tlbg);color:var(--tl);border-radius:999px;padding:2px 9px;margin:0 5px 5px 0}
+.chip.r{border-color:#e08a7d;background:var(--rdbg);color:var(--rd)}
+.chip.g{border-color:#cfd6dd;background:#f1f3f5;color:var(--mut)}
+.stage{background:var(--stage);border:1px solid var(--line);border-radius:14px;padding:14px;overflow-x:auto}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 12px;align-items:center}
+.play{background:var(--or);color:#fff;border:0;border-radius:9px;padding:9px 16px;font:700 15px var(--sans);cursor:pointer}
+.sec{background:#fff;color:var(--ink);border:1.5px solid var(--con);border-radius:9px;padding:8px 15px;font:600 15px var(--sans);cursor:pointer}
+.con{background:var(--con);color:#dfe8ef;border-radius:12px;padding:12px 14px;font:13.5px/1.6 var(--mono);min-height:96px;white-space:pre-wrap;word-break:break-word}
+.con .ok{color:#7fe0a6}.con .no{color:#ff9f8e}.con .am{color:#ffd27a}.con .dim{color:#8fa1b0}
+.req{border-left:3px solid #cfd6dd;padding:4px 0 4px 12px;margin:8px 0;transition:.3s}
+.req b{font:700 13px var(--mono);margin-right:6px}
+.req.hit{border-left-color:var(--or);background:#fff4ee}
+.pick{display:flex;flex-wrap:wrap;gap:7px}
+.pick button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:6px 13px;font:600 13.5px var(--sans);color:var(--ink);cursor:pointer}
+.pick button.on{background:var(--con);color:#fff;border-color:var(--con)}
+.pick.m button{border-radius:9px;font:700 12.5px var(--mono)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+th{font:700 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+td.m{font:700 13px var(--mono);white-space:nowrap}
+.k{display:inline-block;font:700 10.5px var(--mono);border-radius:5px;padding:1px 6px;margin-right:3px;color:#fff}
+.PK{background:var(--con)}.FK{background:var(--tl)}.UQ{background:var(--pu)}.CK{background:var(--am)}.TR{background:var(--or)}
+.foot{color:var(--mut);font-size:13px;margin-top:6px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:620px){.two{grid-template-columns:1fr}body{padding:12px}h1{font-size:21px}h1 b{font-size:27px}}
+
+.lanes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;min-width:560px}
+.lane h3{margin:0 0 8px;font:700 13px var(--sans);padding:7px 9px;border-radius:9px;color:#fff;text-align:center}
+.A h3{background:var(--tl)}.B h3{background:var(--pu)}.D h3{background:var(--con)}
+.cell{min-height:56px;margin-bottom:6px}
+.stp{background:#fff;border:1.5px solid var(--line);border-radius:9px;padding:6px 8px;font:12px/1.4 var(--mono);opacity:0;transform:translateY(6px);transition:.3s;word-break:break-word}
+.stp.show{opacity:1;transform:none}
+.stp.ok{border-color:var(--gr);background:var(--grbg)}.stp.no{border-color:var(--rd);background:var(--rdbg)}.stp.lk{border-color:var(--am);background:var(--ambg)}
+.stp u{display:block;text-decoration:none;font:700 10px var(--mono);color:var(--mut)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.stat{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff}
+.stat b{display:block;font:800 22px var(--mono)}.stat small{color:var(--mut);font-size:12.5px}
+.why{margin-top:12px;border-left:3px solid var(--or);background:#fff4ee;padding:8px 12px;border-radius:0 8px 8px 0;display:none}
+.grid{display:flex;flex-wrap:wrap;gap:3px}
+.v{width:15px;height:15px;border-radius:4px;background:#d5dce3;transition:.2s}.v.ok{background:var(--gr)}.v.no{background:var(--rd)}
+.sl{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin:4px 0 12px;font-size:14px}
+.sl b{font:700 14px var(--mono)}
+.bw{display:grid;grid-template-columns:1fr 240px;gap:14px;align-items:center}
+@media(max-width:620px){.stats{grid-template-columns:1fr 1fr}.bw{grid-template-columns:1fr}}
+.gt{font:700 13px Consolas,monospace;fill:#111c26}.gs{font:11px Consolas,monospace;fill:#4a5a68}
+.tiles{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.tile{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 16px;min-width:90px;text-align:center}.tile b{display:block;font:800 22px var(--sans)}.tile b.o{color:var(--or)}.tile small{color:var(--mut);font-size:12.5px}.spd{display:inline-flex;border:1.5px solid var(--line);border-radius:9px;overflow:hidden}.spd button{background:#fff;border:0;border-right:1px solid var(--line);padding:8px 13px;font:600 14px var(--sans);cursor:pointer;color:var(--ink)}.spd button:last-child{border-right:0}.spd button.on{background:var(--con);color:#fff}.fly{color:var(--or);font-weight:600;font-size:14px}.node.now{border-color:var(--or);box-shadow:0 0 0 3px #ffd9c7}.node.now em{color:var(--or)}
+.bs{display:inline-block;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:2px 10px;border:1.5px solid currentColor;margin:0 6px 4px 0;white-space:nowrap;vertical-align:1px}
+.bs.b{color:#2f8f5b}.bs.p{color:#b7791f}.bs.l{color:#1d6fb8}.bs.d{color:#6d4fc2}.bs.x{color:#c0392b}
+.stleg{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;margin:0 0 14px;color:#4a5a68;font-size:13.5px}
+.bld{background:#ffffff;border:1px solid #dfe5ea;border-left:4px solid #2f8f5b;border-radius:12px;padding:10px 14px;margin:12px 0 4px;color:#111c26}
+.bld.p{border-left-color:#b7791f}.bld.l{border-left-color:#1d6fb8}.bld.d{border-left-color:#6d4fc2}.bld.x{border-left-color:#c0392b}
+.bld .mm{font:12.5px var(--mono);color:#4a5a68;margin-top:4px}.bld p{margin:4px 0 0}
 </style></head><body><div class="wrap">
-<h1><span class="b">CineLog</span> Transactions in motion</h1><p class="lead">One user action is one database transaction: it commits fully or rolls back fully. Slow work (spoiler scan, TMDB, email) runs outside it as an E3 background job. Run each transaction step by step, or set two sessions against each other in the clash simulator.</p>
-<div class="stats"><div class="stat"><b style="color:var(--text)">10</b><span>transactions</span></div><div class="stat"><b style="color:var(--ok)">10</b><span>built</span></div><div class="stat"><b style="color:var(--brand)">3</b><span>clash scenarios</span></div><div class="stat"><b style="color:var(--cat)">WAL</b><span>SQLite mode now</span></div><div class="stat"><b style="color:var(--ok)">100 → 0</b><span>voters → duplicates</span></div><div class="stat"><b style="color:var(--prog)">2</b><span>checks in progress</span></div></div><div class="legend"><span><span class="badge s-built">Built</span> in the first version of the code</span>
-<span><span class="badge s-prog">In progress</span> being finished or tested now</span>
-<span><span class="badge s-plan">Planned</span> agreed, not built yet</span></div>
-<div class="tabs" id="tb"><button class="on" data-tab="tx">Transactions T1–T10</button><button data-tab="clash">Clash simulator</button><button data-tab="iso">Isolation &amp; checks</button></div>
-<div data-pane="tx"><div class="grid g2"><div class="card"><div id="list"></div></div>
-<div class="card"><h2 id="tn">—</h2><div id="tmeta" class="small muted"></div><div id="tsteps" style="margin:10px 0"></div>
-<div id="tfail"></div><p class="small muted" id="tnote"></p><button class="btn pri" id="run">▶ Run</button></div></div></div>
-<div data-pane="clash" class="hide"><div class="card"><div id="cl" style="margin:0 0 10px"></div>
-<div class="grid" style="grid-template-columns:1fr 1fr"><div><div class="small" style="font-weight:700;margin:0 0 6px">Session A</div><div id="ca"></div></div>
-<div><div class="small" style="font-weight:700;margin:0 0 6px">Session B</div><div id="cb"></div></div></div>
-<p id="cend" style="margin-top:12px;font-weight:700"></p><button class="btn pri" id="crun">▶ Run both</button></div></div>
-<div data-pane="iso" class="hide"><div class="grid g2"><div class="card"><h2>Isolation and locking</h2><table class="t">
-<tr><td>SQLite in WAL mode</td><td>Used now on laptops. Writers start with <span class="mono">BEGIN IMMEDIATE</span> and queue one after another; readers are never blocked.</td><td><span class="badge s-built">Built</span></td></tr>
-<tr><td>PostgreSQL (Docker)</td><td>Read Committed with row locks; the same UNIQUE and compare-and-swap rules give the same results.</td><td><span class="badge s-prog">In progress</span></td></tr>
-<tr><td>Lock order</td><td>Parent first: POLL then VOTE; REVIEW then REPORT then AUDIT_LOG. Two transactions cannot wait on each other.</td><td><span class="badge s-built">Built</span></td></tr>
-<tr><td>Deadlock fallback</td><td>The database aborts one transaction, it is retried; no partial data.</td><td><span class="badge s-built">Built</span></td></tr>
-</table></div><div class="card"><h2>How we check it</h2><table class="t">
-<tr><td>100 members vote at once (NFR04)</td><td><span class="badge s-built">Passes on SQLite</span> <span class="badge s-prog">PostgreSQL run</span></td></tr>
-<tr><td>20 threads, same member (TC-E2-06)</td><td><span class="badge s-built">1 row, 19 × 409</span></td></tr>
-<tr><td>Every invalid poll / review change → 409 (TC-E2-02/03)</td><td><span class="badge s-built">Pass</span> <span class="badge s-prog">more pairs being added</span></td></tr>
-<tr><td>Audit row cannot be edited (TC-E2-04)</td><td><span class="badge s-built">Pass</span></td></tr>
-<tr><td>Two moderators at once</td><td><span class="badge s-prog">Test being written</span></td></tr></table></div></div></div>
 
-<div class="foot">Source: backend/app/routers/clubs.py, reviews.py, moderation.py, workflow.py, db.py · tests: backend/tests/test_sprint2_engines.py (TC-E2-*), test_100_concurrent_votes_no_duplicates.</div></div>
-<script>const DATA={"tx": [{"id": "T1", "name": "Submit review", "fr": "FR08", "st": "built", "lock": "none (new row)", "steps": ["BEGIN IMMEDIATE", "INSERT INTO reviews (user_id, film_id, text, state) VALUES (…, 'pending_scan')", "COMMIT", "after COMMIT: submit scan job to E3 (USER priority)"], "fail": "Any error → ROLLBACK; 400 or 503; nothing is visible", "note": "The scan job is queued only after COMMIT, so a job never sees an uncommitted review."}, {"id": "T2", "name": "Save scan result", "fr": "FR08, FR09", "st": "built", "lock": "compare-and-swap on reviews.state", "steps": ["BEGIN IMMEDIATE", "SELECT review → still pending_scan?", "UPDATE reviews SET segments_json=…, risk=…, state='published' WHERE id=6 AND state='pending_scan'", "COMMIT"], "fail": "Review deleted or moderated meanwhile → 0 rows changed; the worker treats it as done", "note": "After a restart, reviews still pending_scan are queued again (no lost jobs)."}, {"id": "T3", "name": "Vote in a poll", "fr": "FR14, NFR04", "st": "built", "lock": "row lock on polls + UNIQUE (poll_id, user_id)", "steps": ["BEGIN IMMEDIATE", "SELECT … FROM polls WHERE id=1 FOR UPDATE  (poll must be open)", "INSERT INTO votes (poll_id, user_id, option_id)", "COMMIT → push new tally on /ws/polls/1"], "fail": "Second vote → UNIQUE fails → ROLLBACK → 409 'already voted'", "note": "Tested: 100 members at once → 100 votes; 20 threads from one member → 1 row."}, {"id": "T4", "name": "Close a poll", "fr": "FR13, FR15", "st": "built", "lock": "same poll row lock as T3", "steps": ["BEGIN IMMEDIATE", "SELECT … FROM polls WHERE id=1 FOR UPDATE", "UPDATE polls SET state='closed', result_json=…, winner_film_id=… WHERE id=1 AND state='open'", "COMMIT"], "fail": "Poll not open → 409 'invalid transition'", "note": "A vote is either before the close or refused; the result never changes afterwards."}, {"id": "T5", "name": "Report a review", "fr": "FR10", "st": "built", "lock": "UNIQUE (review_id, user_id)", "steps": ["BEGIN IMMEDIATE", "INSERT INTO review_reports (review_id, user_id)", "count distinct reporters", "if 3: UPDATE reviews SET state='hidden' WHERE state='published'", "COMMIT"], "fail": "Rollback undoes the report and the hide together", "note": "Application rule in the same transaction today; a database trigger version is planned."}, {"id": "T6", "name": "Moderator decision", "fr": "FR09, FR11", "st": "built", "lock": "compare-and-swap", "steps": ["BEGIN IMMEDIATE", "UPDATE reviews SET state='published' WHERE id=9 AND state='hidden'", "INSERT INTO audit_log (actor_id, action, target, detail)", "COMMIT"], "fail": "Another moderator acted first → 0 rows → 409; no audit row", "note": "State and audit row are saved together or not at all."}, {"id": "T7", "name": "Grant or revoke a role", "fr": "FR03", "st": "built", "lock": "PK (user_id, role)", "steps": ["BEGIN IMMEDIATE", "INSERT INTO user_roles (user_id, role) / DELETE …", "INSERT INTO audit_log", "COMMIT"], "fail": "Any error → no role change and no audit row", "note": "No role change can exist without its audit entry."}, {"id": "T8", "name": "Rate by aspect", "fr": "FR07", "st": "built", "lock": "PK (user_id, film_id, aspect)", "steps": ["BEGIN IMMEDIATE", "INSERT OR REPLACE INTO aspect_ratings (user_id, film_id, aspect, value)", "COMMIT", "film average calculated when the page is read"], "fail": "Value outside 0.5–5 → 400 before any write", "note": "A stored FILM.avg_rating updated in this transaction is planned only if the film page gets slow."}, {"id": "T9", "name": "Give a strike", "fr": "FR20", "st": "built", "lock": "—", "steps": ["BEGIN IMMEDIATE", "INSERT INTO user_strikes", "count strikes in the last 30 days", "if 3: UPDATE users SET muted_until = now + 3 days", "INSERT INTO audit_log", "COMMIT"], "fail": "Rollback: no strike, no mute, no audit row", "note": "Application rule today; trigger version planned."}, {"id": "T10", "name": "Follow a user", "fr": "FR18", "st": "built", "lock": "PK (follower_id, followee_id) + CHECK", "steps": ["BEGIN IMMEDIATE", "INSERT INTO follows (follower_id, followee_id) if missing", "INSERT INTO notifications", "COMMIT"], "fail": "Following yourself → 400; a repeat follow changes nothing", "note": "The feed is built from diary entries and reviews; a separate ACTIVITY table is still being considered."}], "clash": [{"name": "Two votes from one member, same moment", "a": ["BEGIN", "lock poll 1", "INSERT vote (1, 5)", "COMMIT ✓ 200"], "b": ["BEGIN", "wait for poll 1 lock…", "INSERT vote (1, 5) → UNIQUE fails", "ROLLBACK ✗ 409 already voted"], "end": "1 row in votes"}, {"name": "Vote and close at the same moment", "a": ["BEGIN", "lock poll 1", "UPDATE polls … state='closed'", "COMMIT ✓ 200"], "b": ["BEGIN", "wait for poll 1 lock…", "poll is closed", "ROLLBACK ✗ 409 voting is closed"], "end": "result frozen without the late vote"}, {"name": "Two moderators act on one review", "a": ["BEGIN", "UPDATE … WHERE state='hidden' → 1 row", "INSERT audit_log", "COMMIT ✓ 200"], "b": ["BEGIN", "UPDATE … WHERE state='hidden' → 0 rows", "no audit row", "ROLLBACK ✗ 409"], "end": "1 decision, 1 audit row"}]};
-const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const badge=s=>{const m={built:['s-built','Built'],prog:['s-prog','In progress'],plan:['s-plan','Planned'],bad:['s-bad','Not met']}[s]||['s-plan',s];return `<span class="badge ${m[0]}">${m[1]}</span>`};
-function tabs(root){$$('.tabs button',root).forEach(b=>b.onclick=()=>{$$('.tabs button',root).forEach(x=>x.classList.toggle('on',x===b));$$('[data-pane]',root).forEach(p=>p.classList.toggle('hide',p.dataset.pane!==b.dataset.tab))})}
+<h1><b>CineLog</b> Transactions in motion</h1>
+<p class="lead">One user action is one transaction in Engine E2 (Storage &amp; Transaction): it commits fully or rolls back fully. Each scene shows two things arriving at the same moment. Press <b>Play</b> to watch who wins, who is rejected and what is left in the database. The transactions are now built on SQLite in WAL mode with <code>BEGIN IMMEDIATE</code> for writes (<code>backend/app/db.py</code>, <code>workflow.py</code>, routers on branch sprint-2). Each scene ends with an <b>In the build</b> box: what the code does today, the test that proves it and what is still being finished.</p>
+<div class="tiles"><div class="tile"><b>10</b><small>transactions</small></div><div class="tile"><b>6</b><small>scenes</small></div><div class="tile"><b class="o">0</b><small>half-saved rows</small></div><div class="tile"><b style="color:#2f8f5b">6</b><small>built as designed</small></div><div class="tile"><b style="color:#b7791f">2</b><small>in progress (triggers)</small></div><div class="tile"><b style="color:#6d4fc2">2</b><small>built differently</small></div><div class="tile"><b style="color:#2f8f5b">100 → 0</b><small>voters → duplicates (tested)</small></div></div>
+<div class="stleg"><span><span class="bs b">Built</span>in the code and tested</span><span><span class="bs p">In progress</span>works in part, being finished</span><span><span class="bs d">Built differently</span>same need, different table or rule</span><span><span class="bs l">Planned</span>agreed for Sprint 3</span></div><div class="tabs" id="tabs"></div>
+<div class="card">
+<h2 id="ttl"></h2><p id="sub"></p><div id="chips"></div>
+<div id="ctl"></div>
+<div class="stage" id="stage"></div>
+<div class="btns"><button class="play" id="go">▶ Play</button><button class="sec" id="nx">Next scene →</button><span class="spd" id="spd"><button data-v="2">Slow</button><button data-v="1" class="on">Normal</button><button data-v="0.45">Fast</button></span><span class="fly">● two requests in flight</span></div>
+<div class="stats" id="stats"></div>
+<div class="why" id="why"></div>
+<div id="bld"></div>
+<div class="lab">Requirements in this scene</div><div id="rq"></div>
+</div>
+<div class="card"><h2>All transaction boundaries</h2>
+<div style="overflow-x:auto"><table><tr><th>ID</th><th>Action</th><th>Saved together</th><th>Protection</th><th>In the build</th></tr>
+<tr><td class="m">T1</td><td>Submit review</td><td>Review row as Pending Scan; the job is queued after commit</td><td>Invisible until scanned</td><td><span class="bs b">Built</span></td></tr>
+<tr><td class="m">T2</td><td>Save scan result</td><td>State and risk score</td><td>Compare-and-swap</td><td><span class="bs b">Built</span></td></tr>
+<tr><td class="m">T3</td><td>Vote</td><td>Open check and vote row</td><td>Row lock + UNIQUE (poll_id, user_id)</td><td><span class="bs b">Built</span></td></tr>
+<tr><td class="m">T4</td><td>Close poll</td><td>State and stored result</td><td>Same row lock as T3</td><td><span class="bs b">Built</span></td></tr>
+<tr><td class="m">T5</td><td>Report review</td><td>Report row and, on the 3rd, state = hidden</td><td>UNIQUE (review_id, user_id) + trigger</td><td><span class="bs p">In progress</span><br><small style="color:var(--mut)">trigger being written; app code today</small></td></tr>
+<tr><td class="m">T6</td><td>Moderator action</td><td>State change and audit row</td><td>Compare-and-swap; first wins</td><td><span class="bs b">Built</span></td></tr>
+<tr><td class="m">T7</td><td>Role change</td><td>Role row and audit row</td><td>Primary key (user_id, role_id)</td><td><span class="bs b">Built</span></td></tr>
+<tr><td class="m">T8</td><td>Aspect rating</td><td>Rating and film average</td><td>Trigger in the same transaction</td><td><span class="bs d">Built differently</span><br><small style="color:var(--mut)">average calculated when read; stored average planned</small></td></tr>
+<tr><td class="m">T9</td><td>Strike</td><td>Strike row, mute on the 3rd in 30 days, and audit row</td><td>Trigger in the same transaction</td><td><span class="bs p">In progress</span><br><small style="color:var(--mut)">trigger being written; app code today</small></td></tr>
+<tr><td class="m">T10</td><td>Follow</td><td>Follow row and activity row</td><td>Primary key (follower_id, followee_id)</td><td><span class="bs d">Built differently</span><br><small style="color:var(--mut)">feed reads diary and reviews; no activity row</small></td></tr></table></div></div>
 
-tabs($('#tb').parentNode);let T=0,C=0;const X=DATA.tx;
-$('#list').innerHTML=X.map((t,i)=>`<div class="chip" style="display:flex;justify-content:space-between;margin:5px 0" data-i="${i}"><span><b>${t.id}</b> ${esc(t.name)}</span>${badge(t.st)}</div>`).join('');
-$$('#list .chip').forEach(c=>c.onclick=()=>pick(+c.dataset.i));
-function pick(i){T=i;const t=X[i];$$('#list .chip').forEach((c,k)=>c.classList.toggle('on',k===i));$('#tn').textContent=t.id+' · '+t.name;
- $('#tmeta').innerHTML=`${t.fr} · clash control: <span class="mono">${esc(t.lock)}</span> · ${badge(t.st)}`;
- $('#tsteps').innerHTML=t.steps.map((s,k)=>`<div class="mono st" style="padding:6px 10px;margin:4px 0;border-radius:8px;border:1px solid var(--line);background:var(--panel2)">${esc(s)}</div>`).join('');
- $('#tfail').innerHTML=`<div class="small"><b style="color:#f87171">On failure:</b> ${esc(t.fail)}</div>`;$('#tnote').textContent=t.note}
-$('#run').onclick=()=>{const els=$$('#tsteps .st');els.forEach(e=>{e.style.borderColor='var(--line)';e.style.background='var(--panel2)'});
- els.forEach((e,k)=>setTimeout(()=>{e.style.borderColor='#34d399';e.style.background='rgba(52,211,153,.14)'},300+k*450))};
-pick(2);
-const CL=DATA.clash;$('#cl').innerHTML=CL.map((c,i)=>`<span class="chip" data-i="${i}">${esc(c.name)}</span>`).join('');
-$$('#cl .chip').forEach(c=>c.onclick=()=>cp(+c.dataset.i));
-function cp(i){C=i;$$('#cl .chip').forEach((c,k)=>c.classList.toggle('on',k===i));const c=CL[i];
- const col=(arr,id)=>$(id).innerHTML=arr.map(s=>`<div class="mono cs" style="opacity:.25;padding:6px 10px;margin:4px 0;border-radius:8px;border:1px solid var(--line)">${esc(s)}</div>`).join('');col(c.a,'#ca');col(c.b,'#cb');$('#cend').textContent=''}
-$('#crun').onclick=()=>{cp(C);const c=CL[C];const A=$$('#ca .cs'),B=$$('#cb .cs');let t=200;
- for(let k=0;k<4;k++){setTimeout(()=>{A[k].style.opacity=1;if(k===3)A[k].style.borderColor='#34d399'},t);t+=420;setTimeout(()=>{B[k].style.opacity=1;if(k===3)B[k].style.borderColor='#f87171'},t);t+=420}
- setTimeout(()=>$('#cend').textContent='End state: '+c.end,t)};cp(0);
+<div class="foot">CineLog · Mini Project, Theme 01 · Role based management · Guide: Prof. Vijay B · The lanes show the designed behaviour; the In the build boxes come from the code and the Sprint 2 test run (193 passed), branch sprint-2.</div>
+</div><script>const STN={b:'Built',p:'In progress',l:'Planned',d:'Built differently',x:'Not met yet'};const st=s=>`<span class="bs ${s}">${STN[s]}</span>`;
+
+
+const RQ={'FR-20':'The 3rd strike within 30 days mutes the account for 3 days; a muted user can read but not post.','FR-08':'Scan every new review before it is visible.','FR-09':'Fixed review lifecycle; an invalid transition is rejected with HTTP 409.','FR-10':'Hide a review automatically when 3 different users report it.','FR-11':'Moderator actions apply immediately and are logged.','FR-13':'A poll accepts votes only while Open.','FR-14':'Exactly one vote per member per poll, even when members vote at the same moment.','NFR-04':'Zero data corruption under concurrent writes: 0 duplicate votes and 0 lost updates in a 100-user concurrent test.','NFR-05':'Reliable background job processing; a failed job is retried 3 times.'};
+// step: [lane, row, text, class]
+const C=[
+{t:'Double vote',h:'T3 · The same member votes twice',d:'Asha taps Vote twice by mistake. Both requests reach the server within a few milliseconds. Is her vote counted twice?',fr:['FR-14','FR-13','NFR-04'],
+ L:['Request 1 · Asha','Request 2 · Asha','Database · E2'],
+ S:[['A',0,'BEGIN',''],['B',0,'BEGIN',''],['A',1,'lock poll 7 · state = open ✓','lk'],['B',1,'waits for the lock on poll 7','lk'],['A',2,"INSERT vote (7, 'asha', 21)",''],['D',2,'row saved · UNIQUE ok','ok'],['A',3,'COMMIT → 201','ok'],['B',3,'gets the lock · state = open ✓','lk'],['B',4,"INSERT vote (7, 'asha', 21)",''],['D',4,'UNIQUE (poll_id, user_id) violated','no'],['B',5,'ROLLBACK → 409 already voted','no']],
+ st:[['votes by Asha','1'],['duplicate votes','0'],['lost updates','0'],['second request','409']],
+ why:'The database rule, not the application code, stops the second vote. Even if both requests pass the "has she voted?" check at the same instant, only one INSERT can succeed.'},
+{t:'Two moderators',h:'T6 · Two moderators act on one review',d:'Review 41 is Hidden. Meera approves it while Ravi removes it, at the same moment. Which one wins?',fr:['FR-09','FR-11'],
+ L:['Meera · approve','Ravi · remove','Database · E2'],
+ S:[['A',0,'BEGIN',''],['B',0,'BEGIN',''],['A',1,"UPDATE review SET state='published'<br>WHERE id=41 AND state='hidden'",''],['D',1,'1 row updated · row locked by Meera','lk'],['B',1,"UPDATE review SET state='removed'<br>WHERE id=41 AND state='hidden'",''],['B',2,'waits for the row lock','lk'],['A',2,'INSERT audit_log (meera, APPROVE, 41)',''],['A',3,'COMMIT → 200 published','ok'],['D',3,'state is now published','ok'],['B',3,"re-checks state='hidden' → 0 rows",'no'],['B',4,'ROLLBACK → 409 state already changed','no']],
+ st:[['final state','published'],['audit rows','1'],['second action','409'],['half-saved data','0']],
+ why:'This is compare-and-swap: the UPDATE names the state the row must be in now. The first change wins, the second matches 0 rows and gets 409. The state change and its audit row are saved together or not at all.'},
+{t:'Third report',h:'T5 · The third report arrives',d:'Review 41 has 2 reports. A third reader reports it, and one of the earlier readers reports it again.',fr:['FR-10','FR-09'],
+ L:['Ravi · new report','Asha · repeat report','Database · E2'],
+ S:[['A',0,'BEGIN',''],['B',0,'BEGIN',''],['A',1,"INSERT report (41, 'ravi')",''],['D',1,'row saved · trigger counts 3 distinct','ok'],['D',2,"trigger: review 41 state = 'hidden'",'lk'],['A',2,'COMMIT → 201 hidden, queued','ok'],['B',2,"INSERT report (41, 'asha')",''],['D',3,'UNIQUE (review_id, user_id) violated','no'],['B',3,'ROLLBACK → 409 already reported','no']],
+ st:[['distinct reports','3'],['review state','hidden'],['repeat report','ignored'],['moderator queue','+1']],
+ why:'The trigger runs inside the same transaction as the report, so the review is hidden at the exact moment the third report is saved. If that transaction rolled back, the hide would be undone too.'},
+{t:'Review and scan',h:'T1 + T2 · A review waits for its scan',d:'Asha submits a review. The spoiler scan takes time. Does she wait, and can anyone read the review before it is scanned?',fr:['FR-08','FR-09','NFR-05'],
+ L:['Asha · browser','Worker · E3 → E1','Database · E2'],
+ S:[['A',0,'POST /reviews',''],['D',0,"BEGIN · INSERT review 41<br>state='pending_scan' · COMMIT",'ok'],['A',1,'202 pending_scan · reply at once','ok'],['B',1,'job queued after commit · USER priority','lk'],['B',2,'run_scan(text, film 101) → risk 0.82',''],['B',3,"UPDATE … SET state='published', risk=0.82<br>WHERE id=41 AND state='pending_scan'",''],['D',3,'1 row updated · COMMIT','ok'],['A',4,'GET /reviews/41 → published,<br>sentence 3 blurred','ok']],
+ st:[['visible before scan','no'],['locks held during scan','0'],['retries if scan fails','3'],['transactions','2']],
+ why:'The slow scan is kept outside the database transaction. Two short transactions (save, then publish) bracket it, so no lock is held while the scan runs and the review stays invisible in between.'},
+{t:'Third strike',h:'T9 · The third strike mutes an account',d:'Dev already has 2 strikes this month. Moderator Meera gives a third while Dev is posting another review.',fr:['FR-20','FR-11'],
+ L:['Meera · strike','Dev · new review','Database · E2'],
+ S:[['A',0,'BEGIN',''],['A',1,"INSERT strike ('dev', review 41)",''],['D',1,'row saved · trigger counts 3 in 30 days','ok'],['D',2,"trigger: dev muted_until = now + 3 days",'lk'],['A',2,'INSERT audit_log (meera, STRIKE, dev)',''],['A',3,'COMMIT → 201','ok'],['B',3,'POST /reviews',''],['D',4,'permission check: muted_until > now','no'],['B',4,'403 muted · can read, cannot post','no']],
+ st:[['strikes in 30 days','3'],['muted for','3 days'],['audit rows','1'],["Dev's new review",'403']],
+ why:'The strike, the mute and the audit entry are one transaction, so there is no moment when Dev has three strikes but can still post. The mute removes posting rights only; reading still works.'},
+{t:'100 members vote',burst:1,h:'NFR-04 · A whole club votes in one second',d:'Many members vote in the same second and some tap twice. Does the stored count equal the number of distinct voters?',fr:['NFR-04','FR-14'],
+ why:'Every accepted vote is one row, and the UNIQUE rule allows one row per member. So the count always equals the number of distinct voters: 0 duplicates and 0 lost updates, which is the pass rule for NFR-04.'}
+];
+const BL=[["b", "T3 · POST /polls/{poll_id}/vote · routers/clubs.py", "Built as shown: BEGIN IMMEDIATE, the poll row is locked and checked for open, then INSERT into votes with UNIQUE (poll_id, user_id). The second request gets 409 {\"detail\": \"already voted\"}. 20 threads voting for one member left exactly 1 row.", "TC-E2-01, TC-E2-06 · A20", "PostgreSQL run of the same test (Sprint 3)"], ["b", "T6 · POST /moderation/{review_id}/approve | remove · workflow.py", "Built as compare-and-swap: UPDATE … WHERE id = ? AND state = ?. The state change and the audit_log row commit together; the second moderator gets 409 invalid transition.", "TC-E2-03 · A26", "—"], ["p", "T5 · POST /reviews/{review_id}/report · routers/reviews.py", "The report and the hide happen in one transaction, but in application code: after the INSERT the route counts distinct reporters and sets state = hidden. A repeat report is stopped by UNIQUE (review_id, user_id) and answered 200 {\"ignored\": true} instead of 409. The database trigger version is being written.", "test_three_reports_hide_and_moderator_flow", "Database trigger (in progress)"], ["b", "T1 + T2 · POST /films/{film_id}/reviews → E3 WorkerPool", "Built as shown: T1 saves pending_scan and replies 202; the scan job is queued after commit with USER priority, retried 3 times (0.5 s × 2ⁿ); T2 publishes with compare-and-swap. The scan itself takes 49.9 ms per review against a 20 ms target, so speed is still being worked on.", "TC-E3-01, TC-E3-02, TC-E3-03 · A09, A10 · PT-02 (not met)", "Sweep that re-queues stuck pending_scan reviews (Sprint 3)"], ["p", "T9 · POST /moderation/users/{uid}/strike · routers/moderation.py", "Strike, mute and audit row are saved in one transaction by application code: the 3rd strike in 30 days sets users.muted_until = now + 3 days, and a muted user gets 403 on posting but can still read. The trigger version is being written.", "test_three_strikes_mute_and_a_mute_blocks_posting_but_not_watching", "Database trigger (in progress)"], ["b", "test_100_concurrent_votes_no_duplicates", "Run on SQLite: 100 members voting at once gave 100 vote rows and 0 duplicates; the second tap of each member got 409. This is the NFR-04 pass rule.", "test_100_concurrent_votes_no_duplicates · TC-E2-06", "Same run on PostgreSQL and inside the 100-user load test (Sprint 3)"]];
+let SP=1;document.querySelectorAll('#spd button').forEach(b=>b.onclick=()=>{SP=+b.dataset.v;document.querySelectorAll('#spd button').forEach(x=>x.classList.toggle('on',x===b))});
+let cur=0,tm=[],busy=0;const $=id=>document.getElementById(id);
+const stop=()=>{tm.forEach(clearTimeout);tm=[];busy=0};
+function gauge(v,max){const a=Math.PI*(1-Math.min(v/max,1)),x=110+78*Math.cos(a),y=100-78*Math.sin(a);
+  return `<svg viewBox="0 0 220 130" style="width:100%;max-width:240px"><path d="M26,100 A84,84 0 0 1 194,100" fill="none" stroke="#dfe5ea" stroke-width="18" stroke-linecap="round"/><path d="M26,100 A84,84 0 0 1 30,76" fill="none" stroke="#2f8f5b" stroke-width="18" stroke-linecap="round"/><line x1="110" y1="100" x2="${x}" y2="${y}" stroke="#111c26" stroke-width="4" stroke-linecap="round"/><circle cx="110" cy="100" r="8" fill="#111c26"/><text x="110" y="82" text-anchor="middle" class="gt">${v}</text><text x="26" y="122" text-anchor="middle" class="gs">0</text><text x="110" y="122" text-anchor="middle" class="gs">duplicate votes</text><text x="194" y="122" text-anchor="middle" class="gs">${max}</text></svg>`}
+function render(){stop();const c=C[cur];
+  const tb=$('tabs');tb.innerHTML='';C.forEach((x,i)=>{const b=document.createElement('button');b.innerHTML='<i>0'+(i+1)+'</i>'+x.t;if(i===cur)b.className='on';b.onclick=()=>{cur=i;render()};tb.appendChild(b)});
+  $('ttl').textContent=c.h;$('sub').textContent=c.d;$('chips').innerHTML=c.fr.map(x=>'<span class="chip">'+x+'</span>').join('');
+  $('why').style.display='none';$('why').textContent=c.why;const bl=BL[cur];$('bld').innerHTML='<div class="bld '+bl[0]+'"><b style="font:700 12px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--mut)">In the build</b><br>'+st(bl[0])+'<code>'+bl[1]+'</code><p>'+bl[2]+'</p><div class="mm">Tests: '+bl[3]+'</div><div class="mm">Still to do: '+bl[4]+'</div></div>';$('rq').innerHTML=c.fr.map(k=>'<div class="req"><b>'+k+'</b>'+RQ[k]+'</div>').join('');
+  if(c.burst){$('ctl').innerHTML='<div class="sl"><span>members <input type="range" id="n" min="10" max="100" step="10" value="100"> <b id="nv">100</b></span><span>double taps <input type="range" id="d" min="0" max="40" step="5" value="20"> <b id="dv">20</b></span></div>';
+    ['n','d'].forEach(k=>$(k).oninput=ev=>{stop();$(k+'v').textContent=ev.target.value;grid()});grid();return}
+  $('ctl').innerHTML='';const rows=Math.max(...c.S.map(s=>s[1]))+1;
+  $('stage').innerHTML='<div class="lanes">'+['A','B','D'].map((k,i)=>'<div class="lane '+k+'"><h3>'+c.L[i]+'</h3>'+Array.from({length:rows},(_,r)=>'<div class="cell" id="c'+k+r+'"></div>').join('')+'</div>').join('')+'</div>';
+  $('stats').innerHTML=c.st.map(x=>'<div class="stat"><b>–</b><small>'+x[0]+'</small></div>').join('');
+}
+function grid(){const n=+$('n').value,d=+$('d').value;
+  $('stage').innerHTML='<div class="bw"><div><div class="lab" style="margin-top:0">'+(n+d)+' requests arrive within 1 second</div><div class="grid">'+Array.from({length:n+d},()=>'<div class="v"></div>').join('')+'</div></div><div id="gg">'+gauge(0,10)+'</div></div>';
+  $('stats').innerHTML=[['requests',n+d],['votes saved','–'],['rejected with 409','–'],['duplicates in table','–']].map(x=>'<div class="stat"><b>'+x[1]+'</b><small>'+x[0]+'</small></div>').join('')}
+function play(){const c=C[cur];
+  if(c.burst){stop();grid();busy=1;const n=+$('n').value,vs=[...document.querySelectorAll('.v')],order=vs.map((_,i)=>i).sort(()=>Math.random()-.5),seen=new Set(),s=document.querySelectorAll('.stat b');let ok=0,no=0;
+    order.forEach((i,k)=>tm.push(setTimeout(()=>{const m=i<n?i:i-n;if(seen.has(m)){vs[i].classList.add('no');no++}else{seen.add(m);vs[i].classList.add('ok');ok++}
+      s[1].textContent=ok;s[2].textContent=no;s[3].textContent=0;if(k===order.length-1){$('why').style.display='block';document.querySelectorAll('.req').forEach(e=>e.classList.add('hit'));busy=0}},18*k*SP)));return}
+  render();busy=1;
+  c.S.forEach((s,i)=>tm.push(setTimeout(()=>{const d=document.createElement('div');d.className='stp '+s[3];d.innerHTML='<u>t'+(i+1)+'</u>'+s[2];$('c'+s[0]+s[1]).appendChild(d);requestAnimationFrame(()=>d.classList.add('show'));
+    if(i===c.S.length-1){document.querySelectorAll('.stat b').forEach((b,j)=>b.textContent=c.st[j][1]);$('why').style.display='block';document.querySelectorAll('.req').forEach(e=>e.classList.add('hit'));busy=0}},(620*i+120)*SP)));
+}
+$('go').onclick=play;$('nx').onclick=()=>{cur=(cur+1)%C.length;render()};render();
+
 </script></body></html>

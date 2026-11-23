@@ -1,67 +1,151 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CineLog Normalization in Motion</title><style>
-:root{--bg:#0d1020;--panel:#151a30;--panel2:#1c2240;--line:#2a3158;--text:#e8eaf6;--muted:#9aa3c7;--brand:#ff6a2b;
---acc:#a78bfa;--cat:#2dd4bf;--diary:#fbbf24;--rev:#fb923c;--club:#f472b6;--sup:#94a3b8;
---ok:#34d399;--prog:#fbbf24;--plan:#60a5fa;--bad:#f87171}
-*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 "Segoe UI",system-ui,-apple-system,Arial,sans-serif}
-.wrap{max-width:1180px;margin:0 auto;padding:22px 18px 40px}
-h1{font:700 30px/1.2 Cambria,Georgia,serif;margin:0 0 6px}h1 .b{color:var(--brand)}
-h2{font:700 18px/1.3 Cambria,Georgia,serif;margin:0 0 10px}
-.lead{color:var(--muted);max-width:900px;margin:0 0 16px}
-.stats{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 14px}
-.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 16px;min-width:110px}
-.stat b{display:block;font:700 26px/1.1 Cambria,Georgia,serif}.stat span{color:var(--muted);font-size:12.5px}
-.legend{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px;font-size:13px;color:var(--muted)}
-.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
-.badge{display:inline-block;border-radius:999px;padding:1px 9px;font-size:12px;font-weight:700;white-space:nowrap}
-.s-built{background:rgba(52,211,153,.15);color:var(--ok)}.s-prog{background:rgba(251,191,36,.15);color:var(--prog)}
-.s-plan{background:rgba(96,165,250,.15);color:var(--plan)}.s-bad{background:rgba(248,113,113,.15);color:var(--bad)}
-.tabs{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px;margin:0 0 14px;flex-wrap:wrap}
-.tabs button,.btn{background:transparent;color:var(--text);border:0;border-radius:9px;padding:7px 14px;font:600 14px inherit;cursor:pointer}
-.tabs button.on{background:var(--text);color:var(--bg)}
-.btn{background:var(--panel2);border:1px solid var(--line)}.btn:hover{border-color:var(--brand)}.btn.pri{background:var(--brand);border-color:var(--brand);color:#fff}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
-.grid{display:grid;gap:14px}.g2{grid-template-columns:1.35fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
-@media(max-width:860px){.g2,.g3{grid-template-columns:1fr}}
-.muted{color:var(--muted)}.small{font-size:13px}.mono{font-family:Consolas,"Courier New",monospace;font-size:13px}
-table.t{width:100%;border-collapse:collapse;font-size:13.5px}table.t th,table.t td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
-table.t th{color:var(--muted);font-weight:600}
-.chip{display:inline-block;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:3px 9px;margin:3px;font-size:13px;cursor:pointer}
-.chip:hover{border-color:var(--brand)}.chip.on{border-color:var(--brand);background:#2a1b17}
-.hide{display:none!important}
-.foot{margin-top:18px;color:var(--muted);font-size:12.5px}
-pre.code{background:#0a0d1a;border:1px solid var(--line);border-radius:10px;padding:10px 12px;overflow:auto;margin:6px 0;font:12.5px/1.45 Consolas,"Courier New",monospace;color:#dbe1ff;white-space:pre-wrap}
+*{box-sizing:border-box}
+:root{--ink:#111c26;--mut:#4a5a68;--line:#dfe5ea;--bg:#f5f7f9;--stage:#eef1f4;--or:#d9480f;--tl:#0f766e;--tlbg:#e6f6f4;--gr:#2f8f5b;--grbg:#e7f5ec;--rd:#c0392b;--rdbg:#fdecea;--am:#b7791f;--ambg:#fdf4e1;--pu:#6d4fc2;--con:#14212b;
+--sans:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;--mono:Consolas,"SF Mono",ui-monospace,Menlo,monospace}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--sans);padding:18px}
+.wrap{max-width:980px;margin:auto}
+h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-.01em;display:flex;flex-wrap:wrap;align-items:baseline;gap:12px}
+h1 b{color:var(--or);font-size:32px;font-weight:800}
+.lead{margin:6px 0 14px;color:#2c3a47}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:10px}
+.tabs button{flex:none;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:8px 14px;font:600 14.5px var(--sans);color:var(--ink);cursor:pointer;white-space:nowrap}
+.tabs button i{font:700 12px var(--mono);color:var(--or);font-style:normal;margin-right:6px}
+.tabs button.on{background:var(--con);color:#fff;border-color:var(--con)}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px}
+.card h2{margin:0 0 4px;font-size:20px;font-weight:800}
+.card p{margin:0 0 10px;color:#2c3a47}
+.lab{font:700 11.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin:14px 0 8px}
+.chip{display:inline-block;font:700 11.5px var(--mono);border:1.5px solid #5bb8ae;background:var(--tlbg);color:var(--tl);border-radius:999px;padding:2px 9px;margin:0 5px 5px 0}
+.chip.r{border-color:#e08a7d;background:var(--rdbg);color:var(--rd)}
+.chip.g{border-color:#cfd6dd;background:#f1f3f5;color:var(--mut)}
+.stage{background:var(--stage);border:1px solid var(--line);border-radius:14px;padding:14px;overflow-x:auto}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 12px;align-items:center}
+.play{background:var(--or);color:#fff;border:0;border-radius:9px;padding:9px 16px;font:700 15px var(--sans);cursor:pointer}
+.sec{background:#fff;color:var(--ink);border:1.5px solid var(--con);border-radius:9px;padding:8px 15px;font:600 15px var(--sans);cursor:pointer}
+.con{background:var(--con);color:#dfe8ef;border-radius:12px;padding:12px 14px;font:13.5px/1.6 var(--mono);min-height:96px;white-space:pre-wrap;word-break:break-word}
+.con .ok{color:#7fe0a6}.con .no{color:#ff9f8e}.con .am{color:#ffd27a}.con .dim{color:#8fa1b0}
+.req{border-left:3px solid #cfd6dd;padding:4px 0 4px 12px;margin:8px 0;transition:.3s}
+.req b{font:700 13px var(--mono);margin-right:6px}
+.req.hit{border-left-color:var(--or);background:#fff4ee}
+.pick{display:flex;flex-wrap:wrap;gap:7px}
+.pick button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:6px 13px;font:600 13.5px var(--sans);color:var(--ink);cursor:pointer}
+.pick button.on{background:var(--con);color:#fff;border-color:var(--con)}
+.pick.m button{border-radius:9px;font:700 12.5px var(--mono)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+th{font:700 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+td.m{font:700 13px var(--mono);white-space:nowrap}
+.k{display:inline-block;font:700 10.5px var(--mono);border-radius:5px;padding:1px 6px;margin-right:3px;color:#fff}
+.PK{background:var(--con)}.FK{background:var(--tl)}.UQ{background:var(--pu)}.CK{background:var(--am)}.TR{background:var(--or)}
+.foot{color:var(--mut);font-size:13px;margin-top:6px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:620px){.two{grid-template-columns:1fr}body{padding:12px}h1{font-size:21px}h1 b{font-size:27px}}
+
+.gates{display:flex;align-items:stretch;gap:0;min-width:500px;position:relative}
+.node{flex:1 1 0;min-width:0;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:9px 5px;text-align:center;transition:.25s;position:relative;z-index:1}
+.node b{display:block;font-size:13.5px}.node small{display:block;color:var(--mut);font-size:11.5px;line-height:1.3}
+.node em{display:block;font:700 11.5px var(--mono);font-style:normal;margin-top:6px;color:var(--mut);min-height:16px}
+.node.pass{border-color:var(--gr);background:var(--grbg)}.node.pass em{color:var(--gr)}
+.node.fail{border-color:var(--rd);background:var(--rdbg)}.node.fail em{color:var(--rd)}
+.node.skip{opacity:.38}
+.arr{flex:none;width:14px;display:flex;align-items:center;justify-content:center;color:#9aa7b3;font-weight:700}
+.st{display:inline-block;font:800 14px var(--mono);border-radius:7px;padding:3px 10px;color:#fff;margin-bottom:8px}
+.s2{background:var(--gr)}.s4{background:var(--rd)}.s5{background:var(--pu)}.s0{background:#9aa7b3}
+.why{margin-top:12px;border-left:3px solid var(--or);background:#fff4ee;padding:8px 12px;border-radius:0 8px 8px 0;min-height:42px}
+.tiles{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.tile{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 16px;min-width:90px;text-align:center}.tile b{display:block;font:800 22px var(--sans)}.tile b.o{color:var(--or)}.tile small{color:var(--mut);font-size:12.5px}.spd{display:inline-flex;border:1.5px solid var(--line);border-radius:9px;overflow:hidden}.spd button{background:#fff;border:0;border-right:1px solid var(--line);padding:8px 13px;font:600 14px var(--sans);cursor:pointer;color:var(--ink)}.spd button:last-child{border-right:0}.spd button.on{background:var(--con);color:#fff}.fly{color:var(--or);font-weight:600;font-size:14px}.node.now{border-color:var(--or);box-shadow:0 0 0 3px #ffd9c7}.node.now em{color:var(--or)}
+.tbl{background:#fff;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;margin:0 10px 10px 0;display:inline-block;vertical-align:top;animation:in .45s both}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.tbl h4{margin:0;padding:6px 10px;font:700 12.5px var(--mono);background:var(--con);color:#fff;display:flex;justify-content:space-between;gap:10px}
+.tbl h4 span{color:#ffb38a;font-weight:700}
+.tbl table{font:12.5px var(--mono);width:auto}
+.tbl th{font-size:10.5px;padding:5px 8px;background:#f1f3f5}
+.tbl td{padding:4px 8px;white-space:nowrap}
+.tbl td.bad{background:var(--rdbg);color:var(--rd);font-weight:700}
+.tbl td.key{background:var(--tlbg);color:var(--tl);font-weight:700}
+.tbl td.drv{background:var(--ambg);color:var(--am);font-weight:700}
+.an{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.a{border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;transition:.3s}
+.a b{display:block;font:800 13px var(--mono)}.a small{color:var(--mut);font-size:12.5px;display:block;line-height:1.35}
+.a em{font:700 11.5px var(--mono);font-style:normal;display:inline-block;margin-top:6px;padding:1px 8px;border-radius:999px}
+.a.bad{border-color:#e08a7d;background:var(--rdbg)}.a.bad em{background:var(--rd);color:#fff}
+.a.ok{border-color:var(--gr);background:var(--grbg)}.a.ok em{background:var(--gr);color:#fff}
+.rule{border-left:3px solid var(--or);background:#fff4ee;padding:8px 12px;border-radius:0 8px 8px 0;margin:12px 0}
+.bar{height:22px;border-radius:6px;background:var(--or);transition:width .8s;min-width:4px}
+.bar.g{background:var(--gr)}
+.brow{display:grid;grid-template-columns:150px 1fr 90px;gap:10px;align-items:center;margin:8px 0;font-size:14px}
+.brow b{font:700 13px var(--mono);text-align:right}
+@media(max-width:620px){.an{grid-template-columns:1fr}.brow{grid-template-columns:110px 1fr 70px}}
+
+.bs{display:inline-block;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:2px 10px;border:1.5px solid currentColor;margin:0 6px 4px 0;white-space:nowrap;vertical-align:1px}
+.bs.b{color:#2f8f5b}.bs.p{color:#b7791f}.bs.l{color:#1d6fb8}.bs.d{color:#6d4fc2}.bs.x{color:#c0392b}
+.stleg{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;margin:0 0 14px;color:#4a5a68;font-size:13.5px}
+.bld{background:#ffffff;border:1px solid #dfe5ea;border-left:4px solid #2f8f5b;border-radius:12px;padding:10px 14px;margin:12px 0 4px;color:#111c26}
+.bld.p{border-left-color:#b7791f}.bld.l{border-left-color:#1d6fb8}.bld.d{border-left-color:#6d4fc2}.bld.x{border-left-color:#c0392b}
+.bld .mm{font:12.5px var(--mono);color:#4a5a68;margin-top:4px}.bld p{margin:4px 0 0}
 </style></head><body><div class="wrap">
-<h1><span class="b">CineLog</span> Normalization in motion</h1><p class="lead">How one flat sheet of film logs becomes the CineLog tables. Each scene applies one normal form and shows which update, insert and delete problems it removes. The last two scenes show where we copy data on purpose, and the indexes. All of it is in the first version of the schema; the review against the design is still going on.</p>
-<div class="stats"><div class="stat"><b style="color:var(--text)">3</b><span>normal forms</span></div><div class="stat"><b style="color:var(--text)">3</b><span>anomalies removed</span></div><div class="stat"><b style="color:var(--brand)">3</b><span>deliberate exceptions</span></div><div class="stat"><b style="color:var(--ok)">2</b><span>exceptions built</span></div><div class="stat"><b style="color:var(--ok)">7</b><span>indexes built</span></div><div class="stat"><b style="color:var(--prog)">1</b><span>index in progress</span></div></div><div class="legend"><span><span class="badge s-built">Built</span> in the first version of the code</span>
-<span><span class="badge s-prog">In progress</span> being finished or tested now</span>
-<span><span class="badge s-plan">Planned</span> agreed, not built yet</span></div>
-<div class="tabs" id="sc"></div>
-<div class="grid g2"><div class="card" id="stage"></div><div class="card" id="side"></div></div>
-<div style="margin-top:12px;display:flex;gap:8px"><button class="btn" id="prev">◀ Back</button><button class="btn pri" id="play">▶ Play all</button><button class="btn" id="next">Next ▶</button></div>
 
-<div class="foot">Source: backend/app/models.py (sprint-2) · genres and cast became separate tables in the build · stored average rating is planned, not built.</div></div>
-<script>const DATA={"scenes": [{"k": "Flat sheet", "nf": "Start", "fr": ["FR06", "FR07"], "status": "built", "say": "How a film club keeps logs in one spreadsheet today (S1.2). One row holds the user, the film, the cast and the aspect scores.", "tables": [{"name": "film_log (spreadsheet)", "cols": ["user", "email", "film", "year", "cast", "genres", "story", "acting", "club"], "rows": [["asha", "asha@mail.com", "Drishyam", "2015", "Ajay D, Tabu, Shriya S", "Crime, Drama", "4.5", "5", "Reel Club"], ["ravi", "ravi@mail.com", "Drishyam", "2015", "Ajay D, Tabu, Shriya S", "Crime, Drama", "4", "4.5", "Reel Club"], ["asha", "asha@mail.com", "Tumbbad", "2018", "Sohum S, Jyoti M", "Horror", "5", "4", "Reel Club"]], "bad": [[0, 4], [1, 4], [0, 5], [1, 5], [2, 1], [0, 1]]}], "problems": ["Update: Asha's email is stored twice; change one and they disagree", "Insert: a film nobody has logged cannot be added", "Delete: removing Ravi's only row loses the fact that he is in Reel Club"]}, {"k": "1NF", "nf": "First Normal Form", "fr": ["FR04", "FR08"], "status": "built", "say": "One value per cell. Lists become rows in their own tables: roles, spoiler words, poll choices, and in the build also genres and cast.", "tables": [{"name": "film_genres", "cols": ["film_id", "genre"], "rows": [["1", "Crime"], ["1", "Drama"], ["2", "Horror"]]}, {"name": "cast_members", "cols": ["film_id", "actor", "character"], "rows": [["1", "Ajay Devgn", "Vijay"], ["1", "Tabu", "Meera"], ["2", "Sohum Shah", "Vinayak"]]}, {"name": "user_roles", "cols": ["user_id", "role"], "rows": [["7", "viewer"], ["7", "critic"]]}], "problems": ["Fixed: each genre, cast member and role is one row, so search and the spoiler word list can use them directly"]}, {"k": "2NF", "nf": "Second Normal Form", "fr": ["FR12"], "status": "built", "say": "No column depends on only part of a composite key. MEMBERSHIP (club_id, user_id) keeps only the club role, the one fact that belongs to the pair.", "tables": [{"name": "club_members", "cols": ["club_id", "user_id", "role"], "rows": [["1", "7", "convener"], ["1", "9", "member"], ["1", "12", "co_convener"]]}, {"name": "clubs", "cols": ["id", "name", "is_public"], "rows": [["1", "Reel Club", "true"]]}], "problems": ["Fixed: the club name lives once in clubs, not on every membership row", "Club roles: convener, co_convener, member (CHECK)"]}, {"k": "3NF", "nf": "Third Normal Form", "fr": ["FR06", "FR07"], "status": "built", "say": "No column depends on another non-key column. Film details only in films, user details only in users.", "tables": [{"name": "users", "cols": ["id", "email", "display_name"], "rows": [["7", "asha@mail.com", "Asha"], ["9", "ravi@mail.com", "Ravi"]]}, {"name": "films", "cols": ["id", "title", "year", "tmdb_id"], "rows": [["1", "Drishyam", "2015", "350312"], ["2", "Tumbbad", "2018", "523380"]]}, {"name": "aspect_ratings", "cols": ["user_id", "film_id", "aspect", "value"], "rows": [["7", "1", "story", "4.5"], ["7", "1", "acting", "5"], ["9", "1", "story", "4"]]}], "problems": ["Fixed: changing Asha's email touches one row", "A film can exist before anyone logs it", "Deleting a diary entry never loses a user or club fact"]}, {"k": "On purpose", "nf": "Deliberate exceptions", "fr": ["FR13", "FR15", "FR07", "FR05"], "status": "mixed", "say": "Three places where we copy data on purpose, and why.", "exc": [["polls.result_json is stored when the poll closes", "A closed poll must never change, even if a member leaves later (FR13, FR15)", "built"], ["films.avg_rating as a stored copy", "Today the average is calculated from aspect_ratings when read, so it is always correct; a stored copy only if the film page gets slow (FR07)", "plan"], ["TMDB overview, poster and popularity kept as received", "CineLog only shows and searches them, never edits them (FR05)", "built"]]}, {"k": "Indexes", "nf": "Indexes", "fr": ["NFR01", "NFR03"], "status": "mixed", "say": "Indexes for the queries the pages run most. Most are already in the build; the final list waits for the Sprint 2 slow-query check.", "idx": [["films (title), films (year)", "search and filters", "built"], ["users (email) UNIQUE", "sign-in", "built"], ["reviews (film_id, state)", "visible reviews of a film", "built"], ["diary_entries (user_id, watched_on)", "a user's diary by date", "built"], ["review_reports (review_id)", "count reports of a review", "built"], ["polls (club_id)", "a club's polls", "built"], ["votes UNIQUE (poll_id, user_id)", "also speeds up vote counts", "built"], ["follow feed", "merged activity feed (FR18)", "prog"]]}]};
-const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const badge=s=>{const m={built:['s-built','Built'],prog:['s-prog','In progress'],plan:['s-plan','Planned'],bad:['s-bad','Not met']}[s]||['s-plan',s];return `<span class="badge ${m[0]}">${m[1]}</span>`};
-function tabs(root){$$('.tabs button',root).forEach(b=>b.onclick=()=>{$$('.tabs button',root).forEach(x=>x.classList.toggle('on',x===b));$$('[data-pane]',root).forEach(p=>p.classList.toggle('hide',p.dataset.pane!==b.dataset.tab))})}
+<h1><b>CineLog</b> Normalization in motion</h1>
+<p class="lead">How one flat sheet of film logs becomes the CineLog tables. Each scene applies one normal form and shows which update, insert and delete problems it removes. The last two scenes show where we broke the rule on purpose, and the indexes. The schema is now built in <code>backend/app/models.py</code> (36 tables, branch sprint-2), so each scene also shows what the code does today: the normal forms are in place, one of the three exceptions is built, one is planned, and most indexes exist while the rest wait for the load test.</p>
+<div class="tiles"><div class="tile"><b>3</b><small>normal forms</small></div><div class="tile"><b>3</b><small>anomalies removed</small></div><div class="tile"><b class="o">3</b><small>deliberate exceptions</small></div><div class="tile"><b>7</b><small>indexes</small></div><div class="tile"><b style="color:#2f8f5b">36</b><small>tables built</small></div><div class="tile"><b style="color:#2f8f5b">4 of 7</b><small>design indexes built</small></div><div class="tile"><b style="color:#b7791f">1</b><small>exception planned</small></div></div>
+<div class="stleg"><span><span class="bs b">Built</span>in the code and tested</span><span><span class="bs p">In progress</span>works in part, being finished</span><span><span class="bs l">Planned</span>agreed for Sprint 3</span><span><span class="bs d">Built differently</span>same need, different table or rule</span></div><div class="tabs" id="tabs"></div>
+<div class="card">
+<h2 id="ttl"></h2><p id="sub"></p><div id="chips"></div>
+<div class="stage" id="stage"></div>
+<div class="btns"><button class="play" id="go">▶ Play</button><button class="sec" id="nx">Next scene →</button></div>
+<div class="con" id="con"></div>
+<div class="an" id="an"></div>
+<div class="rule" id="rule"></div>
+<div id="bld"></div>
+</div>
 
-let cur=0,timer=null;const S=DATA.scenes;
-$('#sc').innerHTML=S.map((s,i)=>`<button data-i="${i}">${String(i+1).padStart(2,'0')} ${esc(s.k)}</button>`).join('');
-$$('#sc button').forEach(b=>b.onclick=()=>{stop();go(+b.dataset.i)});
-function tbl(t){return `<div class="small" style="font-weight:700;margin:10px 0 4px" >${esc(t.name)}</div><div style="overflow:auto"><table class="t mono"><tr>${t.cols.map(c=>`<th>${esc(c)}</th>`).join('')}</tr>`+
- t.rows.map((r,i)=>'<tr>'+r.map((v,j)=>`<td style="${(t.bad||[]).some(b=>b[0]===i&&b[1]===j)?'background:rgba(248,113,113,.18);color:#fecaca':''}">${esc(v)}</td>`).join('')+'</tr>').join('')+'</table></div>'}
-function go(i){cur=(i+S.length)%S.length;const s=S[cur];$$('#sc button').forEach((b,k)=>b.classList.toggle('on',k===cur));
- let h=`<h2>${esc(s.nf)}</h2><p class="muted">${esc(s.say)}</p>`;
- if(s.tables)h+=s.tables.map(tbl).join('');
- if(s.exc)h+='<table class="t"><tr><th>Exception</th><th>Why</th><th>Status</th></tr>'+s.exc.map(e=>`<tr><td class="mono">${esc(e[0])}</td><td>${esc(e[1])}</td><td>${badge(e[2])}</td></tr>`).join('')+'</table>';
- if(s.idx)h+='<table class="t"><tr><th>Index</th><th>Used for</th><th>Status</th></tr>'+s.idx.map(e=>`<tr><td class="mono">${esc(e[0])}</td><td>${esc(e[1])}</td><td>${badge(e[2])}</td></tr>`).join('')+'</table>';
- $('#stage').innerHTML=h;
- $('#side').innerHTML=`<h2>${s.problems?(cur===0?'Problems it causes':'What this step fixes'):'Status'}</h2>`+(s.problems?'<ul style="padding-left:18px;margin:0">'+s.problems.map(p=>`<li style="margin:0 0 6px">${esc(p)}</li>`).join('')+'</ul>':'<p class="muted">See the table: each line says whether it is built, in progress or planned.</p>')+
- `<p class="small muted" style="margin-top:14px">Requirements: ${s.fr.join(', ')}</p><p class="small muted">Code: <span class="mono">backend/app/models.py</span> (first version built; review against the design in progress)</p>`}
-function stop(){clearInterval(timer);timer=null;$('#play').textContent='▶ Play all'}
-$('#prev').onclick=()=>{stop();go(cur-1)};$('#next').onclick=()=>{stop();go(cur+1)};
-$('#play').onclick=()=>{if(timer){stop();return}go(0);$('#play').textContent='■ Stop';timer=setInterval(()=>{if(cur===S.length-1){stop();return}go(cur+1)},3500)};
-go(0);
+<div class="foot">CineLog · Mini Project, Theme 01 · Role based management · Guide: Prof. Vijay B · The scenes illustrate the design; the In the build boxes come from backend/app/models.py on branch sprint-2.</div>
+</div><script>const STN={b:'Built',p:'In progress',l:'Planned',d:'Built differently',x:'Not met yet'};const st=s=>`<span class="bs ${s}">${STN[s]}</span>`;
+
+
+const $=id=>document.getElementById(id);
+function T(name,tag,head,rows,cls={}){return '<div class="tbl"><h4>'+name+'<span>'+tag+'</span></h4><table><tr>'+head.map(h=>'<th>'+h+'</th>').join('')+'</tr>'+rows.map((r,i)=>'<tr>'+r.map((c,j)=>'<td class="'+((cls[j]||'')+' '+((cls.cell||{})[i+','+j]||''))+'">'+c+'</td>').join('')+'</tr>').join('')+'</table></div>'}
+const AN=[['Update anomaly','A film title is stored on every log row; fixing a typo means changing many rows.'],['Insert anomaly','A new film cannot be stored until somebody logs it.'],['Delete anomaly','Deleting the last log of a film loses the film itself.']];
+const BS=[["d", "Where we start", "This sheet is the S1.2 starting point, not something CineLog stores. The import path that replaces it is the diary and aspect forms (POST /diary, PUT /films/{id}/aspects).", "backend/app/routers/diary.py"], ["b", "aspect_ratings", "Built one row per (user, film, aspect) with CHECK aspect in the 5 names and CHECK value 0.5 to 5. Cast, genres and keywords were also split out of the film row: cast_members, film_genres, film_keywords.", "test_diary_watchlist_aspects_and_taste"], ["b", "users · films · aspect_ratings", "Built exactly this way. Users and films each hold their own facts once; aspect_ratings keeps only (user_id, film_id, aspect, value) with an index on (film_id, aspect).", "backend/app/models.py · test_api.py"], ["b", "reviews · user_roles · club_members", "Built. reviews stores user_id and film_id only; roles are rows in user_roles (CHECK on the 5 names); club_role lives in club_members (convener, co_convener, member). The build has 36 tables, each fact stored once.", "TC-E2-03 · TC-E4-08"], ["p", "1 built · 1 planned · 1 built differently", "polls.result_json: built, written once at close, then 409 on change (TC-E2-02). films.avg_rating: planned; today the average is calculated from aspect_ratings when the page is read, so it is always correct. genres and cast: built differently, as their own tables instead of copied lists.", "TC-E2-02 · test_poll_lifecycle_one_vote_and_frozen_result"], ["p", "4 of 7 built · more added in the build", "Built: users(email), reviews(film_id, state), votes UNIQUE(poll_id, user_id), diary_entries(user_id, watched_on). Also built: films(title), films(year), aspect_ratings(film_id, aspect), notifications(user_id, read_at). Not yet: reviews(state, risk) and user_strikes(user_id, given_at) wait for the 100-user load test (NFR-03); ACTIVITY has no table, the feed uses the diary and review indexes.", "NFR-03 load test · Sprint 3"]],IX=["b", "b", "l", "b", "b", "d", "p"];
+const S=[
+{t:'Flat sheet',h:'Where we start: one flat sheet',d:'This is how a film club keeps logs in a spreadsheet today (S1.2). One row holds the user, the film, the cast list and all five aspect scores.',fr:['FR-06','FR-07'],bad:[1,1,1],
+ html:()=>T('film_log','flat sheet',['user','email','film','year','cast','story','acting','visuals','music','pacing'],[['asha','asha@mail.com','Drishyam','2015','Ajay D, Tabu, Shriya S','4.5','5','4','–','4'],['ravi','ravi@mail.com','Drishyam','2015','Ajay D, Tabu, Shriya S','4','4.5','–','–','–'],['asha','asha@mail.com','Tumbbad','2018','Sohum S, Jyoti M','5','4','5','4.5','4']],{4:'bad',cell:{'0,8':'bad','1,7':'bad','1,8':'bad','1,9':'bad'}}),
+ log:['<span class="no">cast holds a list in one cell</span>','<span class="no">empty aspect cells when a user rates only some aspects</span>','<span class="no">Drishyam, 2015 and its cast are repeated on every row</span>'],
+ rule:'Problems: repeated facts, lists in one cell and empty cells. All three anomalies are possible.'},
+{t:'1NF',h:'First Normal Form (1NF): one value per cell',d:'Each aspect score becomes its own row, so a user can rate any subset of aspects (FR-07) with no empty cells.',fr:['FR-07'],bad:[1,1,1],
+ html:()=>T('rating_row','1NF',['user','email','film','year','aspect','score'],[['asha','asha@mail.com','Drishyam','2015','Story','4.5'],['asha','asha@mail.com','Drishyam','2015','Acting','5'],['ravi','ravi@mail.com','Drishyam','2015','Story','4'],['asha','asha@mail.com','Tumbbad','2018','Story','5']],{0:'key',2:'key',4:'key'}),
+ log:['<span class="ok">5 aspect columns → rows (user, film, aspect, score)</span>','<span class="ok">no empty cells: unrated aspects have no row</span>','<span class="am">key is now (user, film, aspect)</span>','<span class="no">email and year still repeat on every row</span>'],
+ rule:'1NF is reached, but email depends only on user and year only on film: partial dependencies on a composite key.'},
+{t:'2NF',h:'Second Normal Form (2NF): no part-key facts',d:'Facts that depend on only part of the key move to their own tables. The film and the user are now stored once.',fr:['FR-06','FR-07'],bad:[0,0,0],
+ html:()=>T('USER','2NF',['user_id','email'],[['1','asha@mail.com'],['2','ravi@mail.com']],{0:'key'})+T('FILM','2NF',['film_id','title','year'],[['101','Drishyam','2015'],['102','Tumbbad','2018']],{0:'key'})+T('ASPECT_RATING','2NF',['user_id','film_id','aspect','score'],[['1','101','Story','4.5'],['1','101','Acting','5'],['2','101','Story','4'],['1','102','Story','5']],{0:'key',1:'key',2:'key'}),
+ log:['<span class="ok">USER (user_id → email)</span>','<span class="ok">FILM (film_id → title, year)</span>','<span class="ok">ASPECT_RATING keeps only what depends on the whole key</span>','<span class="ok">a title typo is fixed in one row; a film can exist with no ratings</span>'],
+ rule:'All three anomalies are gone. A film is stored once, can exist before anybody rates it, and survives when its ratings are deleted.'},
+{t:'3NF',h:'Third Normal Form (3NF): no fact about a non-key column',d:'A review stores only film_id and user_id. Titles, roles and club names are never copied into other tables.',fr:['FR-03','FR-09','FR-12'],bad:[0,0,0],
+ html:()=>T('REVIEW','3NF',['review_id','user_id','film_id','state','risk'],[['41','1','101','published','0.82'],['42','2','101','pending_scan','–']],{0:'key'})+T('USER_ROLE','3NF',['user_id','role_id'],[['1','Viewer'],['1','Critic'],['2','Viewer']],{0:'key',1:'key'})+T('MEMBERSHIP','3NF',['club_id','user_id','club_role'],[['5','1','convener'],['5','2','member']],{0:'key',1:'key'}),
+ log:['<span class="ok">REVIEW holds ids only; the title stays in FILM</span>','<span class="ok">roles are rows in USER_ROLE, not a column on USER</span>','<span class="ok">club_role depends on (club_id, user_id), so it lives in MEMBERSHIP</span>','<span class="am">design: 23 tables · build: 36 tables, each fact stored once</span>'],
+ rule:'Every non-key column depends on the key, the whole key and nothing but the key. This is the form the CineLog schema is designed to.'},
+{t:'On-purpose exceptions',h:'Where we break the rule on purpose',d:'Three columns can be calculated from other tables. We store them anyway, each for a measured reason and each with a guard that keeps it correct.',fr:['FR-07','FR-13','NFR-03'],bad:[0,0,0],
+ html:()=>T('FILM','stored on purpose',['film_id','title','avg_rating','genres'],[['101','Drishyam','<span id="avg">4.38</span>','Thriller, Drama'],['102','Tumbbad','4.50','Horror, Fantasy']],{0:'key',2:'drv',3:'drv'})+T('POLL','stored on purpose',['poll_id','state','result'],[['7','closed','option 21']],{0:'key',2:'drv'})+'<div style="margin-top:6px"><div class="brow"><span>read film page with a stored average</span><div><div class="bar g" id="b1" style="width:4px"></div></div><b id="v1">–</b></div><div class="brow"><span>recalculate from every rating</span><div><div class="bar" id="b2" style="width:4px"></div></div><b id="v2">–</b></div></div>',
+ log:["INSERT INTO aspect_rating VALUES (3, 101, 'Story', 5);",'<span class="am">design: trigger sets FILM.avg_rating 4.38 → 4.50 (same transaction) · planned, not built yet</span>','<span class="ok">avg_rating: 1 row read per film page, kept correct by the trigger</span>','<span class="ok">POLL.result: written once at close, then 409 on any change (FR-13)</span>','<span class="ok">genres, cast: copied whole from TMDB, searched in the E1 index</span>'],
+ fx:()=>{setTimeout(()=>{$('avg').textContent='4.50';$('b1').style.width='6%';$('v1').textContent='1 row';$('b2').style.width='92%';$('v2').textContent='n rows'},900)},
+ rule:'A film page is read far more often than it is rated, so reading one stored value helps the API target of p95 (95th percentile) ≤ 300 ms. The bars compare rows read, not measured times.'},
+{t:'Indexes',h:'Indexes for the queries we run most',d:'Each B+-tree index serves one frequent query. Without it the database reads the whole table; with it, a few pages.',fr:['NFR-03','NFR-01'],bad:[0,0,0],
+ html:()=>'<div class="tbl" style="display:block;margin:0"><h4>B+-tree indexes<span>design list</span></h4><table style="width:100%;font-family:var(--sans)"><tr><th>Index</th><th>Query it serves</th><th>In the build</th></tr>'+[['USER (email)','Sign-in'],['REVIEW (film_id, state)','Published reviews of a film'],['REVIEW (state, risk)','Rebuilding the moderator queue'],['VOTE (poll_id, user_id)','One-vote check and live counts'],['DIARY_ENTRY (user_id, watched_on)','A diary in date order, streaks, year in review'],['ACTIVITY (user_id, created_at)','The feed, newest first'],['STRIKE (user_id, given_at)','Counting strikes in the last 30 days']].map((r,i)=>'<tr><td class="m">'+r[0]+'</td><td style="white-space:normal">'+r[1]+'</td><td>'+st(IX[i])+'</td></tr>').join('')+'</table></div><div style="margin-top:10px"><div class="brow"><span>full table scan</span><div><div class="bar" id="b2" style="width:4px"></div></div><b id="v2">–</b></div><div class="brow"><span>index lookup</span><div><div class="bar g" id="b1" style="width:4px"></div></div><b id="v1">–</b></div></div>',
+ log:["SELECT * FROM review WHERE film_id = 101 AND state = 'published';",'<span class="no">without index: every review row is checked · O(n)</span>','<span class="ok">with REVIEW (film_id, state): walk the tree · O(log n)</span>','<span class="ok">built: ix_reviews_film_state on (film_id, state)</span>','<span class="am">EXPLAIN check and the remaining indexes come with the 100-user load test</span>'],
+ fx:()=>{setTimeout(()=>{$('b2').style.width='92%';$('v2').textContent='O(n)';$('b1').style.width='9%';$('v1').textContent='O(log n)'},700)},
+ rule:'Indexes speed up reads but slow down writes a little, so we index only the queries listed here. Four of the seven are built; the rest are checked against real query plans in the Sprint 3 load test.'}
+];
+let cur=0,tm=[];
+function render(played){tm.forEach(clearTimeout);tm=[];const s=S[cur];
+  const tb=$('tabs');tb.innerHTML='';S.forEach((x,i)=>{const b=document.createElement('button');b.innerHTML='<i>0'+(i+1)+'</i>'+x.t;if(i===cur)b.className='on';b.onclick=()=>{cur=i;render()};tb.appendChild(b)});
+  $('ttl').textContent=s.h;$('sub').textContent=s.d;$('chips').innerHTML=s.fr.map(c=>'<span class="chip">'+c+'</span>').join('');
+  $('stage').innerHTML=s.html();$('con').innerHTML='<span class="dim">Press ▶ Play to apply this step.</span>';$('rule').style.visibility='hidden';$('rule').textContent=s.rule;
+  const bb=BS[cur];$('bld').innerHTML='<div class="bld '+bb[0]+'"><b style="font:700 12px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--mut)">In the build</b><br>'+st(bb[0])+'<code>'+bb[1]+'</code><p>'+bb[2]+'</p><div class="mm">Evidence: '+bb[3]+'</div></div>';
+  const prev=cur?S[cur-1].bad:[1,1,1];$('an').innerHTML=AN.map((a,i)=>'<div class="a '+(prev[i]?'bad':'ok')+'" id="a'+i+'"><b>'+a[0]+'</b><small>'+a[1]+'</small><em>'+(prev[i]?'possible':'removed')+'</em></div>').join('')}
+function play(){render();const s=S[cur],con=$('con');con.innerHTML='';
+  s.log.forEach((l,i)=>tm.push(setTimeout(()=>{con.innerHTML+=l+'\n';if(i===s.log.length-1){s.bad.forEach((b,k)=>{const a=$('a'+k);a.className='a '+(b?'bad':'ok');a.querySelector('em').textContent=b?'possible':'removed'});$('rule').style.visibility='visible'}},500*i+200)));
+  if(s.fx)s.fx()}
+$('go').onclick=play;$('nx').onclick=()=>{cur=(cur+1)%S.length;render()};render();
+
 </script></body></html>
