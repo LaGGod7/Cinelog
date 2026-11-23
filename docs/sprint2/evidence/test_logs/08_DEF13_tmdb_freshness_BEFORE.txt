@@ -1,0 +1,83 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.18, pytest-9.2.0, pluggy-1.7.0 -- /home/claude/venv/bin/python
+rootdir: /home/claude/cinelog_repo/backend
+plugins: anyio-4.16.0, cov-7.1.0
+collecting ... collected 5 items
+
+tests/test_tmdb_freshness.py::test_tc_e1_12_search_shows_a_new_release_even_when_older_films_match FAILED [ 20%]
+tests/test_tmdb_freshness.py::test_tc_e1_13_autocomplete_shows_a_new_release_next_to_local_matches FAILED [ 40%]
+tests/test_tmdb_freshness.py::test_tc_e1_14_short_queries_and_no_key_still_stay_local PASSED [ 60%]
+tests/test_tmdb_freshness.py::test_tc_e3_07_catalogue_sync_runs_on_a_schedule FAILED [ 80%]
+tests/test_tmdb_freshness.py::test_tc_e3_08_a_finished_sync_records_when_it_ran FAILED [100%]
+
+=================================== FAILURES ===================================
+_____ test_tc_e1_12_search_shows_a_new_release_even_when_older_films_match _____
+
+app = <fastapi.applications.FastAPI object at 0x7f9feb5db770>
+admin = <conftest.Api object at 0x7f9fea9b5e80>, films = [1, 2, 3]
+
+    def test_tc_e1_12_search_shows_a_new_release_even_when_older_films_match(app, admin, films):
+        _import_old_ones(app, admin)
+        _fake_tmdb(app, OLD_AND_NEW)
+        titles = [f["title"] for f in admin.get("/films/search", params={"q": "galaxy raiders"}).json()]
+>       assert "Galaxy Raiders: Reborn" in titles                  # before the fix: only the 3 old films
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert 'Galaxy Raiders: Reborn' in ['Galaxy Raiders', 'Galaxy Raiders II', 'Galaxy Raiders III']
+
+tests/test_tmdb_freshness.py:30: AssertionError
+_____ test_tc_e1_13_autocomplete_shows_a_new_release_next_to_local_matches _____
+
+app = <fastapi.applications.FastAPI object at 0x7f9feaa30cd0>
+admin = <conftest.Api object at 0x7f9fd272efd0>, films = [1, 2, 3]
+
+    def test_tc_e1_13_autocomplete_shows_a_new_release_next_to_local_matches(app, admin, films):
+        _import_old_ones(app, admin)
+        _fake_tmdb(app, OLD_AND_NEW)
+        titles = [f["title"] for f in admin.get("/films/autocomplete", params={"q": "galaxy"}).json()]
+>       assert "Galaxy Raiders: Reborn" in titles and len(titles) <= 10
+E       AssertionError: assert ('Galaxy Raiders: Reborn' in ['Galaxy Raiders', 'Galaxy Raiders II', 'Galaxy Raiders III'])
+
+tests/test_tmdb_freshness.py:38: AssertionError
+_______________ test_tc_e3_07_catalogue_sync_runs_on_a_schedule ________________
+
+app = <fastapi.applications.FastAPI object at 0x7f9fd1ecd090>
+admin = <conftest.Api object at 0x7f9fd1ead5b0>, films = [1, 2, 3]
+
+    def test_tc_e3_07_catalogue_sync_runs_on_a_schedule(app, admin, films):
+        from app.services import jobs
+        calls = []
+        jobs_submit = jobs.submit_sync
+        jobs.submit_sync = lambda a, pages=5: calls.append(pages)
+        try:
+>           assert not jobs.maybe_auto_sync(app, 0.0)                    # no TMDB key: never
+                       ^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'app.services.jobs' has no attribute 'maybe_auto_sync'
+
+tests/test_tmdb_freshness.py:55: AttributeError
+______________ test_tc_e3_08_a_finished_sync_records_when_it_ran _______________
+
+app = <fastapi.applications.FastAPI object at 0x7f9fd26a7890>
+admin = <conftest.Api object at 0x7f9fe98510f0>
+
+    def test_tc_e3_08_a_finished_sync_records_when_it_ran(app, admin):
+        import httpx
+        from app.clients.tmdb import TMDBClient
+        from app.services import jobs
+    
+        def handler(req):
+            if req.url.path.endswith(("/movie/popular", "/movie/now_playing", "/movie/upcoming")):
+                return httpx.Response(200, json={"results": []})
+            return httpx.Response(404)
+        app.state.tmdb = TMDBClient("k", rate=1000, client=httpx.Client(transport=httpx.MockTransport(handler)))
+        out = jobs.sync_catalog(app, pages=1)
+>       assert out["running"] is False and out["last_finished"]
+                                           ^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'last_finished'
+
+tests/test_tmdb_freshness.py:84: KeyError
+=========================== short test summary info ============================
+FAILED tests/test_tmdb_freshness.py::test_tc_e1_12_search_shows_a_new_release_even_when_older_films_match
+FAILED tests/test_tmdb_freshness.py::test_tc_e1_13_autocomplete_shows_a_new_release_next_to_local_matches
+FAILED tests/test_tmdb_freshness.py::test_tc_e3_07_catalogue_sync_runs_on_a_schedule
+FAILED tests/test_tmdb_freshness.py::test_tc_e3_08_a_finished_sync_records_when_it_ran
+========================= 4 failed, 1 passed in 1.01s ==========================
