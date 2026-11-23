@@ -25,11 +25,24 @@ def _films_in_order(db: Session, ids: List[int]) -> List[Film]:
     return [by_id[i] for i in ids if i in by_id]
 
 
+ONLINE_SLOTS = 3  # places in a 10-item list kept for films TMDB knows and we do not have yet
+
+
+def _with_online(app, q: str, ids: List[int], k: int = 10) -> List[int]:
+    """Local matches first, plus up to 3 films TMDB found that are new to us (imported on the spot).
+
+    Before this, TMDB was asked only when the local catalogue had no match (autocomplete) or fewer than 3 (search),
+    so a new release never appeared once a few older films shared its words ('superman', 'dune'). Answers are
+    remembered for 10 minutes per query and TMDB is skipped for 45 s after a failure (services/online.py)."""
+    if len(q.strip()) < 3:
+        return ids[:k]
+    new = [i for i in find_online(app, q, 5) if i not in ids][:ONLINE_SLOTS]
+    return ids[: k - len(new)] + new
+
+
 @router.get("/films/autocomplete")
 def autocomplete(q: str, request: Request, db: Session = Depends(get_db)):
-    ids = request.app.state.search.autocomplete(q)
-    if not ids and len(q.strip()) >= 3:  # nothing in our catalogue (yet): ask TMDB and import what it finds
-        ids = ids + [i for i in find_online(request.app, q, 5) if i not in ids]
+    ids = _with_online(request.app, q, request.app.state.search.autocomplete(q))
     return [{"id": f.id, "title": f.title, "year": f.year} for f in _films_in_order(db, ids)]
 
 
@@ -37,8 +50,8 @@ def autocomplete(q: str, request: Request, db: Session = Depends(get_db)):
 def search(request: Request, q: str = "", genre: Optional[str] = None, cast: Optional[str] = None,
            year: Optional[int] = None, db: Session = Depends(get_db)):
     ids = request.app.state.search.search(q, genre, cast, year, 10)
-    if len(ids) < 3 and len(q.strip()) >= 3 and not (genre or cast or year):
-        ids = ids + [i for i in find_online(request.app, q, 5) if i not in ids]
+    if not (genre or cast or year):  # filters search the local catalogue only
+        ids = _with_online(request.app, q, ids)
     return [film_dict(f) for f in _films_in_order(db, ids)]
 
 

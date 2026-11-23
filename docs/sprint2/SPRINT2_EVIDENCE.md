@@ -7,8 +7,8 @@ a commit or a log in this repository. Sprint 2 work is on branch `sprint-2`; the
 `d2608f6` and the starting point (end of the Sprint 1 build) is `222c581`.
 
 **Honest status in one paragraph.** A first working version of all four engines is built, runnable and partly tested
-(188 automated tests pass, 1 skipped, 93% line coverage). Sprint 2 testing found **6 new product defects (DEF-07 to
-DEF-12)**; all six are fixed and retested. Two quality targets are **not met yet** and move to Sprint 3: spoiler
+(193 automated tests pass, 1 skipped, 93% line coverage). Sprint 2 testing found **7 new product defects (DEF-07 to
+DEF-13)**; all seven are fixed and retested. Two quality targets are **not met yet** and move to Sprint 3: spoiler
 accuracy (NFR02: 53.7% of spoiler reviews blurred and 12.0% of clean reviews wrongly blurred, against ≥ 85% and ≤ 10%)
 and spoiler scan time (49.9 ms mean per review against ≤ 20 ms). Load, soak, security-scan and usability tests
 (NFR03, NFR05, NFR06, NFR08), end-to-end integration and PostgreSQL testing are planned for Sprint 3.
@@ -293,6 +293,7 @@ Failed tests are kept: the "before" logs stay in the repository next to the rete
 | DEF-10 / TC-E3-04 | Caches could not show thrashing: no eviction counter | `evictions` + `stats()` in LRUCache; shown on /health | 18d5554 | TC-E3-04, TC-E3-06 — Pass |
 | DEF-11 / full-suite log | 1,084 warnings: `datetime.utcnow()` deprecated in Python 3.12+ | 31 calls → `datetime.now(timezone.utc)` (naive UTC kept) | d49df7b | full suite 187 passed; 758 warnings left (framework, Sprint 3) |
 | DEF-12 / TC-E1-11 | "Loved it.Dr. Crowe…" split as "Loved it.Dr." | Rule needed 3 lowercase letters before the stop; now 2. Gold labels re-aligned (118 → 120 spoiler sentences) | 6258a5f (fail), a3601ad (fix) | TC-E1-11, gold alignment test — Pass |
+| DEF-13 / TC-E1-12, TC-E1-13, TC-E3-07, TC-E3-08 | Reported by the team (23-11-2026): new TMDB releases did not show up. Search asked TMDB only when the catalogue had < 3 matches (autocomplete: 0), so 3 older films with the same words hid a new release; and the catalogue never synced on its own (FR05 asks for a schedule) | Search and autocomplete now ask TMDB for every 3+ letter query (cached 10 min) and keep up to 3 of 10 places for new films; the 30-second timer queues a sync 2 min after start-up and then every `SYNC_EVERY_HOURS` (default 6); sync records `last_finished` | see `git log` | TC-E1-12/13/14, TC-E3-07/08 — Pass; full suite 193 passed |
 
 Mistakes in the tests themselves (not product defects), kept in `test_logs/00_first_run_with_3_test_mistakes.txt`:
 

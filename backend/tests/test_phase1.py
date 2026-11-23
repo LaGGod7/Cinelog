@@ -290,7 +290,9 @@ def test_search_finds_a_new_film_on_tmdb_imports_it_and_serves_it_locally_next_t
     with app.state.db.session() as s:
         terms = {t.term for t in s.query(SpoilerTerm).filter_by(film_id=r[0]["id"])}
     assert "zed marlowe" in terms and "dana doe" in terms                              # character AND actor names seeded
-    assert len(seen) <= n + 1                                                           # at most the one search call
+    # Sprint 2 (DEF-13): TMDB is now asked for every 3+ letter query (once per query, remembered for 10 minutes), so
+    # each of the two new queries above may cost one search call - but nothing already imported is fetched again.
+    assert len(seen) <= n + 2 and not any("/movie/" in p for p in seen[n:])
 
 
 def test_autocomplete_falls_back_to_tmdb_only_for_real_queries(app, admin, films):

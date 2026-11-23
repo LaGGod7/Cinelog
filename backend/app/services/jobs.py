@@ -95,6 +95,7 @@ def sync_catalog(app, pages: int = 5) -> dict:
     for fid in new_ids:
         submit_plot_fetch(app, fid)
     status["running"] = False
+    status["last_finished"] = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None).isoformat(timespec="seconds")
     return dict(status)
 
 
@@ -106,6 +107,25 @@ def refresh_search(app) -> bool:
 
 def submit_sync(app, pages: int = 5) -> None:
     app.state.pool.submit(Job("sync", lambda: sync_catalog(app, pages), BATCH, max_retries=2))
+
+
+def maybe_auto_sync(app, now: float) -> bool:
+    """Queue a catalogue sync when one is due (FR05). Called by the 30-second timer; returns True if a sync was queued.
+
+    Due = TMDB is configured, SYNC_EVERY_HOURS > 0, no sync is running, and the next-sync time has passed.
+    The first sync is due 2 minutes after start-up, so new releases arrive without anyone pressing Admin > Sync."""
+    st = app.state
+    hours = st.settings.sync_every_hours
+    if st.tmdb is None or hours <= 0 or st.sync_status.get("running"):
+        return False
+    if not hasattr(st, "next_auto_sync"):
+        st.next_auto_sync = now + 120.0
+    if now < st.next_auto_sync:
+        return False
+    st.next_auto_sync = now + hours * 3600.0
+    st.sync_status["auto"] = True
+    submit_sync(app, st.settings.sync_pages)
+    return True
 
 
 def refit_shield_space(app) -> None:

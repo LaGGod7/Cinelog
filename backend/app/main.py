@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import threading
+import time
 from typing import Optional
 
 from fastapi import FastAPI, Request
@@ -170,6 +171,7 @@ def _periodic(app: FastAPI) -> None:
         try:
             st.pool.submit(Job("close-polls", lambda: jobs.close_due_polls(app), BATCH, max_retries=0))
             st.pool.submit(Job("search-refresh", lambda: jobs.refresh_search(app), BATCH, max_retries=0))
+            jobs.maybe_auto_sync(app, time.monotonic())
         finally:
             st.timer = threading.Timer(30.0, tick)
             st.timer.daemon = True

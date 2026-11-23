@@ -64,6 +64,10 @@ class Settings:
     # external services
     tmdb_api_key: str = field(default_factory=lambda: os.getenv("TMDB_API_KEY", ""))
     tmdb_rate: float = field(default_factory=lambda: float(os.getenv("TMDB_RATE", "30")))
+    # automatic catalogue sync (FR05 "synced from TMDB on a schedule"): first run 2 minutes after start-up, then every
+    # SYNC_EVERY_HOURS hours; 0 turns it off. Each run pulls now-playing, upcoming and SYNC_PAGES pages of popular films.
+    sync_every_hours: float = field(default_factory=lambda: float(os.getenv("SYNC_EVERY_HOURS", "6")))
+    sync_pages: int = field(default_factory=lambda: int(os.getenv("SYNC_PAGES", "3")))
     google_client_id: str = field(default_factory=lambda: os.getenv("GOOGLE_CLIENT_ID", ""))
     google_client_secret: str = field(default_factory=lambda: os.getenv("GOOGLE_CLIENT_SECRET", ""))
     google_redirect_uri: str = field(default_factory=lambda: os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:8000/api/auth/google/callback"

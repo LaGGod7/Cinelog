@@ -1,0 +1,17 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.18, pytest-9.2.0, pluggy-1.7.0 -- /home/claude/venv/bin/python
+rootdir: /home/claude/cinelog_repo/backend
+plugins: anyio-4.16.0, cov-7.1.0
+collecting ... collected 29 items / 20 deselected / 9 selected
+
+tests/test_tmdb_freshness.py::test_tc_e1_12_search_shows_a_new_release_even_when_older_films_match PASSED [ 11%]
+tests/test_tmdb_freshness.py::test_tc_e1_13_autocomplete_shows_a_new_release_next_to_local_matches PASSED [ 22%]
+tests/test_tmdb_freshness.py::test_tc_e1_14_short_queries_and_no_key_still_stay_local PASSED [ 33%]
+tests/test_tmdb_freshness.py::test_tc_e3_07_catalogue_sync_runs_on_a_schedule PASSED [ 44%]
+tests/test_tmdb_freshness.py::test_tc_e3_08_a_finished_sync_records_when_it_ran PASSED [ 55%]
+tests/test_phase1.py::test_search_finds_a_new_film_on_tmdb_imports_it_and_serves_it_locally_next_time PASSED [ 66%]
+tests/test_phase1.py::test_autocomplete_falls_back_to_tmdb_only_for_real_queries PASSED [ 77%]
+tests/test_phase1.py::test_tmdb_failure_never_breaks_search_and_is_visible_to_admins PASSED [ 88%]
+tests/test_phase1.py::test_search_without_a_tmdb_key_just_searches_the_local_catalogue PASSED [100%]
+
+======================= 9 passed, 20 deselected in 1.26s =======================
