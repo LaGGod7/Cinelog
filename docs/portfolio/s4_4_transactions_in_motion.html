@@ -1,0 +1,83 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CineLog Transactions in Motion</title><style>
+:root{--bg:#0d1020;--panel:#151a30;--panel2:#1c2240;--line:#2a3158;--text:#e8eaf6;--muted:#9aa3c7;--brand:#ff6a2b;
+--acc:#a78bfa;--cat:#2dd4bf;--diary:#fbbf24;--rev:#fb923c;--club:#f472b6;--sup:#94a3b8;
+--ok:#34d399;--prog:#fbbf24;--plan:#60a5fa;--bad:#f87171}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 "Segoe UI",system-ui,-apple-system,Arial,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 18px 40px}
+h1{font:700 30px/1.2 Cambria,Georgia,serif;margin:0 0 6px}h1 .b{color:var(--brand)}
+h2{font:700 18px/1.3 Cambria,Georgia,serif;margin:0 0 10px}
+.lead{color:var(--muted);max-width:900px;margin:0 0 16px}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 14px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 16px;min-width:110px}
+.stat b{display:block;font:700 26px/1.1 Cambria,Georgia,serif}.stat span{color:var(--muted);font-size:12.5px}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px;font-size:13px;color:var(--muted)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.badge{display:inline-block;border-radius:999px;padding:1px 9px;font-size:12px;font-weight:700;white-space:nowrap}
+.s-built{background:rgba(52,211,153,.15);color:var(--ok)}.s-prog{background:rgba(251,191,36,.15);color:var(--prog)}
+.s-plan{background:rgba(96,165,250,.15);color:var(--plan)}.s-bad{background:rgba(248,113,113,.15);color:var(--bad)}
+.tabs{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px;margin:0 0 14px;flex-wrap:wrap}
+.tabs button,.btn{background:transparent;color:var(--text);border:0;border-radius:9px;padding:7px 14px;font:600 14px inherit;cursor:pointer}
+.tabs button.on{background:var(--text);color:var(--bg)}
+.btn{background:var(--panel2);border:1px solid var(--line)}.btn:hover{border-color:var(--brand)}.btn.pri{background:var(--brand);border-color:var(--brand);color:#fff}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1.35fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:860px){.g2,.g3{grid-template-columns:1fr}}
+.muted{color:var(--muted)}.small{font-size:13px}.mono{font-family:Consolas,"Courier New",monospace;font-size:13px}
+table.t{width:100%;border-collapse:collapse;font-size:13.5px}table.t th,table.t td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+table.t th{color:var(--muted);font-weight:600}
+.chip{display:inline-block;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:3px 9px;margin:3px;font-size:13px;cursor:pointer}
+.chip:hover{border-color:var(--brand)}.chip.on{border-color:var(--brand);background:#2a1b17}
+.hide{display:none!important}
+.foot{margin-top:18px;color:var(--muted);font-size:12.5px}
+pre.code{background:#0a0d1a;border:1px solid var(--line);border-radius:10px;padding:10px 12px;overflow:auto;margin:6px 0;font:12.5px/1.45 Consolas,"Courier New",monospace;color:#dbe1ff;white-space:pre-wrap}
+</style></head><body><div class="wrap">
+<h1><span class="b">CineLog</span> Transactions in motion</h1><p class="lead">One user action is one database transaction: it commits fully or rolls back fully. Slow work (spoiler scan, TMDB, email) runs outside it as an E3 background job. Run each transaction step by step, or set two sessions against each other in the clash simulator.</p>
+<div class="stats"><div class="stat"><b style="color:var(--text)">10</b><span>transactions</span></div><div class="stat"><b style="color:var(--ok)">10</b><span>built</span></div><div class="stat"><b style="color:var(--brand)">3</b><span>clash scenarios</span></div><div class="stat"><b style="color:var(--cat)">WAL</b><span>SQLite mode now</span></div><div class="stat"><b style="color:var(--ok)">100 → 0</b><span>voters → duplicates</span></div><div class="stat"><b style="color:var(--prog)">2</b><span>checks in progress</span></div></div><div class="legend"><span><span class="badge s-built">Built</span> in the first version of the code</span>
+<span><span class="badge s-prog">In progress</span> being finished or tested now</span>
+<span><span class="badge s-plan">Planned</span> agreed, not built yet</span></div>
+<div class="tabs" id="tb"><button class="on" data-tab="tx">Transactions T1–T10</button><button data-tab="clash">Clash simulator</button><button data-tab="iso">Isolation &amp; checks</button></div>
+<div data-pane="tx"><div class="grid g2"><div class="card"><div id="list"></div></div>
+<div class="card"><h2 id="tn">—</h2><div id="tmeta" class="small muted"></div><div id="tsteps" style="margin:10px 0"></div>
+<div id="tfail"></div><p class="small muted" id="tnote"></p><button class="btn pri" id="run">▶ Run</button></div></div></div>
+<div data-pane="clash" class="hide"><div class="card"><div id="cl" style="margin:0 0 10px"></div>
+<div class="grid" style="grid-template-columns:1fr 1fr"><div><div class="small" style="font-weight:700;margin:0 0 6px">Session A</div><div id="ca"></div></div>
+<div><div class="small" style="font-weight:700;margin:0 0 6px">Session B</div><div id="cb"></div></div></div>
+<p id="cend" style="margin-top:12px;font-weight:700"></p><button class="btn pri" id="crun">▶ Run both</button></div></div>
+<div data-pane="iso" class="hide"><div class="grid g2"><div class="card"><h2>Isolation and locking</h2><table class="t">
+<tr><td>SQLite in WAL mode</td><td>Used now on laptops. Writers start with <span class="mono">BEGIN IMMEDIATE</span> and queue one after another; readers are never blocked.</td><td><span class="badge s-built">Built</span></td></tr>
+<tr><td>PostgreSQL (Docker)</td><td>Read Committed with row locks; the same UNIQUE and compare-and-swap rules give the same results.</td><td><span class="badge s-prog">In progress</span></td></tr>
+<tr><td>Lock order</td><td>Parent first: POLL then VOTE; REVIEW then REPORT then AUDIT_LOG. Two transactions cannot wait on each other.</td><td><span class="badge s-built">Built</span></td></tr>
+<tr><td>Deadlock fallback</td><td>The database aborts one transaction, it is retried; no partial data.</td><td><span class="badge s-built">Built</span></td></tr>
+</table></div><div class="card"><h2>How we check it</h2><table class="t">
+<tr><td>100 members vote at once (NFR04)</td><td><span class="badge s-built">Passes on SQLite</span> <span class="badge s-prog">PostgreSQL run</span></td></tr>
+<tr><td>20 threads, same member (TC-E2-06)</td><td><span class="badge s-built">1 row, 19 × 409</span></td></tr>
+<tr><td>Every invalid poll / review change → 409 (TC-E2-02/03)</td><td><span class="badge s-built">Pass</span> <span class="badge s-prog">more pairs being added</span></td></tr>
+<tr><td>Audit row cannot be edited (TC-E2-04)</td><td><span class="badge s-built">Pass</span></td></tr>
+<tr><td>Two moderators at once</td><td><span class="badge s-prog">Test being written</span></td></tr></table></div></div></div>
+
+<div class="foot">Source: backend/app/routers/clubs.py, reviews.py, moderation.py, workflow.py, db.py · tests: backend/tests/test_sprint2_engines.py (TC-E2-*), test_100_concurrent_votes_no_duplicates.</div></div>
+<script>const DATA={"tx": [{"id": "T1", "name": "Submit review", "fr": "FR08", "st": "built", "lock": "none (new row)", "steps": ["BEGIN IMMEDIATE", "INSERT INTO reviews (user_id, film_id, text, state) VALUES (…, 'pending_scan')", "COMMIT", "after COMMIT: submit scan job to E3 (USER priority)"], "fail": "Any error → ROLLBACK; 400 or 503; nothing is visible", "note": "The scan job is queued only after COMMIT, so a job never sees an uncommitted review."}, {"id": "T2", "name": "Save scan result", "fr": "FR08, FR09", "st": "built", "lock": "compare-and-swap on reviews.state", "steps": ["BEGIN IMMEDIATE", "SELECT review → still pending_scan?", "UPDATE reviews SET segments_json=…, risk=…, state='published' WHERE id=6 AND state='pending_scan'", "COMMIT"], "fail": "Review deleted or moderated meanwhile → 0 rows changed; the worker treats it as done", "note": "After a restart, reviews still pending_scan are queued again (no lost jobs)."}, {"id": "T3", "name": "Vote in a poll", "fr": "FR14, NFR04", "st": "built", "lock": "row lock on polls + UNIQUE (poll_id, user_id)", "steps": ["BEGIN IMMEDIATE", "SELECT … FROM polls WHERE id=1 FOR UPDATE  (poll must be open)", "INSERT INTO votes (poll_id, user_id, option_id)", "COMMIT → push new tally on /ws/polls/1"], "fail": "Second vote → UNIQUE fails → ROLLBACK → 409 'already voted'", "note": "Tested: 100 members at once → 100 votes; 20 threads from one member → 1 row."}, {"id": "T4", "name": "Close a poll", "fr": "FR13, FR15", "st": "built", "lock": "same poll row lock as T3", "steps": ["BEGIN IMMEDIATE", "SELECT … FROM polls WHERE id=1 FOR UPDATE", "UPDATE polls SET state='closed', result_json=…, winner_film_id=… WHERE id=1 AND state='open'", "COMMIT"], "fail": "Poll not open → 409 'invalid transition'", "note": "A vote is either before the close or refused; the result never changes afterwards."}, {"id": "T5", "name": "Report a review", "fr": "FR10", "st": "built", "lock": "UNIQUE (review_id, user_id)", "steps": ["BEGIN IMMEDIATE", "INSERT INTO review_reports (review_id, user_id)", "count distinct reporters", "if 3: UPDATE reviews SET state='hidden' WHERE state='published'", "COMMIT"], "fail": "Rollback undoes the report and the hide together", "note": "Application rule in the same transaction today; a database trigger version is planned."}, {"id": "T6", "name": "Moderator decision", "fr": "FR09, FR11", "st": "built", "lock": "compare-and-swap", "steps": ["BEGIN IMMEDIATE", "UPDATE reviews SET state='published' WHERE id=9 AND state='hidden'", "INSERT INTO audit_log (actor_id, action, target, detail)", "COMMIT"], "fail": "Another moderator acted first → 0 rows → 409; no audit row", "note": "State and audit row are saved together or not at all."}, {"id": "T7", "name": "Grant or revoke a role", "fr": "FR03", "st": "built", "lock": "PK (user_id, role)", "steps": ["BEGIN IMMEDIATE", "INSERT INTO user_roles (user_id, role) / DELETE …", "INSERT INTO audit_log", "COMMIT"], "fail": "Any error → no role change and no audit row", "note": "No role change can exist without its audit entry."}, {"id": "T8", "name": "Rate by aspect", "fr": "FR07", "st": "built", "lock": "PK (user_id, film_id, aspect)", "steps": ["BEGIN IMMEDIATE", "INSERT OR REPLACE INTO aspect_ratings (user_id, film_id, aspect, value)", "COMMIT", "film average calculated when the page is read"], "fail": "Value outside 0.5–5 → 400 before any write", "note": "A stored FILM.avg_rating updated in this transaction is planned only if the film page gets slow."}, {"id": "T9", "name": "Give a strike", "fr": "FR20", "st": "built", "lock": "—", "steps": ["BEGIN IMMEDIATE", "INSERT INTO user_strikes", "count strikes in the last 30 days", "if 3: UPDATE users SET muted_until = now + 3 days", "INSERT INTO audit_log", "COMMIT"], "fail": "Rollback: no strike, no mute, no audit row", "note": "Application rule today; trigger version planned."}, {"id": "T10", "name": "Follow a user", "fr": "FR18", "st": "built", "lock": "PK (follower_id, followee_id) + CHECK", "steps": ["BEGIN IMMEDIATE", "INSERT INTO follows (follower_id, followee_id) if missing", "INSERT INTO notifications", "COMMIT"], "fail": "Following yourself → 400; a repeat follow changes nothing", "note": "The feed is built from diary entries and reviews; a separate ACTIVITY table is still being considered."}], "clash": [{"name": "Two votes from one member, same moment", "a": ["BEGIN", "lock poll 1", "INSERT vote (1, 5)", "COMMIT ✓ 200"], "b": ["BEGIN", "wait for poll 1 lock…", "INSERT vote (1, 5) → UNIQUE fails", "ROLLBACK ✗ 409 already voted"], "end": "1 row in votes"}, {"name": "Vote and close at the same moment", "a": ["BEGIN", "lock poll 1", "UPDATE polls … state='closed'", "COMMIT ✓ 200"], "b": ["BEGIN", "wait for poll 1 lock…", "poll is closed", "ROLLBACK ✗ 409 voting is closed"], "end": "result frozen without the late vote"}, {"name": "Two moderators act on one review", "a": ["BEGIN", "UPDATE … WHERE state='hidden' → 1 row", "INSERT audit_log", "COMMIT ✓ 200"], "b": ["BEGIN", "UPDATE … WHERE state='hidden' → 0 rows", "no audit row", "ROLLBACK ✗ 409"], "end": "1 decision, 1 audit row"}]};
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const badge=s=>{const m={built:['s-built','Built'],prog:['s-prog','In progress'],plan:['s-plan','Planned'],bad:['s-bad','Not met']}[s]||['s-plan',s];return `<span class="badge ${m[0]}">${m[1]}</span>`};
+function tabs(root){$$('.tabs button',root).forEach(b=>b.onclick=()=>{$$('.tabs button',root).forEach(x=>x.classList.toggle('on',x===b));$$('[data-pane]',root).forEach(p=>p.classList.toggle('hide',p.dataset.pane!==b.dataset.tab))})}
+
+tabs($('#tb').parentNode);let T=0,C=0;const X=DATA.tx;
+$('#list').innerHTML=X.map((t,i)=>`<div class="chip" style="display:flex;justify-content:space-between;margin:5px 0" data-i="${i}"><span><b>${t.id}</b> ${esc(t.name)}</span>${badge(t.st)}</div>`).join('');
+$$('#list .chip').forEach(c=>c.onclick=()=>pick(+c.dataset.i));
+function pick(i){T=i;const t=X[i];$$('#list .chip').forEach((c,k)=>c.classList.toggle('on',k===i));$('#tn').textContent=t.id+' · '+t.name;
+ $('#tmeta').innerHTML=`${t.fr} · clash control: <span class="mono">${esc(t.lock)}</span> · ${badge(t.st)}`;
+ $('#tsteps').innerHTML=t.steps.map((s,k)=>`<div class="mono st" style="padding:6px 10px;margin:4px 0;border-radius:8px;border:1px solid var(--line);background:var(--panel2)">${esc(s)}</div>`).join('');
+ $('#tfail').innerHTML=`<div class="small"><b style="color:#f87171">On failure:</b> ${esc(t.fail)}</div>`;$('#tnote').textContent=t.note}
+$('#run').onclick=()=>{const els=$$('#tsteps .st');els.forEach(e=>{e.style.borderColor='var(--line)';e.style.background='var(--panel2)'});
+ els.forEach((e,k)=>setTimeout(()=>{e.style.borderColor='#34d399';e.style.background='rgba(52,211,153,.14)'},300+k*450))};
+pick(2);
+const CL=DATA.clash;$('#cl').innerHTML=CL.map((c,i)=>`<span class="chip" data-i="${i}">${esc(c.name)}</span>`).join('');
+$$('#cl .chip').forEach(c=>c.onclick=()=>cp(+c.dataset.i));
+function cp(i){C=i;$$('#cl .chip').forEach((c,k)=>c.classList.toggle('on',k===i));const c=CL[i];
+ const col=(arr,id)=>$(id).innerHTML=arr.map(s=>`<div class="mono cs" style="opacity:.25;padding:6px 10px;margin:4px 0;border-radius:8px;border:1px solid var(--line)">${esc(s)}</div>`).join('');col(c.a,'#ca');col(c.b,'#cb');$('#cend').textContent=''}
+$('#crun').onclick=()=>{cp(C);const c=CL[C];const A=$$('#ca .cs'),B=$$('#cb .cs');let t=200;
+ for(let k=0;k<4;k++){setTimeout(()=>{A[k].style.opacity=1;if(k===3)A[k].style.borderColor='#34d399'},t);t+=420;setTimeout(()=>{B[k].style.opacity=1;if(k===3)B[k].style.borderColor='#f87171'},t);t+=420}
+ setTimeout(()=>$('#cend').textContent='End state: '+c.end,t)};cp(0);
+</script></body></html>
